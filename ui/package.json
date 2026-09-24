@@ -1,0 +1,15 @@
+{
+  "name": "eval-ai-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "pnpm --filter @evalai/eval-ai dev",
+    "build": "pnpm --filter @evalai/eval-ai build",
+    "test": "pnpm --filter @evalai/eval-ai test",
+    "typecheck": "pnpm --filter @evalai/eval-ai typecheck"
+  },
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

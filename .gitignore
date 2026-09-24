@@ -1,0 +1,56 @@
+# Local environment and credentials; keep documented examples.
+.env
+.env.*
+!.env.example
+!.env.*.example
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime state, including the private .local/model-providers.json store.
+.local/
+backend/data/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.log
+*.log.*
+*.pid
+
+# Installed dependencies and generated build/test caches.
+.venv/
+venv/
+node_modules/
+.next/
+.turbo/
+.pnpm-store/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+*.tsbuildinfo
+.DS_Store
+
+# Presentation and private speaker materials stay outside this repository.
+*.pptx
+*.ppt
+PRESENTER-NOTES.md
+*[Ss][Pp][Ee][Aa][Kk][Ee][Rr]*[Ss][Cc][Rr][Ii][Pp][Tt]*.md
+*[Ss][Pp][Ee][Aa][Kk][Ee][Rr]*[Ss][Cc][Rr][Ii][Pp][Tt]*.docx
+
+# Local handoff artifacts; retain source, diagrams and engineering guides.
+/docs/*.patch
+/docs/*.diff
+/docs/*-files.json
+/docs/*-REVIEW.md

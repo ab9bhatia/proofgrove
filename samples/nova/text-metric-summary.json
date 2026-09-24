@@ -1,0 +1,16 @@
+{
+  "provenance": "Real deterministic scores from the disposable Nova verification run. Run IDs are intentionally omitted.",
+  "fixture_sha256": "011acc77d0236c7e26a83519a1cb36c9b5ba5c9413a2ccdcfd42845f7c65c143",
+  "means": {
+    "baseline": {
+      "nlp.f1_score": 0.773184,
+      "nlp.rouge": 0.741676,
+      "nlp.bleu": 0.683625
+    },
+    "candidate": {
+      "nlp.f1_score": 0.255492,
+      "nlp.rouge": 0.243081,
+      "nlp.bleu": 0.032771
+    }
+  }
+}

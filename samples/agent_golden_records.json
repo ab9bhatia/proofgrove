@@ -1,0 +1,33 @@
+{
+  "records": [
+    {
+      "inputs": {
+        "query": "Find the latest deployment status for service web-api.",
+        "tools": ["get_deployment_status", "get_service_logs", "list_services"]
+      },
+      "expectations": {
+        "expected_response": "The latest deployment of web-api is healthy.",
+        "expected_actions": ["get_deployment_status(service='web-api')"],
+        "expected_facts": ["deployment version", "health status"],
+        "guidelines": "Must call get_deployment_status before responding."
+      },
+      "tags": { "complexity": "simple", "expected_tool_calls": "1" }
+    },
+    {
+      "inputs": {
+        "query": "Check if web-api is healthy and show recent error logs.",
+        "tools": ["get_deployment_status", "get_service_logs", "list_services"]
+      },
+      "expectations": {
+        "expected_response": "web-api is healthy and the recent error logs were retrieved.",
+        "expected_actions": [
+          "get_deployment_status(service='web-api')",
+          "get_service_logs(service='web-api', level='error')"
+        ],
+        "expected_facts": ["health status", "error logs"],
+        "guidelines": "Must call both tools. Report health first, then logs."
+      },
+      "tags": { "complexity": "multi_step", "expected_tool_calls": "2" }
+    }
+  ]
+}

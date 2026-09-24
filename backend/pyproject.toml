@@ -1,0 +1,80 @@
+[project]
+name = "eval-ai-lite"
+version = "0.2.0"
+description = "Eval Hub — golden dataset registry and LLM-judge evaluation engine for the Proofgrove platform"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-multipart>=0.0.27",
+    "openai>=1.0.0,<3",
+    "sqlalchemy[asyncio]>=2.0.0",
+    "alembic>=1.14.0",
+    "aiosqlite>=0.20.0",
+    # Live-agent target runner: POST JSON-RPC message/stream to the kagent
+    # controller /api/a2a and consume the SSE reply. Mirrors workflow-worker.
+    "httpx>=0.27",
+    "httpx-sse>=0.4",
+    # MCP client for synthetic dataset generation: the /datasets/generate worker
+    # calls a grounding tool (e.g. kensho-mcp search) over Streamable HTTP. Core
+    # (not optional) because generation is a shipped in-cluster feature.
+    "mcp>=1.0",
+    "temporalio>=1.30,<2.0",
+    # Read-only access to trace evidence archived in MinIO (local) or Azure Blob (cloud).
+    "boto3>=1.35.0",
+    "opentelemetry-api>=1.27.0,<2.0.0",
+    "opentelemetry-sdk>=1.27.0,<2.0.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.27.0,<2.0.0",
+    "openinference-semantic-conventions>=0.1.21,<1.0.0",
+    "openinference-instrumentation>=0.1.21,<1.0.0",
+    "openinference-instrumentation-openai>=0.1.21,<1.0.0",
+]
+
+[project.optional-dependencies]
+postgres = ["asyncpg>=0.29.0", "psycopg[binary]>=3.1.0"]
+archive = ["pyarrow>=23.0.1,<24", "azure-identity>=1.19,<2", "azure-storage-blob>=12.24,<13"]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.27.0",
+    "respx>=0.21",
+    "ruff>=0.4",
+    "aiosqlite>=0.20.0",
+]
+# Third-party scoring frameworks used behind the evaluator-adapter seam.
+# Optional so the core service/image stays light and offline-runnable; the
+# engine falls back to the native judge when these are not installed.
+frameworks = [
+    "ragas==0.4.3",
+    "deepeval>=2.0,<5",
+    # RAGAS 0.4.3 still imports the Vertex adapter removed from community 0.4.
+    # Keep community 0.3 while using the patched LangChain core.
+    "langchain>=1,<2",
+    "langchain-core>=1.2.22,<2",
+    "langchain-community>=0.3,<0.4",
+    "langchain-openai>=1,<2",
+]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evalhub"]
+
+[tool.pytest.ini_options]
+testpaths = ["test", "tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+markers = [
+    "integration: live checks that require external Compass / AI Gateway credentials",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 240
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]

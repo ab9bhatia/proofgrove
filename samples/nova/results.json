@@ -1,0 +1,561 @@
+{
+  "schema_version": 1,
+  "dataset_id": "nova_ops_v1",
+  "clock": "2026-09-24T09:00:00Z",
+  "evaluator_version": "nova-checks@1",
+  "notice": "Computed deterministic teaching checks over authored snapshots. They are not captured production evidence or backend semantic judge scores. UNKNOWN and NA are excluded from the scored denominator and reported separately.",
+  "checks": [
+    "fact_and_unit",
+    "source_freshness",
+    "request_contract",
+    "final_outcome"
+  ],
+  "cases": [
+    {
+      "id": "n-01",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "FAIL",
+          "reason": "The authored answer omits or contradicts a required fact, eligibility decision, currency or unit."
+        },
+        "source_freshness": {
+          "status": "FAIL",
+          "reason": "The identified source is not the expected effective version at the frozen clock."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "FAIL",
+          "reason": "The authored answer omits or contradicts a required fact, eligibility decision, currency or unit."
+        },
+        "source_freshness": {
+          "status": "FAIL",
+          "reason": "The identified source is not the expected effective version at the frozen clock."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-02",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "UNKNOWN",
+          "reason": "No citation or source observation identifies the version used. Missing attribution is not proof of a stale source."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-03",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-04",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-05",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "FAIL",
+          "reason": "Known request violation: missing required currency. An incomplete final state does not erase this violation."
+        },
+        "final_outcome": {
+          "status": "FAIL",
+          "reason": "The authored persisted effect has the wrong order, amount, currency, item or reason."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "FAIL",
+          "reason": "The authored answer omits or contradicts a required fact, eligibility decision, currency or unit."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "FAIL",
+          "reason": "Known request violation: missing required currency. An incomplete final state does not erase this violation."
+        },
+        "final_outcome": {
+          "status": "UNKNOWN",
+          "reason": "The authored final-state snapshot is incomplete. Do not count this as pass, failure, or proof that no action occurred."
+        }
+      }
+    },
+    {
+      "id": "n-06",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "FAIL",
+          "reason": "Known request violation: missing required currency. An incomplete final state does not erase this violation."
+        },
+        "final_outcome": {
+          "status": "FAIL",
+          "reason": "The authored final state has 2 distinct completed effects; exactly one is required."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "FAIL",
+          "reason": "The authored answer omits or contradicts a required fact, eligibility decision, currency or unit."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "FAIL",
+          "reason": "Known request violation: missing required currency. An incomplete final state does not erase this violation."
+        },
+        "final_outcome": {
+          "status": "UNKNOWN",
+          "reason": "The authored final-state snapshot is incomplete. Do not count this as pass, failure, or proof that no action occurred."
+        }
+      }
+    },
+    {
+      "id": "n-07",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-08",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "NA",
+          "reason": "This case has no narrow fact-and-unit check; inspect its action rule or rubric instead."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "NA",
+          "reason": "This case has no narrow fact-and-unit check; inspect its action rule or rubric instead."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-09",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "NA",
+          "reason": "This case has no narrow fact-and-unit check; inspect its action rule or rubric instead."
+        },
+        "source_freshness": {
+          "status": "NA",
+          "reason": "No versioned source is required by this case."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "NA",
+          "reason": "This case has no narrow fact-and-unit check; inspect its action rule or rubric instead."
+        },
+        "source_freshness": {
+          "status": "NA",
+          "reason": "No versioned source is required by this case."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-10",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "FAIL",
+          "reason": "The authored answer omits or contradicts a required fact, eligibility decision, currency or unit."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-11",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "PASS",
+          "reason": "The authored answer satisfies the case-specific fact-and-unit patterns. This is not a general semantic quality verdict."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "FAIL",
+          "reason": "The authored answer omits or contradicts a required fact, eligibility decision, currency or unit."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The complete authored request log contains no forbidden mutation."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final-state snapshot contains no forbidden mutation; the answer may still be wrong."
+        }
+      }
+    },
+    {
+      "id": "n-12",
+      "baseline": {
+        "fact_and_unit": {
+          "status": "NA",
+          "reason": "This case has no narrow fact-and-unit check; inspect its action rule or rubric instead."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The authored request has the required tool and arguments. This does not prove successful execution."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final state contains exactly one correct effect."
+        }
+      },
+      "candidate": {
+        "fact_and_unit": {
+          "status": "NA",
+          "reason": "This case has no narrow fact-and-unit check; inspect its action rule or rubric instead."
+        },
+        "source_freshness": {
+          "status": "PASS",
+          "reason": "The supplied source observation or citation matches the effective registry version. This does not establish answer groundedness."
+        },
+        "request_contract": {
+          "status": "PASS",
+          "reason": "The authored request has the required tool and arguments. This does not prove successful execution."
+        },
+        "final_outcome": {
+          "status": "PASS",
+          "reason": "The complete authored final state contains exactly one correct effect."
+        }
+      }
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "fact_and_unit": {
+        "PASS": 8,
+        "FAIL": 1,
+        "UNKNOWN": 0,
+        "NA": 3,
+        "total": 12,
+        "applicable": 9,
+        "scored": 9
+      },
+      "source_freshness": {
+        "PASS": 10,
+        "FAIL": 1,
+        "UNKNOWN": 0,
+        "NA": 1,
+        "total": 12,
+        "applicable": 11,
+        "scored": 11
+      },
+      "request_contract": {
+        "PASS": 10,
+        "FAIL": 2,
+        "UNKNOWN": 0,
+        "NA": 0,
+        "total": 12,
+        "applicable": 12,
+        "scored": 12
+      },
+      "final_outcome": {
+        "PASS": 10,
+        "FAIL": 2,
+        "UNKNOWN": 0,
+        "NA": 0,
+        "total": 12,
+        "applicable": 12,
+        "scored": 12
+      }
+    },
+    "candidate": {
+      "fact_and_unit": {
+        "PASS": 4,
+        "FAIL": 5,
+        "UNKNOWN": 0,
+        "NA": 3,
+        "total": 12,
+        "applicable": 9,
+        "scored": 9
+      },
+      "source_freshness": {
+        "PASS": 9,
+        "FAIL": 1,
+        "UNKNOWN": 1,
+        "NA": 1,
+        "total": 12,
+        "applicable": 11,
+        "scored": 10
+      },
+      "request_contract": {
+        "PASS": 10,
+        "FAIL": 2,
+        "UNKNOWN": 0,
+        "NA": 0,
+        "total": 12,
+        "applicable": 12,
+        "scored": 12
+      },
+      "final_outcome": {
+        "PASS": 10,
+        "FAIL": 0,
+        "UNKNOWN": 2,
+        "NA": 0,
+        "total": 12,
+        "applicable": 12,
+        "scored": 10
+      }
+    }
+  }
+}

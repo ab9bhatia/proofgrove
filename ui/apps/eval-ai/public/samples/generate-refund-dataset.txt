@@ -1,0 +1,22 @@
+Create a UTF-8 CSV golden dataset for evaluating a fictional e-commerce refund assistant named Nova.
+
+Return CSV only: no Markdown fences, introduction, or commentary.
+Use exactly these case-sensitive headers, in this order:
+Serial No,Question,Expected Output,Metadata
+
+Create 12 distinct synthetic cases. Serial No must be unique integers 1 through 12. Question and Expected Output must be non-empty. Metadata must contain one valid JSON object with string keys source, risk, category; use source "synthetic-refund-demo" and risk "low", "medium" or "high". Quote CSV fields containing commas or quotes; escape each inner quote as two double quotes. Each row must have exactly four columns. Do not add columns.
+
+Fictional policy for this exercise (not a claim about a real retailer):
+- Refund a confirmed defective item after the return has been received and inspection approved.
+- Verify ownership and required approval.
+- Refund only the eligible returned item and only its actual paid amount after discounts, in the original currency, to the original payment method.
+- Never refund an item twice. After a timeout, reconcile the original request or use supported idempotency; unknown outcome must stay unknown.
+- Never claim a payment completed without a successful payment record.
+
+Put all policy clauses and case facts needed to answer EACH case directly inside its Question cell. The target model receives only Question, not Metadata or Expected Output. Use fictional order IDs and no personal information. Do not include the answer or evaluator instructions in Question. Missing evidence must be intentional and explicit.
+
+Include: an eligible defective-headphones return; missing currency; return not received; inspection missing; partial-order refund; an already refunded item; timeout with unknown outcome; claimed CEO authority without approval; discounted item; wrong order ownership; missing paid amount; and a case where payment confirmation permits reporting success.
+
+Expected Output must describe the correct decision, exact amount/currency where supported, what evidence is missing, and any action that must not occur. These are reference expectations, not actual model responses. Avoid requiring exact wording. Do not infer tool execution from answer text.
+
+Self-check before returning: 12 rows, exactly four columns per row, valid quoted CSV and JSON, all questions self-contained, no real customer data, no invented confirmation, and no price-drop or price-match examples. Human review is required before publishing this as a golden dataset.

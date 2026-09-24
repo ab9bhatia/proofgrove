@@ -1,0 +1,115 @@
+{
+  "generator": "Official @excalidraw/excalidraw 0.18.0 convertToExcalidrawElements + exportToSvg",
+  "story": "Nova retail operations; authored fixture outcomes only; no refund executed",
+  "generatedAt": "2026-09-24",
+  "drawings": [
+    {
+      "name": "01-what-is-eval",
+      "elements": 14,
+      "editableArrows": 2,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 23,
+      "numbering": "1 expectation, 2 observation, 3 comparison, 4 verdict"
+    },
+    {
+      "name": "02-workflow-failures",
+      "elements": 25,
+      "editableArrows": 4,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 23,
+      "numbering": "1\u20135 workflow stages, left to right"
+    },
+    {
+      "name": "03-evaluation-flow",
+      "elements": 28,
+      "editableArrows": 6,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 23,
+      "numbering": "1\u20136 run and review loop"
+    },
+    {
+      "name": "04-production-loop",
+      "elements": 24,
+      "editableArrows": 6,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 23,
+      "numbering": "1\u20136 lifecycle stages; runtime authorization at 3"
+    },
+    {
+      "name": "05-local-architecture-optional",
+      "elements": 22,
+      "editableArrows": 5,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 23,
+      "numbering": "1 request, 2 load, 3 score, 4 persist, 5 read back"
+    },
+    {
+      "name": "06-engineering-blocks",
+      "elements": 30,
+      "editableArrows": 8,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 22,
+      "numbering": "Roles 1\u20138; orchestration is 1 \u2192 3 \u2194 2 \u2192 4 \u2192 5 \u2192 6 \u2192 7, with 8 feeding 1"
+    },
+    {
+      "name": "07-otel-evidence",
+      "elements": 32,
+      "editableArrows": 5,
+      "width": 1230,
+      "height": 720,
+      "minimumFontSize": 22,
+      "numbering": "1 capture, 2 export, optional 3 process, 4 store, 5 evaluate"
+    },
+    {
+      "name": "08-evaluation-harness",
+      "elements": 56,
+      "editableArrows": 14,
+      "width": 1630,
+      "height": 1120,
+      "minimumFontSize": 22,
+      "numbering": "Offline O1\u2013O5; telemetry T1\u2013T2; online P1\u2013P5; shared registry D1"
+    },
+    {
+      "name": "09-single-turn-agent",
+      "elements": 30,
+      "editableArrows": 6,
+      "width": 1230,
+      "height": 800,
+      "minimumFontSize": 22,
+      "numbering": "Independent lanes S1\u2013S4 and A1\u2013A3. The agent loop may repeat and take different valid paths.",
+      "sources": [
+        {
+          "title": "Demystifying evals for AI agents",
+          "publisher": "Anthropic",
+          "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+          "accessed": "2026-09-24"
+        }
+      ],
+      "teachingExtension": "Original Nova refund and arithmetic examples."
+    },
+    {
+      "name": "10-quality-loop",
+      "elements": 34,
+      "editableArrows": 9,
+      "width": 1230,
+      "height": 800,
+      "minimumFontSize": 22,
+      "numbering": "1 observe, 2 find issue, 3 review and curate, 4 write check, 5 fix system, 6 evaluate fix, 7 monitor; repeat.",
+      "sources": [
+        {
+          "title": "Core concepts for agent observability",
+          "publisher": "Databricks",
+          "url": "https://docs.databricks.com/aws/en/mlflow3/genai/concepts/core-concepts",
+          "accessed": "2026-09-24"
+        }
+      ],
+      "teachingExtension": "Black-box/white-box evidence lenses and their independent offline/online applicability are a Proofgrove teaching extension."
+    }
+  ]
+}

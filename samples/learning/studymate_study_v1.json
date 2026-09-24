@@ -1,0 +1,69 @@
+{
+  "dataset_id": "studymate_study_v1",
+  "fictional_notice": "StudyMate is a fictional student assistant. Examples and policies are invented for teaching; they are not institutional policies or captured model outputs.",
+  "name": "StudyMate · Can I trust the study helper?",
+  "lesson": "study-helper",
+  "description": "Four fictional Python study questions. Text-overlap scores measure similarity to a reference, not whether the explanation is true.",
+  "records": [
+    {
+      "inputs": {
+        "question": "In Python, does sorted(values) change the original list?",
+        "response": "sorted(values) sorts the original list in place and returns the changed list."
+      },
+      "expectations": {
+        "expected_output": "sorted(values) returns a new sorted list and leaves the original list unchanged."
+      },
+      "tags": {
+        "scene": "sorted-new-list",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "Check behavior, not confident wording. Execute a small example to verify this claim."
+      }
+    },
+    {
+      "inputs": {
+        "question": "What list does list(range(1, 4)) return?",
+        "response": "It returns [1, 2, 3]; the stop value 4 is excluded."
+      },
+      "expectations": {
+        "expected_output": "It returns [1, 2, 3]; the stop value 4 is excluded."
+      },
+      "tags": {
+        "scene": "range-boundary",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "A known passing case checks that the evaluator pipeline works."
+      }
+    },
+    {
+      "inputs": {
+        "question": "What does values.append(5) return?",
+        "response": "It returns the updated list with 5 appended."
+      },
+      "expectations": {
+        "expected_output": "It returns None and appends 5 to the original list."
+      },
+      "tags": {
+        "scene": "append-return",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "The mutation and return value are separate parts of the expected behavior."
+      }
+    },
+    {
+      "inputs": {
+        "question": "Why would I use a Python set?",
+        "response": "Use a set to remove duplicates and test whether an item is present."
+      },
+      "expectations": {
+        "expected_output": "A set stores unique values and supports membership checks."
+      },
+      "tags": {
+        "scene": "paraphrase",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "A valid paraphrase can have low text overlap. Inspect the answer before treating a metric threshold as truth."
+      }
+    }
+  ]
+}

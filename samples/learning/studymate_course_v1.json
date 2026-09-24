@@ -1,0 +1,97 @@
+{
+  "dataset_id": "studymate_course_v1",
+  "fictional_notice": "StudyMate is a fictional student assistant. Examples and policies are invented for teaching; they are not institutional policies or captured model outputs.",
+  "name": "StudyMate · Which course policy should I trust?",
+  "lesson": "course-policy",
+  "description": "All policies are fictional StudyMate rules, not institutional policies. Context snippets are supplied fixtures; no retriever was executed.",
+  "records": [
+    {
+      "inputs": {
+        "question": "When is the weekly StudyMate assignment due?",
+        "response": "The assignment is due Monday at 20:00 IST. Source: POLICY-2026-08.",
+        "context": [
+          "POLICY-2026-08 (superseded): Weekly assignments are due Monday at 20:00 IST."
+        ],
+        "illustrative_document_ids": [
+          "POLICY-2026-08"
+        ],
+        "evidence_note": "Illustrative supplied context only; this is not an attested retrieval result."
+      },
+      "expectations": {
+        "expected_output": "The assignment is due Sunday at 20:00 IST. Source: POLICY-2026-09."
+      },
+      "tags": {
+        "scene": "stale-deadline",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "A fluent answer can faithfully repeat a stale document. Inspect document versions before blaming the generator."
+      }
+    },
+    {
+      "inputs": {
+        "question": "What does the current StudyMate assignment policy say?",
+        "response": "The assignment is due Sunday at 20:00 IST. Source: POLICY-2026-09.",
+        "context": [
+          "POLICY-2026-09 (current; replaces POLICY-2026-08): Weekly assignments are due Sunday at 20:00 IST."
+        ],
+        "illustrative_document_ids": [
+          "POLICY-2026-09"
+        ],
+        "evidence_note": "Illustrative supplied context only; no live retrieval occurred."
+      },
+      "expectations": {
+        "expected_output": "The assignment is due Sunday at 20:00 IST. Source: POLICY-2026-09."
+      },
+      "tags": {
+        "scene": "current-deadline",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "Versioned ground truth makes a policy change testable."
+      }
+    },
+    {
+      "inputs": {
+        "question": "Can every learner get a seven-day assignment extension?",
+        "response": "Yes. Every learner automatically gets a seven-day extension.",
+        "context": [
+          "POLICY-2026-09: Weekly assignments are due Sunday at 20:00 IST."
+        ],
+        "illustrative_document_ids": [
+          "POLICY-2026-09"
+        ],
+        "evidence_note": "The fictional snippet contains no extension rule."
+      },
+      "expectations": {
+        "expected_output": "The supplied policy does not state an extension rule. Ask the course team."
+      },
+      "tags": {
+        "scene": "unsupported-extension",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "Missing evidence should produce an explicit unknown, not an invented rule."
+      }
+    },
+    {
+      "inputs": {
+        "question": "How long are StudyMate session recordings available?",
+        "response": "Recordings are available for 30 days after the session. Source: MEDIA-01.",
+        "context": [
+          "MEDIA-01: Session recordings remain available for 30 days after the session."
+        ],
+        "illustrative_document_ids": [
+          "MEDIA-01"
+        ],
+        "evidence_note": "Illustrative supplied context only; no live retrieval occurred."
+      },
+      "expectations": {
+        "expected_output": "Recordings are available for 30 days after the session. Source: MEDIA-01."
+      },
+      "tags": {
+        "scene": "recording-access",
+        "source": "fictional-studymate-fixture",
+        "split": "test",
+        "takeaway": "Keep representative passing examples alongside failure cases."
+      }
+    }
+  ]
+}

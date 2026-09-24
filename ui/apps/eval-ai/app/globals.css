@@ -1,0 +1,672 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@evalai/shared/theme.css";
+
+@theme inline {
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* The brand's one curve, as a utility. It was already the token every CSS
+     transition here uses, but components reached for Tailwind's `ease-out`
+     instead because there was nothing to type — so the disclosures animated on a
+     different curve from everything the stylesheet drives. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --color-evalai-purple: var(--evalai-purple);
+  --color-eyebrow: var(--eyebrow);
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-series-5: var(--series-5);
+  --color-series-6: var(--series-6);
+  --color-evalai-blue: var(--evalai-blue);
+  --color-evalai-pink: var(--evalai-pink);
+  --color-evalai-green: var(--evalai-green);
+  --color-brand-green-soft: var(--brand-green-soft);
+  --color-brand-purple-soft: var(--brand-purple-soft);
+  --color-brand-slate: var(--brand-slate);
+  --color-brand-text: var(--brand-text);
+  --color-success-text: var(--success-text);
+
+  --color-gate-pass: var(--gate-pass);
+  --color-gate-warn: var(--gate-warn);
+  --color-gate-fail: var(--gate-fail);
+  --color-gate-neutral: var(--gate-neutral);
+  --color-gate-pass-soft: var(--gate-pass-soft);
+  --color-gate-warn-soft: var(--gate-warn-soft);
+  --color-state-positive: var(--state-positive);
+  --color-state-caution: var(--state-caution);
+  --color-state-positive-soft: var(--state-positive-soft);
+  --color-state-caution-soft: var(--state-caution-soft);
+  --color-gate-fail-soft: var(--gate-fail-soft);
+  --color-gate-neutral-soft: var(--gate-neutral-soft);
+
+  --spacing-xs: initial;
+  --spacing-sm: initial;
+  --spacing-md: initial;
+  --spacing-lg: initial;
+  --spacing-xl: initial;
+  --spacing-2xl: initial;
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+}
+
+:root {
+  /* Proofgrove raw palette */
+  --brand-slate: #1e1f1e;
+  --brand-off-white: #fffdf8;
+  --brand-green-soft: #eaf3ed;
+  --brand-purple-soft: #eaf3ed;
+  --evalai-purple: #ae74ff;
+  /* The eyebrow is small, uppercase and bold, so it is held to 4.5:1 as body
+     text. --evalai-purple on this background measures 2.96:1 and fails on
+     every page that renders a section name. Same hue, darker, 5.3:1 here. The
+     brand purple is unchanged everywhere else, and needs no darkening on dark
+     where it already measures 5.3:1. */
+  --eyebrow: #235f52;
+  --evalai-blue: #ae74ff;
+  --evalai-pink: #e5484d;
+  --evalai-green: #235f52;
+  --green-deep: #6fc500;
+  --purple-deep: #8a4edb;
+
+  /* Geometry + motion (Proofgrove spacing.css) */
+  --radius: 0.5rem;
+  --radius-card: 0.75rem;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 120ms;
+  --dur-normal: 200ms;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* Semantic surfaces — light workspace */
+  --background: #fffdf8;
+  --foreground: #1e1f1e;
+  --card: #ffffff;
+  --card-foreground: #1e1f1e;
+  --popover: #ffffff;
+  --popover-foreground: #1e1f1e;
+  --primary: #1e1f1e;
+  --primary-foreground: #fbf8ff;
+  --secondary: #e8e7ee;
+  --secondary-foreground: #1e1f1e;
+  --muted: #f2f4ef;
+  --muted-foreground: #4c4f57;
+  --accent: #eaf3ed;
+  --accent-foreground: #1e1f1e;
+  --destructive: #c62f35;
+  --destructive-foreground: #ffffff;
+  --success: #6fc500;
+  --success-foreground: #1e1f1e;
+  --success-text: #3f7000;
+  --border: #d5d8e1;
+  --input: #c2c8d6;
+  --ring: #235f52;
+  --brand: #235f52;
+  --brand-foreground: #ffffff;
+  --brand-text: #235f52;
+  --shadow-chat: 0 12px 24px -3px rgb(30 31 30 / 0.07);
+  --shadow-hover: 0 6px 16px rgb(30 31 30 / 0.1);
+  --shadow-sm: 0 1px 3px rgb(30 31 30 / 0.08), 0 1px 2px rgb(30 31 30 / 0.04);
+
+  /* Gate verdict palette (light) */
+  --gate-pass: #047857;
+  --gate-warn: #b45309;
+  --gate-fail: #b91c1c;
+  --gate-neutral: #617188;
+  --gate-pass-soft: #ecfdf5;
+  --gate-warn-soft: #fffbeb;
+  --gate-fail-soft: #fef2f2;
+  --gate-neutral-soft: #f1f5f9;
+
+  /* Lifecycle palette (light).
+     Separate from the gate verdicts on purpose: a dataset being Published and a
+     run having passed its gate are different claims that happen to both read as
+     green. Sharing one token would let a lifecycle chip inherit a verdict's
+     meaning the first time either palette changed. */
+  --state-positive: #047857;
+
+  /* Chart series: categorical identity only, and deliberately no green, amber
+     or red. Those three carry meaning in this app — improvement, caution,
+     regression — and the change chart uses them for exactly that. Reusing them
+     to say "the third line" would make one colour mean two things in one view.
+     Anchored on the secondary accent, which the brand already names for data.
+     Six is the ceiling: past that no palette stays distinguishable, so a chart
+     needing a seventh series is plotting too much. */
+  --series-1: #ae74ff;
+  --series-2: #2563eb;
+  --series-3: #0891b2;
+  --series-4: #7c3aed;
+  --series-5: #a21caf;
+  --series-6: #4c4f57;
+  --state-caution: #b45309;
+  --state-positive-soft: #ecfdf5;
+  --state-caution-soft: #fffbeb;
+}
+
+.dark {
+  color-scheme: dark;
+  --evalai-green: #99d6bf;
+  --eyebrow: var(--evalai-purple);
+  --background: #1e1f1e;
+  --foreground: #fbf8ff;
+  --card: #262726;
+  --card-foreground: #fbf8ff;
+  --popover: #262726;
+  --popover-foreground: #fbf8ff;
+  --primary: #fbf8ff;
+  --primary-foreground: #1e1f1e;
+  --secondary: #343639;
+  --secondary-foreground: #fbf8ff;
+  --muted: #343639;
+  --muted-foreground: #c2c8d6;
+  --accent: rgb(145 255 1 / 0.12);
+  --accent-foreground: #fbf8ff;
+  --destructive: #ff777d;
+  --destructive-foreground: #1e1f1e;
+  --success: #91ff01;
+  --success-foreground: #1e1f1e;
+  --success-text: #a6ff33;
+  --border: rgb(251 248 255 / 0.16);
+  --input: rgb(251 248 255 / 0.24);
+  --ring: #ae74ff;
+  --brand: #99d6bf;
+  --brand-foreground: #1e1f1e;
+  --brand-text: #99d6bf;
+  --shadow-chat: 0 12px 24px -3px rgb(0 0 0 / 0.28);
+  --shadow-hover: 0 8px 20px rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.28);
+
+  --gate-pass: #6ee7b7;
+  --gate-warn: #fcd34d;
+  --gate-fail: #fca5a5;
+  --gate-neutral: #94a3b8;
+  --gate-pass-soft: #022c22;
+  --gate-warn-soft: #451a03;
+  --gate-fail-soft: #450a0a;
+  --gate-neutral-soft: #1e293b;
+
+  --state-positive: #6ee7b7;
+
+  --series-1: #c4a2ff;
+  --series-2: #7ab8ff;
+  --series-3: #4dd0e1;
+  --series-4: #b39dff;
+  --series-5: #e879f9;
+  --series-6: #c2c8d6;
+  --state-caution: #fcd34d;
+  --state-positive-soft: #022c22;
+  --state-caution-soft: #451a03;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  html {
+    background: var(--background);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: var(--brand-purple-soft);
+    color: var(--foreground);
+  }
+}
+
+@layer components {
+  /* Setup-screen surfaces. Defined here, with the commit whose components
+     first use them — referenced two layers before the CSS existed, every
+     choice card rendered with no border, no padding and no selected state. */
+  .eval-setup-choice {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    padding: 0.85rem 1rem;
+    text-align: left;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  }
+  .eval-setup-choice:hover:not(:disabled) {
+    border-color: rgb(30 31 30 / 0.28);
+  }
+  .eval-setup-choice[aria-checked="true"],
+  .eval-setup-choice[data-selected="true"] {
+    border-color: rgb(30 31 30 / 0.45);
+    background: rgb(145 255 1 / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(145 255 1 / 0.55);
+  }
+  .eval-setup-inset {
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--border);
+  }
+  .eval-setup-inset:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .eval-setup-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    font-size: 0.75rem;
+  }
+  .eval-setup-meta dt {
+    color: var(--muted-foreground);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.625rem;
+  }
+  .eval-setup-meta dd {
+    margin-top: 0.15rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+
+
+  /* Eval setup step cards — one surface language, avoid nested muted washes */
+  /* A group inside a step card, not a card of its own: the step card is the only
+     surface. Nesting bordered boxes made every level look identical, so nothing
+     read as hierarchy. Separation here is a hairline and space. */
+  .eval-setup-inset {
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .eval-setup-inset:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .eval-setup-band {
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    padding: 1rem 1.25rem;
+  }
+
+  .eval-setup-band:last-child {
+    border-bottom: 0;
+  }
+
+  .eval-setup-choice {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    padding: 0.85rem 1rem;
+    text-align: left;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .eval-setup-choice:hover:not(:disabled) {
+    border-color: rgb(30 31 30 / 0.28);
+  }
+
+  .eval-setup-choice[aria-checked="true"],
+  .eval-setup-choice[data-selected="true"] {
+    border-color: rgb(30 31 30 / 0.45);
+    background: rgb(145 255 1 / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(145 255 1 / 0.55);
+  }
+
+  .eval-setup-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    font-size: 0.75rem;
+  }
+
+  .eval-setup-meta dt {
+    color: var(--muted-foreground);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.625rem;
+  }
+
+  .eval-setup-meta dd {
+    margin-top: 0.15rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .brand-sidebar {
+    --background: #f2f5ef;
+    --foreground: #243832;
+    --muted: #eaf3ed;
+    --muted-foreground: #50665c;
+    --accent: #dfece2;
+    --accent-foreground: #243832;
+    /* 0.36, not 0.16: the separator is a non-text boundary and WCAG 1.4.11 puts
+       those at 3:1. Against this rail 0.16 measures 1.64:1, and 0.34 is the
+       threshold — this keeps a little headroom so a nearby token change does not
+       silently drop it back under. */
+    --border: #78887d;
+    --input: #bdc9bf;
+    --ring: #235f52;
+  }
+
+  /* In light mode the rail is dark slate against off-white paper — the two-tone
+     does the separating and the border is a detail. Dark mode set the rail to
+     #1e1f1e, the same value as the dark canvas, so both surfaces became one and a
+     hairline was carrying the whole boundary. The rail drops below the canvas
+     instead: still slate, but read as beneath it rather than beside it. */
+  .dark .brand-sidebar {
+    --background: #151615;
+    --foreground: #fbf8ff;
+    --muted-foreground: #c2c8d6;
+    --accent: #263d33;
+    --accent-foreground: #fbf8ff;
+    --border: #7b8a80;
+    --ring: #99d6bf;
+  }
+
+  /* A native select, wearing the design system's chevron.
+     The app mixes native selects with the shared Select component, and the tell
+     was the chevron: the OS drew its own, so two controls doing the same job
+     looked like different controls. Replacing every working native select with
+     the custom one is a much larger change than the difference warrants —
+     native selects also behave better on touch — so the glyph is what gets
+     unified. currentColor keeps it correct in both themes. */
+  /* No padding here: this rule lives in @layer components, so a `px-*` utility on
+     the element wins and the glyph ended up sitting on top of the text. The space
+     for it is reserved with a `pr-*` utility at the call site instead, where it
+     competes with `px-*` on equal footing. */
+  .select-chevron {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234c4f57' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem 1rem;
+  }
+
+  .dark .select-chevron {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c2c8d6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  /* Sidebar nav scrollbar — gutter reserved; thumb visible on hover only. */
+  .brand-sidebar .sidebar-nav {
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .brand-sidebar .sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .brand-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 999px;
+  }
+
+  .brand-sidebar .sidebar-nav:hover {
+    scrollbar-color: rgb(251 248 255 / 0.22) transparent;
+  }
+
+  .brand-sidebar .sidebar-nav:hover::-webkit-scrollbar-thumb {
+    background: rgb(251 248 255 / 0.22);
+  }
+
+  /* Main workspace scrollbar — gutter always reserved so focus/hover never shifts cards. */
+  .eval-hub-workspace-scroll {
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .eval-hub-workspace-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .eval-hub-workspace-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 999px;
+  }
+
+  .eval-hub-workspace-scroll:hover {
+    scrollbar-color: rgb(30 31 30 / 0.16) transparent;
+  }
+
+  .eval-hub-workspace-scroll:hover::-webkit-scrollbar-thumb {
+    background: rgb(30 31 30 / 0.16);
+  }
+
+  .dark .eval-hub-workspace-scroll:hover {
+    scrollbar-color: rgb(251 248 255 / 0.2) transparent;
+  }
+
+  .dark .eval-hub-workspace-scroll:hover::-webkit-scrollbar-thumb {
+    background: rgb(251 248 255 / 0.2);
+  }
+
+  .eval-hub-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .eval-hub-workspace {
+    background: var(--background);
+  }
+
+  .dark .eval-hub-workspace {
+    background: linear-gradient(180deg, #1e1f1e 0%, #262726 100%);
+  }
+
+  /* Scroll lives on #main-content, not body — block Radix padding compensation that shifts layout. */
+  .eval-hub-skin body[data-scroll-locked] {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ---- Shared primitive skin (scoped to Proofgrove) ---- */
+
+  .eval-hub-skin button,
+  .eval-hub-skin [role="button"] {
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-standard),
+      filter var(--dur-fast) var(--ease-standard);
+  }
+
+  .eval-hub-skin button:active:not(:disabled),
+  .eval-hub-skin [role="button"]:active:not([aria-disabled="true"]) {
+    transform: scale(0.98);
+  }
+
+  .eval-hub-skin .rounded-2xl.border.bg-card,
+  .eval-hub-skin [class*="rounded-2xl"][class*="border"][class*="bg-card"],
+  .eval-hub-skin [class*="rounded-2xl"][class*="border"][class*="bg-background"] {
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* :not([aria-invalid="true"]) rather than a blanket !important. For important
+     declarations the cascade-layer order is REVERSED, so this rule in the
+     components layer was beating `aria-invalid:border-destructive` in the
+     utilities layer — every invalid field in the app rendered the ordinary grey
+     border, and the review form's rationale and outcome have no companion error
+     message, so a failed submit gave a sighted user no signal at all. */
+  .eval-hub-skin input:not([type="checkbox"]):not([type="radio"]):not([aria-invalid="true"]),
+  .eval-hub-skin textarea:not([aria-invalid="true"]),
+  .eval-hub-skin select:not([aria-invalid="true"]) {
+    border-color: var(--input) !important;
+    transition:
+      border-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard);
+  }
+
+  /* Focus must not repaint an invalid field back to the ordinary accent either:
+     focusFirstInvalid moves focus to the offending control, which is exactly
+     when the error border has to stay visible. */
+  .eval-hub-skin input:not([type="checkbox"]):not([type="radio"]):not([aria-invalid="true"]):focus-visible,
+  .eval-hub-skin textarea:not([aria-invalid="true"]):focus-visible,
+  .eval-hub-skin select:not([aria-invalid="true"]):focus-visible {
+    border-color: var(--purple-deep) !important;
+    box-shadow: 0 0 0 3px rgb(174 116 255 / 0.28);
+  }
+
+  .eval-hub-skin [role="tablist"] [role="tab"][data-state="active"] {
+    border-color: var(--evalai-green) !important;
+    color: var(--foreground);
+  }
+
+  .eval-hub-skin [role="dialog"],
+  .eval-hub-skin aside[role="dialog"] {
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-hover);
+  }
+
+  /* Column headers are labels, and the brand sets labels in Diatype Bold ALL CAPS
+     at 0.08em tracking. The app read as two conventions only because several
+     tables overrode this with their own size/casing utilities — the fix is to let
+     those inherit, not to drop the treatment. */
+  .eval-hub-skin table thead th {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .dark .panel {
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Below `xl`, the evaluation setup flow carries a Run bar stuck to the bottom of
+   the viewport. Scrolling an element into view — including the browser doing it
+   for a newly focused control — must land it above that bar rather than behind
+   it, and `scroll-padding` on the scroll container is what the browser honours.
+   The inset keeps it clear of a home indicator too. */
+@media (max-width: 1279.98px) {
+  /* On the workspace pane, not on `html`. The shell is `h-dvh overflow-hidden`, so
+     the document never scrolls — `#main-content` does. Setting this on `html` was
+     inert: the browser applies scroll-padding to the container that actually
+     scrolls, which is the one carrying this class. */
+  .eval-hub-workspace-scroll {
+    scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Unlayered on purpose: `@layer components` loses to Tailwind's utilities, so a
+   rule there could never beat `rounded-full`. The shared Button is a pill; this
+   app is built on the 8px radius — every toolbar, table and card corner — and a
+   pill in a toolbar row reads as a control borrowed from another product. Stated
+   once here instead of overridden by hand at each call site, which had already
+   drifted. Genuinely round controls opt back in with `rounded-full!`. */
+/* Unlayered, and !important, for the same reason as the two rules below it: a
+   utility cannot beat a layered !important, and the field skin sets border-color
+   that way. Guarding the skin with :not([aria-invalid="true"]) stops it fighting,
+   but `aria-invalid:border-destructive` still has to out-rank the plain
+   `border-input` utility sitting beside it on the same element — so the error
+   border is stated here rather than left to the cascade. Verified in the browser:
+   without this the border stayed --input with aria-invalid set. */
+.eval-hub-skin input[aria-invalid="true"]:not([type="checkbox"]):not([type="radio"]),
+.eval-hub-skin textarea[aria-invalid="true"],
+.eval-hub-skin select[aria-invalid="true"] {
+  border-color: var(--destructive) !important;
+}
+
+/* Unlayered, for the same reason as the badge radius below: the shared column
+   header rule sits in @layer components, and a utility layer always outranks a
+   layered one — so `font-medium` and `font-semibold` still on individual `th`
+   elements beat the 700 the brand sets for labels, and the same role rendered
+   at three different weights across the app. */
+.eval-hub-skin table thead th {
+  font-weight: 700;
+}
+
+.eval-hub-skin button.rounded-full,
+.eval-hub-skin [role="button"].rounded-full,
+/* Anchors too. `buttonVariants` is applied to <Link> as often as to <button>,
+   so covering only the element left "Evaluate dataset" a pill beside a
+   square-cornered "Deprecate" — the exact mismatch this rule exists to stop.
+   Round decorations are spans and divs, which this never touches. */
+.eval-hub-skin a.rounded-full {
+  border-radius: var(--radius);
+}
+
+/* Full-width workspace switches share one treatment across Evaluations and Reviews. */
+.workspace-switcher {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.workspace-switcher [role="tab"] {
+  min-height: 64px;
+  padding: 16px 20px;
+  border-radius: 0;
+  border: 0;
+  border-top: 2px solid transparent;
+  text-align: left;
+  color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--muted) 25%, transparent);
+}
+
+.workspace-switcher [role="tab"] + [role="tab"] {
+  border-left: 1px solid var(--border);
+}
+
+.workspace-switcher [role="tab"][aria-selected="true"] {
+  border-top-color: var(--brand);
+  color: var(--foreground);
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.workspace-switcher [role="tab"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -4px;
+}

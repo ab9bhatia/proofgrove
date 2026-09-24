@@ -1,0 +1,27 @@
+.comparison { border: 1px solid #d7e0d6; border-radius: 9px; background: #f8faf5; padding: 0 20px; margin: 24px 0; }
+.comparison > summary { display: flex; align-items: center; gap: 12px; padding: 17px 0; list-style: none; font-size: 16px; font-weight: 600; cursor: pointer; }
+.comparison > summary::-webkit-details-marker { display: none; }
+.comparison > summary::after { content: "+"; margin-left: auto; font-size: 22px; font-weight: 400; color: #225846; }
+.comparison[open] > summary::after { content: "−"; }
+.comparison .body { padding: 0 0 20px; }
+.comparison .body p { font-size: 15px; line-height: 1.75; margin: 0 0 16px; }
+.manifest { margin: 20px 0; border-top: 1px solid #d7e0d6; }
+.manifest > div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid #d7e0d6; font-size: 14px; line-height: 1.7; }
+.manifest dt { font-weight: 600; color: #225846; }
+.manifest dd { margin: 0; }
+.manifest code { font-size: 12px; background: #edf2e9; padding: 2px 4px; border-radius: 3px; }
+.comparison .body .note { font-size: 13px; color: #617367; }
+.reveal { border: 1px solid #225846; border-radius: 6px; color: #fff; background: #225846; padding: 11px 16px; font-size: 14px; min-height: 44px; cursor: pointer; margin-bottom: 18px; }
+.comparison .body .result { border-left: 3px solid #b45442; background: #fff1eb; padding: 13px 16px; color: #833c2f; font-weight: 600; }
+.tableWrap { overflow-x: auto; margin: 0 0 18px; border: 1px solid #d7e0d6; border-radius: 7px; }
+.tableWrap table { width: 100%; min-width: 620px; border-collapse: collapse; text-align: left; font-size: 14px; line-height: 1.65; }
+.tableWrap caption { text-align: left; padding: 12px 14px; font-weight: 600; color: #225846; background: #eef4eb; }
+.tableWrap th, .tableWrap td { border-top: 1px solid #d7e0d6; padding: 12px 14px; vertical-align: top; }
+.tableWrap th { color: #225846; }
+.body > a { font-size: 14px; color: #225846; text-underline-offset: 3px; }
+.comparison summary:focus-visible, .reveal:focus-visible, .tableWrap:focus-visible, .body > a:focus-visible { outline: 3px solid #52826d; outline-offset: 3px; }
+@media (max-width: 600px) { .comparison { padding: 0 14px; } .manifest > div { grid-template-columns: 1fr; gap: 4px; } .comparison > summary { font-size: 15px; } }
+.casePicker { display: grid; gap: 8px; font-size: 15px; font-weight: 600; margin: 18px 0; }
+.casePicker select { width: 100%; min-width: 0; padding: 10px; border: 1px solid #9bb6a3; background: white; border-radius: 5px; font: inherit; }
+.evidenceCode { max-width: 100%; overflow-x: auto; font-size: 12px; line-height: 1.6; background: #edf2e9; padding: 14px; }
+.casePicker select:focus-visible, .evidenceCode:focus-visible { outline: 3px solid #52826d; outline-offset: 3px; }

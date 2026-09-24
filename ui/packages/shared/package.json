@@ -1,0 +1,153 @@
+{
+  "name": "@evalai/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./proxy": {
+      "types": "./src/proxy.ts",
+      "default": "./src/proxy.ts"
+    },
+    "./bootstrap-jwt": {
+      "types": "./src/bootstrap-jwt.ts",
+      "default": "./src/bootstrap-jwt.ts"
+    },
+    "./user": {
+      "types": "./src/user.ts",
+      "default": "./src/user.ts"
+    },
+    "./feature-flags": {
+      "types": "./src/feature-flags.ts",
+      "default": "./src/feature-flags.ts"
+    },
+    "./utils": {
+      "types": "./src/utils.ts",
+      "default": "./src/utils.ts"
+    },
+    "./date-utils": {
+      "types": "./src/date-utils.ts",
+      "default": "./src/date-utils.ts"
+    },
+    "./security-headers": {
+      "types": "./src/security-headers.ts",
+      "default": "./src/security-headers.ts"
+    },
+    "./security-proxy": {
+      "types": "./src/security-proxy.ts",
+      "default": "./src/security-proxy.ts"
+    },
+    "./session": {
+      "types": "./src/session.ts",
+      "default": "./src/session.ts"
+    },
+    "./theme.css": "./src/theme.css",
+    "./ui/button": {
+      "types": "./src/ui/button.tsx",
+      "default": "./src/ui/button.tsx"
+    },
+    "./ui/input": {
+      "types": "./src/ui/input.tsx",
+      "default": "./src/ui/input.tsx"
+    },
+    "./ui/card": {
+      "types": "./src/ui/card.tsx",
+      "default": "./src/ui/card.tsx"
+    },
+    "./ui/avatar": {
+      "types": "./src/ui/avatar.tsx",
+      "default": "./src/ui/avatar.tsx"
+    },
+    "./ui/badge": {
+      "types": "./src/ui/badge.tsx",
+      "default": "./src/ui/badge.tsx"
+    },
+    "./ui/label": {
+      "types": "./src/ui/label.tsx",
+      "default": "./src/ui/label.tsx"
+    },
+    "./ui/separator": {
+      "types": "./src/ui/separator.tsx",
+      "default": "./src/ui/separator.tsx"
+    },
+    "./ui/table": {
+      "types": "./src/ui/table.tsx",
+      "default": "./src/ui/table.tsx"
+    },
+    "./ui/select": {
+      "types": "./src/ui/select.tsx",
+      "default": "./src/ui/select.tsx"
+    },
+    "./ui/radio-group": {
+      "types": "./src/ui/radio-group.tsx",
+      "default": "./src/ui/radio-group.tsx"
+    },
+    "./ui/checkbox": {
+      "types": "./src/ui/checkbox.tsx",
+      "default": "./src/ui/checkbox.tsx"
+    },
+    "./ui/form": {
+      "types": "./src/ui/form.tsx",
+      "default": "./src/ui/form.tsx"
+    },
+    "./ui/sonner": {
+      "types": "./src/ui/sonner.tsx",
+      "default": "./src/ui/sonner.tsx"
+    },
+    "./ui/dropdown-menu": {
+      "types": "./src/ui/dropdown-menu.tsx",
+      "default": "./src/ui/dropdown-menu.tsx"
+    },
+    "./ui/popover": {
+      "types": "./src/ui/popover.tsx",
+      "default": "./src/ui/popover.tsx"
+    },
+    "./ui/date-picker": {
+      "types": "./src/ui/date-picker.tsx",
+      "default": "./src/ui/date-picker.tsx"
+    },
+    "./ui/confirm-dialog": {
+      "types": "./src/ui/confirm-dialog.tsx",
+      "default": "./src/ui/confirm-dialog.tsx"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "next": "^16.3.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
+    "@radix-ui/react-checkbox": "^1.1.3",
+    "@radix-ui/react-dropdown-menu": "^2.1.4",
+    "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-radio-group": "^1.2.2",
+    "@radix-ui/react-select": "^2.1.4",
+    "@radix-ui/react-separator": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.2.1",
+    "jose": "^6.2.3",
+    "lucide-react": "^0.460.0",
+    "react-day-picker": "^10.0.1",
+    "react-hook-form": "^7.54.2",
+    "sonner": "^1.7.1",
+    "tailwind-merge": "^2.5.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "next": "^16.3.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.11"
+  }
+}
