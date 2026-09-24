@@ -1,87 +1,119 @@
 # Proofgrove
 
-A local AI evaluation lab for learning how to test an AI system, inspect evidence and decide what it can be trusted to do. The app retains the evaluation service and workspace from the requested feature branch with neutral branding, SQLite persistence and an offline classroom profile.
+**A consolidated learning guide to AI evaluation.**
 
-**Start at [localhost:3010/learn](http://localhost:3010/learn).** Five screens—Why, What, Where, How and Trust—follow **Nova**, a fictional retail support agent. A fluent refund confirmation conceals the wrong currency. Learners connect expectations, evidence and checks, then follow the same case through eight engineering responsibilities and production evaluation. The proposed agenda is **45 minutes plus 15 minutes of Q&A**.
+Proofgrove brings together the concepts, architecture, engineering building blocks and practical workflows needed to evaluate **LLMs, RAG applications and autonomous AI agents**. It combines a guided learning experience, an evaluation workspace, worked examples and editable architecture diagrams.
 
-For an independent technical explanation, read the single [AI evaluation engineering guide](docs/EVALUATION-ENGINEERING-GUIDE.md), also downloadable from the app. Ten numbered diagrams have editable Excalidraw sources. The original presentation and private speaker notes are maintained outside the repository at `/Users/ankit.bhatia/PA/EVAL-session-materials`; the app does not serve these materials. Optional lessons on agent evaluation, workflow/repeated-trial probabilities and the quality loop remain in What, Where and Trust.
+It is designed for engineers and practitioners who want to understand what to measure, how to collect evidence and how to use evaluation results to improve an AI system.
 
-The public name is **Proofgrove — the AI evaluation lab**. EvalAI is already used at [eval.ai](https://eval.ai/). Proofgrove is a POC name, not a trademark-clearance claim. Existing package IDs, database filename and API headers remain stable for compatibility.
+**Start reading:** [AI evaluation: an engineering guide](docs/EVALUATION-ENGINEERING-GUIDE.md)
 
-## Run locally
+## What is evaluation?
 
-Prerequisites: Python 3, `uv`, Node.js 22+ and `pnpm` 11.4.0. The backend pins Python 3.13.13 through `uv`. Initial setup needs internet to download dependencies. The default demo then works without model credentials or a Kubernetes cluster. Run these commands from the repository root:
+An evaluation is a repeatable comparison between an AI system's behavior and an explicit quality expectation. The expectation can come from a reference answer, a rubric, a tool-use contract, a safety rule or a measured operational limit.
+
+Three activities work together:
+
+- **Observability** records what happened: requests, responses, tool calls, latency and other execution evidence.
+- **Evaluation** checks whether that behavior met the defined expectations.
+- **Human review** resolves ambiguous cases and challenges the evaluators themselves.
+
+## Why do we need it?
+
+Creating an agent can begin with a prompt. Establishing that it behaves reliably takes evidence across realistic workflows, repeated attempts and edge cases.
+
+An LLM can sound fluent while being wrong. A RAG application can retrieve an irrelevant document. An agent can reach the right answer with the wrong tool arguments. Evaluation separates these failure modes so that an average score does not hide a release-blocking defect.
+
+Changes to a prompt, model, retrieval pipeline or tool can improve one behavior while breaking another. A repeatable evaluation makes those tradeoffs visible before release and helps detect problems that emerge in production.
+
+## Learning path
+
+| Step | Question | What you will learn |
+| --- | --- | --- |
+| 1. Why | Why is a successful demo insufficient? | Reliability, regressions and the difference between a convincing answer and a correct outcome. |
+| 2. What | What does an evaluation compare? | Inputs, expectations, observed behavior, evidence and evaluators. |
+| 3. Where | Where can an AI workflow fail? | Retrieval, reasoning, tool selection, arguments, state changes and recovery. |
+| 4. How | How do engineers run evaluations? | Datasets, endpoints, runners, metrics, traces and experiment tracking. |
+| 5. Trust | What evidence supports a production decision? | Coverage, critical failures, human review, release criteria and ongoing evaluation. |
+
+The examples follow **Nova**, a fictional retail-support agent. A refund request makes the distinction concrete: saying “Refunded AED 250” does not establish that the correct amount was refunded, in the correct currency, to the correct destination, exactly once.
+
+## The engineering building blocks
+
+| Building block | Responsibility |
+| --- | --- |
+| **AI system endpoint** | Identify the model, RAG application or agent under test and define how to invoke it. |
+| **Prompts and configuration** | Record the instructions, model settings, tools and versions that determine behavior. |
+| **Golden dataset** | Store representative inputs, expected answers or behaviors, and case labels such as risk and category. |
+| **Evaluation runner** | Execute cases, manage retries and repeated trials, and record failures and execution metadata. |
+| **Evidence and traces** | Capture answers, retrieved context, tool interactions and outcomes. OpenTelemetry helps connect execution records. |
+| **Metrics and evaluators** | Apply deterministic checks, rubric-based judgments or human assessments to compatible evidence. |
+| **Experiment tracking** | Preserve configurations and results so that baselines, candidates and regressions can be compared. |
+| **Release criteria and runtime controls** | Use evaluation evidence in release decisions; enforce permissions and action rules at execution time. |
+| **Human review and feedback** | Investigate failures, assess evaluator agreement and turn reviewed issues into regression cases. |
+
+The core flow is: **define expectations → prepare cases → invoke the system → capture evidence → evaluate → compare and review → improve and repeat**.
+
+A golden dataset does not need the system's answer beforehand. For a fresh evaluation, the runner generates the actual response and stores it with the run. Dataset metadata describes the case; it is not a precomputed model response.
+
+## Evaluation across the lifecycle
+
+1. **Design:** define the system boundary, success criteria, prohibited actions and evidence requirements.
+2. **Develop:** build representative cases, include edge cases, and compare prompt, model and tool changes.
+3. **Before release:** run regression suites, inspect critical failures and coverage, and review whether the evidence supports release.
+4. **During inference:** record execution evidence and enforce mandatory permissions, validation and approval rules before consequential actions.
+5. **In production:** evaluate sampled traffic and outcomes, review feedback, investigate drift and promote confirmed failures into future test suites.
+
+Evaluation and runtime enforcement have different responsibilities. A high evaluation score does not grant an agent permission to act.
+
+Two independent choices shape a test:
+
+| Choice | Distinction |
+| --- | --- |
+| **Offline / online** | Offline evaluation uses a prepared test set; online evaluation draws on production traffic and outcomes. Offline does not mean disconnected from a model API. |
+| **Black-box / white-box** | Black-box testing examines inputs and externally observable outputs or outcomes. White-box testing adds access to internal components, instrumentation or controlled intermediate steps. |
+
+Comparing two saved evaluation runs is also different from a live A/B experiment, which assigns production traffic to variants. The guide covers both, along with shadow evaluation and their evidence requirements.
+
+## Read results as evidence
+
+Inspect individual failures and coverage alongside aggregate scores. Keep failed checks, missing evidence, technical errors and not-applicable checks distinct. Missing evidence cannot establish success.
+
+Text-overlap metrics such as F1, ROUGE-L and BLEU are useful diagnostics, but they do not prove factual correctness or successful tool execution. Review the underlying case, calibrate evaluators against human judgments, and keep critical failures visible even when the average improves.
+
+## Learn through the workspace
+
+The application connects the concepts to practical tasks:
+
+- Create, validate, version and publish datasets.
+- Manage prompts and select OpenAI, installed Ollama models or configured targets.
+- Configure compatible checks and run evaluations.
+- Inspect case-level responses, scores, evidence and errors.
+- Compare experiments and investigate regressions.
+- Explore quality contracts, review findings and trace evidence.
+
+The included examples use authored scenarios and supplied responses for repeatable learning. Deterministic text checks compute real results; connected model targets can generate fresh responses. Semantic judging remains simulated and unscored in the teaching configuration. Tool execution, captured production traces, continuous online evaluation and live traffic routing require additional integrations. See the [feature map](docs/FEATURE-MAP.md) for implementation details.
+
+## Explore the application
+
+Prerequisites: Python with `uv`, Node.js 22 or newer, and `pnpm` 11.4.0.
 
 ```bash
 ./setup.sh
 ./start.sh
 ```
 
-`setup.sh` installs pinned dependencies and builds the UI. `start.sh` prepares the fixtures, starts the Python API and Next.js UI on loopback, and keeps both running. Press **Ctrl+C**, or run `./stop.sh` in another terminal, to stop them. Repeat starts preserve saved work. Verify the running lab with `python3 scripts/smoke_local.py`.
+The default configuration uses prepared examples without model credentials. Follow the [model setup guide](docs/MODEL-SETUP.md) and [runtime configuration guide](docs/LIVE-DEMO.md) to enable fresh responses with OpenAI or Ollama, then use the [evaluation walkthrough](docs/NEW-EVALUATION.md).
 
-| Location | Purpose |
+## Reading guide
+
+| Resource | Focus |
 | --- | --- |
-| http://localhost:3010/learn | Guided lesson and downloadable resources |
-| http://localhost:3010 | Evaluation workspace |
-| http://localhost:3010/presenter | Presenter cue console, timer and audience controls |
-| http://localhost:3010/lab-setup | Five-case live-demo instructions and prompts |
-| http://127.0.0.1:8010/docs | Interactive API reference |
-| `backend/data/eval-ai.db` | Persistent SQLite database |
-| `backend/data/nova-seed.json` | Actual Nova run IDs and comparison URL |
-| `.local/api.log`, `.local/ui.log` | Service logs |
-
-If a port is occupied, the launcher exits without stopping that process. Stop the earlier lab terminal and retry. Before deliberately resetting classroom data, stop the app and back up the database and seed markers; do not remove a database while the app is running.
-
-## Choose a model provider
-
-Run `./start-local.sh` to enable fresh model responses and start or reuse the local Ollama daemon. On a new machine, install Ollama and download `llama3.2:latest` once before launching. The launcher never downloads model weights.
-
-For OpenAI, add `OPENAI_API_KEY=your-key` to the repository-root `.env` in a private editor, then run `chmod 600 .env`. In a local or live profile, **Models** discovers the accessible OpenAI models automatically. Connecting or refreshing checks the provider catalog; it does not generate answers. `.env` is ignored by Git and is not read in offline mode.
-
-Open **Models**. Select an installed **Local Ollama** model or a discovered **OpenAI** model, then click **Use for new evaluations**. You can also enter the key in Models, acknowledge possible charges and click **Connect OpenAI**. Both providers can stay connected; change the default without restarting. Saved runs keep their original configuration.
-
-Keys entered through Models are saved server-side in the ignored `.local/model-providers.json` and take precedence over `.env`. **Disconnect OpenAI** also disables the `.env` fallback until you reconnect. Local Ollama needs no key. The default `./start.sh` offline profile blocks model inference even when credentials exist. Read [provider setup](docs/LIVE-DEMO.md) for details and the alternative CLI cloud profile.
-
-## Create a new evaluation
-
-Open [New evaluation](http://understandeval.localhost:3010/evaluate) and choose **Start evaluation**. It selects the eight clean golden cases, saved prompt v2, configured model, Nova project and three text metrics. Use the **Models** page to select local Ollama or your connected OpenAI model before starting. The supplied-response rehearsal is a collapsed secondary option. Follow [the new-evaluation guide](docs/NEW-EVALUATION.md).
-
-## What the app includes
-
-The five-screen lesson keeps one view visible at a time. Reveal the refund evidence manually. **What** maps five expectation types to checks and includes an optional judge exercise. **How** has three views: **Building blocks**, **Traces & OTel**, and **Choose a test**. Deeper explanations remain collapsed. Diagram expansion and editable-source downloads support discussion without autoplay.
-
-The lesson covers endpoint adapters, golden datasets, runners, evidence, evaluators, experiment tracking, release gates and human review; offline/online and black-box/white-box testing; A/B and shadow evaluation; and the lifecycle before and during production. The final screen includes current documented industry approaches, resources and a four-field exercise: **request, expectation, evidence, blocker**. Exercise drafts remain in the browser and can be exported.
-
-The simplified workspace shows Start here, Test cases, Checks, Experiments and Observability. New evaluation is the primary action. Model and agent configuration, prompts, governance, usage and the review queue remain under Lab setup. Existing routes and data remain compatible. See [the feature map](docs/FEATURE-MAP.md) for detailed coverage.
-
-Keep the private speaker notes in `/Users/ankit.bhatia/PA/EVAL-session-materials` and use `/presenter` for built-in cues on your private left display. Its Show button opens an audience window for your right display. Follow [live-demo setup](docs/LIVE-DEMO.md) to opt into OpenAI target calls. The default remains offline. A paid-call acknowledgement is not an enforced spending cap. This local demo does not execute payments or agent tools.
-
-## Understand the evidence
-
-`nova_ops_v1` adds **12 cases and two supplied-response runs**. Its baseline is an authored v1.3 answer set, not a reference answer graded against itself. Both versions are scored against the same references by the real deterministic engine. The seed also creates their saved comparison. Startup preserves earlier examples. With `nova_live_starter_v1`, the base seed contains **8 datasets, 41 cases, 14 runs and 3 projects**. The refund golden suite and its new offline rehearsal add eight cases each (10 datasets and 57 cases total, before user additions); starting a new evaluation adds a run. The five new synthetic cases have no generated runs until you start one. User-added records may increase these totals.
-
-Nova's answers, source observations, requests and final states are authored teaching fixtures. No model, retrieval service, refund or return is executed. The app's additional fact/unit, source freshness, request-contract and final-state checks are reproducible calculations over those snapshots. Known bad requests can fail while an incomplete final outcome stays unknown. The source and checks are in [samples/nova](samples/nova/README.md).
-
-Mock semantic judgments remain **unscored/simulated**, not real quality scores. Connected OpenAI and local Ollama targets generate fresh responses in the enabled runtime profiles, while semantic judging remains mock/unscored. Calibrated model judges, agent tools and captured traces require further integration. Continuous production monitoring, live A/B routing and runtime action enforcement are explained but not installed. OTel supplies telemetry, not a quality verdict.
-
-## Materials and layout
-
-- [Engineering guide](docs/EVALUATION-ENGINEERING-GUIDE.md): complete standalone explanation, dataset examples, lifecycle and referenced industry approaches.
-- Presentation and private speaker notes: maintained separately in `/Users/ankit.bhatia/PA/EVAL-session-materials`, outside the repository and app downloads.
-- [Facilitator guide](docs/SESSION-GUIDE.md): proposed 09:00–10:00 Dubai running order.
-- [Numbered diagrams and plan](docs/session-redesign/README.md): editable Excalidraw sources and previews.
-- [Architecture](docs/ARCHITECTURE.md): local implementation and integration boundaries.
-- [Examples](docs/LEARNER-EXAMPLES.md): the 12 Nova cases and result interpretation.
-- [Changes](docs/CHANGES.md), [validation](docs/VALIDATION.md) and [source provenance](docs/SOURCE.md).
-- [Publishing and first-run setup](docs/PUBLISHING.md): private GitHub repository commands for you to review and run.
-
-```text
-backend/              FastAPI, evaluation engine, database and tests
-ui/apps/eval-ai/       Next.js app and server-side API proxy
-ui/packages/          Shared UI and telemetry support
-scripts/              Launcher and additive seed scripts
-samples/nova/         Authored Nova fixtures and reproducible checks
-docs/                 Engineering/facilitator guides and diagram sources
-```
-
-The local profile uses one trusted classroom identity and disables platform authorization. Production identity, tenant isolation, orchestration and evidence infrastructure require the deployment components described in the architecture notes.
+| [Complete engineering guide](docs/EVALUATION-ENGINEERING-GUIDE.md) | Definitions, architecture, lifecycle, dataset examples, evaluation strategies and referenced industry approaches. |
+| [Architecture and moving parts](docs/ARCHITECTURE.md) | How the application, evaluation engine, storage and integration points connect. |
+| [Numbered architecture diagrams](docs/session-redesign/diagrams/README.md) | Editable Excalidraw sources covering the evaluation flow, harness, telemetry and production feedback loop. |
+| [Worked examples](docs/LEARNER-EXAMPLES.md) | Failure cases, expected behavior and result interpretation. |
+| [Sample cases and checks](samples/nova/README.md) | Authored evidence and reproducible checks for the Nova scenarios. |
+| [Run an evaluation](docs/NEW-EVALUATION.md) | Prepare the artifacts, execute a run and interpret its results. |
+| [Feature map](docs/FEATURE-MAP.md) | Implemented capabilities and integration requirements. |
+| [Source provenance](docs/SOURCE.md) | Origin of the application code and its adaptation. |
