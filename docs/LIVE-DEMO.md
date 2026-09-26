@@ -25,7 +25,7 @@ Open **Models**:
 2. For **OpenAI**, select a discovered model and click **Use for new evaluations**. If you did not configure `.env`, enter your key in Models, acknowledge possible charges and click **Connect OpenAI** first. Connecting lists accessible models; it does not generate an answer or prove that every listed model supports this evaluation path.
 3. Both providers can stay connected. Change the default without restarting. Saved runs retain their original configuration.
 
-The key field clears after submission. UI-saved keys and connection settings stay server-side in the ignored `.local/model-providers.json`. Credential precedence is: saved UI connection (including a saved disconnection), then root `.env` (`OPENAI_API_KEY` or `openai_api_key`), then the explicitly acknowledged live-profile environment key. **Disconnect OpenAI** removes the saved UI key and disables `.env` and environment fallback until you reconnect through Models; it does not edit `.env`. Enter credentials from your private display. OpenAI generation uses your account billing, and a paid-call acknowledgement is not a spending cap.
+The key field clears after submission. UI-saved keys and connection settings stay server-side in the ignored `.local/model-providers.json`. Credential precedence is: saved UI connection (including a saved disconnection), then root `.env` (`OPENAI_API_KEY` or `openai_api_key`), then the explicitly acknowledged live-profile environment key. **Disconnect OpenAI** removes the saved UI key and disables `.env` and environment fallback until you reconnect through Models; it does not edit `.env`. OpenAI generation uses your account billing, and a paid-call acknowledgement is not a spending cap.
 
 Open `/evaluate` → **Start evaluation** → inspect the prepared setup → **Run 8 cases**. Each question and saved prompt v2 goes to the selected model. The report saves its actual answer, deterministic text scores, latency and reported token counts. This tests model responses; it does not execute agent tools or payments. Semantic judging remains mock/unscored.
 
@@ -86,7 +86,3 @@ PROOFGROVE_MODE=offline ./start.sh
 ```
 
 The offline profile preserves credential files without reading them and blocks model inference. In a model-enabled profile, use **Disconnect OpenAI** to disable the connection. Unsetting an environment variable alone does not remove or disable a `.env` or UI-saved key.
-
-## Two displays
-
-Open `/presenter` on your private display. Its Show button opens or reuses an audience window; move that window to the shared display. Switching notes does not advance the audience automatically. The timer resets on page refresh. Presenter mode is a separate view, not an authentication boundary.

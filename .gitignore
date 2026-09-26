@@ -42,14 +42,14 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 
-# Presentation and private speaker materials stay outside this repository.
+# Personal presentation materials.
 *.pptx
 *.ppt
-PRESENTER-NOTES.md
+PRESENTER-NOTES.*
 *[Ss][Pp][Ee][Aa][Kk][Ee][Rr]*[Ss][Cc][Rr][Ii][Pp][Tt]*.md
 *[Ss][Pp][Ee][Aa][Kk][Ee][Rr]*[Ss][Cc][Rr][Ii][Pp][Tt]*.docx
 
-# Local handoff artifacts; retain source, diagrams and engineering guides.
+# Local review artifacts.
 /docs/*.patch
 /docs/*.diff
 /docs/*-files.json

@@ -8,8 +8,8 @@ describe("middleTruncate", () => {
   });
 
   it("keeps the tail, which is what distinguishes generated names", () => {
-    const a = "Bakeoff — Codex E2E Agent 20260814-151533_baseline";
-    const b = "Bakeoff — Codex E2E Agent 20260814-151533_candidate";
+    const a = "Bakeoff — Example E2E Agent 20260814-151533_baseline";
+    const b = "Bakeoff — Example E2E Agent 20260814-151533_candidate";
 
     // A trailing ellipsis would render these two identically.
     expect(middleTruncate(a, 40)).not.toBe(middleTruncate(b, 40));
@@ -18,7 +18,7 @@ describe("middleTruncate", () => {
   });
 
   it("stays within the limit", () => {
-    const long = "Codex Full Agent Review 20260817-124129 (agent-under-test)";
+    const long = "Example Full Agent Review 20260817-124129 (agent-under-test)";
     expect(middleTruncate(long, 40).length).toBeLessThanOrEqual(40);
     expect(middleTruncate(long, 40)).toContain("…");
   });

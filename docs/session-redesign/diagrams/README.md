@@ -1,6 +1,6 @@
 # Evaluation diagrams
 
-All thirteen drawings were authored with the official `@excalidraw/excalidraw` API and remain editable. Each has an `.excalidraw` source, SVG for the application and PNG previews that can also be used in the external presentation. Open the `.excalidraw` files directly in Excalidraw to edit them. `manifest.json` records dimensions, arrow counts and numbering.
+All thirteen drawings were authored with the official `@excalidraw/excalidraw` API and remain editable. Each has an `.excalidraw` source, SVG for the application and PNG previews for reference. Open the `.excalidraw` files directly in Excalidraw to edit them. `manifest.json` records dimensions, arrow counts and numbering.
 
 | Drawing | Reading order |
 |---|---|
@@ -18,7 +18,7 @@ All thirteen drawings were authored with the official `@excalidraw/excalidraw` A
 | 12 Evaluation Lego Blocks | Eight numbered component names inside boxes, with italic explanatory questions below. The sequence is a walkthrough of responsibilities, not UI setup order. |
 | 13 Test combinations | Offline/online and black-box/white-box are independent axes. Each of the four cells has a short input → system/path → check schema. |
 
-Start Here uses diagram 11 to explain evaluation through a simple assessment, 12 for Evaluation Lego Blocks and 13 for the four testing combinations. The Evaluation Lego Blocks page shows diagram 12 first, followed by the short component questions and diagram 13. Earlier diagrams remain available as supporting material.
+Start Here uses diagram 11 to explain evaluation through a simple assessment, 12 for Evaluation Lego Blocks and 13 for the four testing combinations. Evaluation Lego Blocks shows diagram 12 followed by the component questions; Types of evaluation presents diagram 13 and the corresponding schemas. Earlier diagrams remain available as supporting material.
 
 Diagram 11 is 1230 × 810. It is an original deadline example informed by Anthropic’s task / outcome / grading distinction: compare the same answer against two independent expectations. The answer is an authored teaching example, not a recorded model run. There are no architecture or execution arrows; each verdict stays visible beside its evidence. Keep the same expectations when repeating the test after a change.
 
@@ -28,4 +28,4 @@ Diagrams 09 and 10 use original Nova examples inspired by [Anthropic](https://ww
 
 Nova is fictional. Outcomes and tool records in the local lab are authored fixtures; no refund is executed. The conceptual lifecycle and harness include integrations that are not installed in the local POC. Offline evaluation can happen before or after release. A missing span does not prove an action never happened, and access to selected traces does not by itself make a test white-box.
 
-Visual checks: all thirteen PNG exports inspected at full size. Text minimum is 22 px in the source. Connector/text crossings and unavailable arrow glyphs were corrected. All element IDs, bindings, text containers and bound elements validate. No StudyMate/booking or original product branding remains in these scenes.
+Source text is at least 22 px. Preserve element IDs, text containers and arrow bindings when editing the diagrams.

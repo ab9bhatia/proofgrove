@@ -1,7 +1,7 @@
 /**
  * Shorten a machine-generated name from the middle.
  *
- * Names like `Bakeoff — Codex E2E Agent 20260814-151533_baseline` are
+ * Names like `Bakeoff — Example E2E Agent 20260814-151533_baseline` are
  * distinguished by their tail: the timestamp and suffix are the only part that
  * differs between two runs of the same evaluation. A trailing ellipsis therefore
  * cuts off exactly the characters a reader needs, and a column of them reads as

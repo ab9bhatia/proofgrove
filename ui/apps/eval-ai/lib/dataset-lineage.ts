@@ -80,7 +80,7 @@ export function datasetSourceLabel(ds: DatasetInfo): string {
   if (by.includes("playwright")) return "Runtime verification";
   if (by.includes("upload") || by.includes("import") || by.includes("ui")) return "Import";
   // Anything unrecognised is still a provenance answer, not a pipeline name.
-  // Title-casing the raw creator leaked "Codex E2e" and "Codex Runtime Verific…"
+  // Title-casing the raw creator leaked "Example E2e" and "Example Runtime Verific…"
   // into a column whose other values are categories.
   return "Registry";
 }

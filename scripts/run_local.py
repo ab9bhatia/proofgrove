@@ -125,7 +125,7 @@ def main():
             ['pnpm', '--filter', '@evalai/eval-ai', command],
             cwd=ROOT / 'ui', env=ui_env, stdout=ui_log, stderr=subprocess.STDOUT, start_new_session=True,
         ))
-        print(f'\nProofgrove → http://understandeval.localhost:3010/\nPresenter → http://localhost:3010/presenter\nMode: {env["PROOFGROVE_MODE"]}. Semantic judge remains mock/unscored; deterministic checks compute real scores.\nModel generation uses the provider selected in Models. OpenAI calls may incur charges.\nKeep this terminal open. Press Ctrl+C to stop.\n', flush=True)
+        print(f'\nProofgrove → http://understandeval.localhost:3010/\nMode: {env["PROOFGROVE_MODE"]}. Semantic judge remains mock/unscored; deterministic checks compute real scores.\nModel generation uses the provider selected in Models. OpenAI calls may incur charges.\nKeep this terminal open. Press Ctrl+C to stop.\n', flush=True)
         while all(process.poll() is None for process in PROCESSES):
             time.sleep(1)
         raise RuntimeError('A service exited. Inspect .local/api.log and .local/ui.log.')

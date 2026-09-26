@@ -7,7 +7,7 @@ def test_a_name_already_carrying_this_version_is_left_alone():
     # Datasets are routinely named with their version because a fork carries its
     # origin in its name. Appending the version again produced
     # "…_v11.v11", which then rode along on every run, experiment and report.
-    assert dataset_version_label("Codex E2E Agent 20260814-151533_v11", 11) == "Codex E2E Agent 20260814-151533_v11"
+    assert dataset_version_label("Agent E2E Suite 20260814-151533_v11", 11) == "Agent E2E Suite 20260814-151533_v11"
     assert dataset_version_label("support-quality.v3", 3) == "support-quality.v3"
 
 

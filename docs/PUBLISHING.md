@@ -1,68 +1,70 @@
-# Publish and run Proofgrove
+# Set up and contribute to Proofgrove
 
-The intended repository is `ab9bhatia/proofgrove`. Start with a **private** repository. This teaching adaptation retains its source provenance in [SOURCE.md](SOURCE.md); no project license has been added. Keep provenance and any applicable source notices when sharing it. A private repository does not change the source's existing permissions.
+Proofgrove contains an evaluation learning guide and a local workspace for running examples. The [source provenance](SOURCE.md) describes its origins. Keep applicable source notices with redistributed code.
 
-## First publication — commands for you to run
+## Requirements
 
-Run these from the Proofgrove project directory. The prepared folder is not yet a Git repository; no commit, repository creation or push has been performed for you.
+- macOS with a POSIX shell. The launch scripts use POSIX process groups; native Windows is not supported.
+- [uv](https://docs.astral.sh/uv/) for Python dependencies. The backend pins its interpreter in `backend/.python-version`.
+- Node.js 22 or newer and pnpm 11.4.0, as declared in `ui/package.json`.
+- Internet access for the initial dependency installation. Ollama model downloads require additional disk space.
 
-Checked on September 24, 2026: GitHub CLI is installed and the saved `ab9bhatia` authentication is valid, but `ankit-bhatia_incepai` is active. Switch to the intended account and verify it before publication:
-
-```bash
-gh auth switch --hostname github.com --user ab9bhatia
-gh api user --jq .login
-gh auth setup-git --hostname github.com
-gh repo view ab9bhatia/proofgrove --json nameWithOwner,isPrivate,url,viewerPermission
-```
-
-The identity command must print `ab9bhatia`. Repository existence and write access have not been verified under that account. If the repository is already present, inspect it before creating or pushing; use the creation sequence below only for a new remote.
+## Install and start
 
 ```bash
-cd /Users/ankit.bhatia/PA/EVAL
-git init -b main
-git add .
-git status --short
-git diff --cached --stat
-git diff --cached
-```
-
-Review the staged diff before continuing. Runtime state, credentials, installed dependencies, presentations, private speaker notes and local handoff patches should be absent. `.gitignore` includes `.local/model-providers.json` through `.local/`, the SQLite database and its sidecars, logs and `.env` variants. PowerPoint files, `PRESENTER-NOTES.md` and speaker-script Markdown/Word files are also ignored. Example environment files remain included. Ignore rules do not remove files that were already committed; this sequence is for the first publication.
-
-When the diff is ready, run:
-
-```bash
-git commit -m "Add Proofgrove local evaluation lab"
-gh repo create ab9bhatia/proofgrove --private --source=. --remote=origin
-git push -u origin main
-```
-
-`gh repo create` above creates the private remote without pushing; the last command uploads your commit. If the remote already exists, inspect it rather than rerunning repository creation. Do not add a generated license or replace the recorded provenance as part of the setup.
-
-The original presentation and private speaker notes are maintained in `/Users/ankit.bhatia/PA/EVAL-session-materials`, outside the repository. Do not copy them into `deliverables/`, public app assets or `docs/`; the app provides no presentation download. Editable Excalidraw files, diagram previews, engineering/facilitator guides, authored sample data and dependency lockfiles belong in the repository. Private speaker scripts, local database contents, saved credentials, model weights and run logs do not.
-
-## First run on another machine
-
-The launcher is tested on macOS and uses POSIX process groups; native Windows is not supported by these scripts. Install Python 3, `uv`, Node.js 22 or newer and `pnpm` 11.4.0. `uv` uses the backend's pinned Python version in `backend/.python-version` (currently 3.13.13). Initial setup requires internet access for dependencies.
-
-```bash
-gh repo clone ab9bhatia/proofgrove
+git clone https://github.com/ab9bhatia/proofgrove.git
 cd proofgrove
 ./setup.sh
 ./start.sh
 ```
 
-Open [the lesson](http://localhost:3010/learn) or [the workspace](http://localhost:3010). The default offline profile seeds authored examples and computes deterministic text metrics without model credentials. Stored provider settings do not enable inference in offline mode. The SQLite database and `.local/` directory are created on this machine. Keep the launcher terminal open; use Ctrl+C or `./stop.sh` to stop it.
+`setup.sh` installs locked dependencies and builds the UI. `start.sh` launches the offline profile, prepares synthetic examples and starts the API and UI. Open [the application](http://localhost:3010). Keep the launcher terminal open; stop it with Ctrl+C or run `./stop.sh` from the repository root.
 
-For fresh local responses, install Ollama and download `llama3.2:latest` once with `ollama pull llama3.2:latest`. Model installation requires internet and disk space; the app launcher itself never downloads weights. Then stop the offline launcher and run:
+The offline profile computes deterministic checks over supplied evidence. It does not invoke a model. Mock semantic judgments remain unscored; they are not measurements of answer quality.
+
+## Enable fresh model responses
+
+For local inference, install Ollama and download an appropriate model before starting the model-enabled profile. For example:
 
 ```bash
-./start-local.sh
+ollama pull llama3.2:latest
+./stop.sh
+PROOFGROVE_MODEL=llama3.2:latest ./start-local.sh
 ```
 
-The launcher checks the installed local model, reuses an existing loopback Ollama daemon or starts one it owns, and stops only its own daemon on exit. Open **Models** to choose the default for new evaluations. For newer local model choices, see [MODEL-SETUP.md](MODEL-SETUP.md).
+The launcher never downloads model weights. Open **Models** to choose an installed model for subsequent evaluations. See [model setup](MODEL-SETUP.md) for other supported configurations and resource considerations.
 
-For OpenAI, add `OPENAI_API_KEY=your-key` to the repository-root `.env` using a private editor and run `chmod 600 .env`. Refresh providers in Models to discover accessible models. This checks the catalog without generating answers; actual evaluation calls use your OpenAI billing. Alternatively, enter the key through **Connect OpenAI**. UI-saved settings override `.env`, and **Disconnect OpenAI** disables its fallback. Offline mode reads neither credential source.
+For OpenAI, add `OPENAI_API_KEY=your-key` to the repository-root `.env` in a private editor, protect it with `chmod 600 .env`, and use the model-enabled profile. Alternatively, connect through **Models**. Refreshing providers checks model availability; actual generation uses the provider account's billing. [The live evaluation guide](LIVE-DEMO.md) explains credential precedence and connection behavior.
 
-Both `.env` and `.local/model-providers.json` are ignored and stay on your machine; another clone needs its own credentials. Follow [LIVE-DEMO.md](LIVE-DEMO.md) for provider setup and [NEW-EVALUATION.md](NEW-EVALUATION.md) for the first eight-case run.
+Credentials, local databases, downloaded dependencies and runtime state stay on the machine. `.env` variants and `.local/` are ignored by Git; example environment files are intentionally tracked. Each installation needs its own provider configuration.
 
-The app binds to loopback and uses a trusted classroom identity. Publishing its source does not deploy a hosted service or add production authentication.
+## Run an evaluation
+
+Start with the [working-agent cases](../samples/working-agents/README.md). They explain the four-case Nova dataset, expected tool calls, CSV import and evaluation checks. The [new evaluation guide](NEW-EVALUATION.md) also covers the supplied-response and LLM paths.
+
+A local agent run executes tools against synthetic records and produces a fresh model answer. Check the case-level evidence as well as aggregate scores. A passing tool contract does not establish answer correctness or production readiness.
+
+## Prepare a contribution
+
+Create a branch, make the change and run the applicable [validation checks](VALIDATION.md). Review the complete diff before staging:
+
+```bash
+git status --short
+git diff --check
+git diff --stat
+git diff
+```
+
+Stage only the files intended for the contribution, then inspect the staged diff:
+
+```bash
+git add <changed-files>
+git diff --cached --check
+git diff --cached
+```
+
+Include the problem, resulting behavior and verification in the change description. Keep private credentials, machine-specific paths, personal presentation material and generated runtime data out of the change. Ignore rules do not remove files already tracked by Git.
+
+## Runtime boundaries
+
+The default app binds to loopback and uses a trusted local identity. Publishing the source does not deploy a hosted service or provide production authentication. External trace storage, online monitoring, traffic routing and runtime policy enforcement require their own integrations; see [architecture](ARCHITECTURE.md) and [feature coverage](FEATURE-MAP.md).

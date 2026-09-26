@@ -1,6 +1,6 @@
 # AI evaluation: an engineering guide
 
-**Ankit Bhatia · Proofgrove · 24 September 2026**
+**Proofgrove · Engineering reference**
 
 This is a standalone guide for designing, building and operating evaluation of AI systems. Nova, a fictional retail operations agent, provides a running example. All Nova responses, tool requests and final states in the local lab are authored fixtures. No customer order or payment is changed. Industry references were checked on 24 September 2026; availability and preview status can change.
 

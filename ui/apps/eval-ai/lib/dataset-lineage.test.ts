@@ -56,8 +56,8 @@ describe("datasetVersionLabel", () => {
   it("collapses a version the name already carries", () => {
     // Stored on every run recorded before the backend fix, and those records
     // are immutable.
-    expect(datasetVersionLabel("Codex E2E Agent 20260814-151533_v11.v11")).toBe(
-      "Codex E2E Agent 20260814-151533_v11",
+    expect(datasetVersionLabel("Example E2E Agent 20260814-151533_v11.v11")).toBe(
+      "Example E2E Agent 20260814-151533_v11",
     );
     expect(datasetVersionLabel("support-quality.v3.v3")).toBe("support-quality.v3");
   });

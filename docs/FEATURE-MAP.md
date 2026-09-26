@@ -2,39 +2,34 @@
 
 This classroom edition adapts the actual evaluation service and UI from source revision `9fd1bf74c778a87c8cac9f47d3d0789a17d8acf1`. It keeps the domain model and feature surfaces while using SQLite and a local worker. API presence means implementation exists; it does not mean every external dependency is included or every workflow is preconfigured.
 
-## The lesson is the primary experience
+## Learning experience
 
-[`/learn`](http://localhost:3010/learn) delivers five screens: **Why, What, Where, How and Trust (Production)**. The proposed hour is 50 minutes of teaching and 10 minutes of Q&A, with 20 teaching minutes reserved for engineering in How. One fictional student-booking story connects expectations, evidence, workflow failures and repeatable tests. The product workspace remains an optional extension.
+**Start Here** contains five pages: **Overview**, **Why evaluate?**, **What is evaluation?**, **Evaluation Lego Blocks**, and **Types of evaluation**. The lessons connect explicit expectations with evidence, then introduce the dataset, system under test, runner, checks and experiment results.
 
-| Lesson feature | Implemented behavior | Claim and boundary |
+| Feature | Behavior | Boundary |
 | --- | --- | --- |
-| Five-screen sequence | Persistent Next/Back and five numbered navigation buttons | Instructor-controlled navigation; no autoplay or completion certification |
-| Engineering motivation | Prompt/model/tool variants, regressions, variable behavior and stateful action risks | Explains why reliability needs evidence; makes no adoption or reliability statistic claim |
-| Booking evidence reveals | Request and reply first; manual timestamp reveal and expandable edge-case explanations | Authored examples, not a live agent or calendar |
-| Diagram library | Seven Excalidraw assets rendered as SVG with expanded modal views and editable-source downloads | Original five retained; adds `06-engineering-blocks` and `07-otel-evidence` |
-| Building blocks | First EngineeringLab tab follows dataset, endpoint, runner, evidence, evaluators, experiments, gate and review | Describes required responsibilities, including versions, held-out cases, isolation and repeat trials; does not install a production harness |
-| Traces & OTel | Second tab connects instrumentation, context propagation, OTLP export, optional Collector and storage | Authored trace illustration; no connected trace backend, hidden model reasoning or automatic quality judgment |
-| Choose a test | Third tab separates offline/online from black-box/white-box; distinguishes offline comparison, live A/B and shadow | Traces alone may provide gray-box visibility; offline is not a synonym for disconnected; live routing and monitoring are not installed |
-| Progressive technical detail | Collapsed illustrative code/data walkthrough and component details; basic flow and local architecture remain available | Pseudocode and diagrams do not execute services, evaluate a live agent or enforce action policy |
-| Saved-case demonstration | New-tab workspace links for datasets, evaluations and other advanced features | Real persisted records and text metrics; supplied answers and tool-request JSON are authored fixtures |
-| Five edge cases | Missing timezone, lost availability, timeout after a write, absent approval and unauthorized modification | Expected behavior for discussion; no runtime enforcement claim |
-| Production distinction | Task success, action validity, recovery and operational performance; evaluation, release rule and runtime policy gate | Production metrics and action controls are teaching concepts, not installed monitoring or an agent permission system |
-| Four-field exercise | Request, expectation, evidence and blocker; browser-local draft and download | A learner's test plan, not a backend run, instructor submission or release approval |
+| Guided navigation | Five pages with Back/Next controls | Self-paced explanation; no completion certification |
+| Evaluation example | Compare a fluent refund claim with its supporting evidence | Authored teaching example, not a live payment |
+| Diagram library | Numbered Excalidraw sources and expanded previews | Conceptual responsibilities do not attest execution |
+| Evaluation Lego Blocks | Diagram first, then eight component explanations | Explains architecture without requiring eight separate services |
+| Types of evaluation | Offline/online and black-box/white-box choices, with example records | Online sampling, traffic routing and runtime enforcement need separate integrations |
+| Workspace walkthrough | Golden datasets, working agents, prompts, checks, runs and experiments | Inspect actual run evidence separately from authored learning examples |
+| Learning resources | Downloadable engineering guide and links to primary sources | Technical explanations rather than claims of production certification |
 
-Implementation: `ui/apps/eval-ai/components/learning/learning-experience.tsx` renders the lesson and `engineering-lab.tsx` supplies the three How views. The richer `ScenarioLab` and `ArchitectureLab` components remain in source but are not rendered in `/learn`. `scripts/seed_learning.py` loads `samples/learning/` into the actual API. [The session guide](SESSION-GUIDE.md) supplies facilitation prompts; [engineering notes](ENGINEERING-NOTES.md) define the technical terms; [the diagram source guide](session-redesign/README.md) links the editable assets.
+Implementation: `ui/apps/eval-ai/components/learning/learning-experience.tsx` renders the lesson, `engineering-lab.tsx` describes the building blocks, and `evaluation-types.tsx` explains the two evaluation choices. [Engineering notes](ENGINEERING-NOTES.md) define technical terms; the [diagram reference](session-redesign/README.md) links editable assets.
 
 ## What runs locally
 
-The browser at `http://localhost:3010` uses a same-origin proxy to the Python API at `http://127.0.0.1:8010`. SQLite stores datasets, versions, runs, results and governance records. The classroom workspace is `local-classroom`.
+The UI uses a same-origin proxy to the Python API. SQLite stores datasets, versions, runs, results and governance records; a local worker executes jobs.
 
-Local classroom scoring has two modes:
+- **Supplied-response evaluation** scores stored evidence. Deterministic text checks are real calculations, but text overlap alone cannot establish correctness.
+- **LLM evaluation** sends cases and a configured prompt to a connected model, then saves actual responses and check results.
+- **Local-agent evaluation** runs one of six guided workflows against synthetic records. The workflow calls local tools and uses the configured model to write a fresh response. The [working-agent cases](../samples/working-agents/README.md) define four cases per agent and the expected tool contracts.
+- **Mock semantic judging** exercises orchestration without a live judge and records semantic checks as unscored/simulated. It is not evidence of answer quality.
 
-- **Deterministic scoring** computes a result from supplied reference text, document IDs, captured tool calls or measured telemetry. These are real calculations with limited claims.
-- **Mock semantic judging** exercises the pipeline without a live semantic evaluator. The retained engine records these checks as **unscored / simulated**, with no numeric quality score. Internal mock values are not answer-quality evidence.
+The offline profile supports supplied evidence without model credentials. Model-enabled profiles require a configured provider. Golden datasets store expectations; actual responses and observed tool calls belong to run records. The authored Nova and StudyMate learning fixtures remain separate from evidence captured during new evaluations.
 
-The twelve seeded runs are **diagnostic-only**: six earlier classroom runs plus six StudyMate runs. They have no overall release gate and do not benchmark a live model. Across six published datasets there are 24 cases and six saved comparison experiments. Token F1, ROUGE-L and BLEU are actually computed. The earlier RAG runs also select document recall, which is not applicable to these supplied-response/reference sources because no retrieval execution is attested. The new StudyMate runs select only the three NLP diagnostics. Earlier agent fixtures declare expected tools; StudyMate booking fixtures store explicitly illustrative request JSON. Neither contains observed tool-call traces.
-
-All StudyMate policies are invented for teaching. A small classroom benchmark is not a production reliability estimate. The lesson's illustrated expectations and decisions are separate from these persisted metric results.
+Tool checks compare tool names and arguments with the expected contract. They do not by themselves establish action ordering, final-answer correctness, a real payment or production reliability. Trace archive infrastructure is not bundled into the local runtime.
 
 ## Feature coverage
 

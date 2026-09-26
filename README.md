@@ -33,7 +33,8 @@ Changes to a prompt, model, retrieval pipeline or tool can improve one behavior 
 | 1. Overview | What will I be able to do? | Understand the scope, building blocks and practical evaluation flow. |
 | 2. Why evaluate? | Why is a successful demo insufficient? | Reliability, regressions and the difference between a convincing answer and a correct outcome. |
 | 3. What is evaluation? | What does an evaluation compare? | One response can pass a format check and fail a factual check; compare each written expectation with the observed result. |
-| 4. Evaluation Lego Blocks | How do engineers run evaluations? | Datasets, endpoints, runners, metrics, traces and experiment tracking; offline/online and black-box/white-box combinations. |
+| 4. Evaluation Lego Blocks | How do engineers run evaluations? | Datasets, endpoints, runners, metrics, traces and experiment tracking. |
+| 5. Types of evaluation | When do we evaluate, and what can we inspect? | Offline/online and black-box/white-box combinations. |
 
 The examples follow **Nova**, a fictional retail-support agent. A refund request makes the distinction concrete: saying “Refunded AED 250” does not establish that the correct amount was refunded, in the correct currency, to the correct destination, exactly once.
 

@@ -1,8 +1,8 @@
 # Source provenance
 
-Adapted locally from the user-specified evaluation feature branch.
+Proofgrove adapts an existing evaluation service and Next.js application for a standalone learning environment.
 
-Pinned upstream commit: `9fd1bf74c778a87c8cac9f47d3d0789a17d8acf1`.
+Pinned upstream snapshot: `9fd1bf74c778a87c8cac9f47d3d0789a17d8acf1`.
 Retrieved: 2026-09-22.
 
-The Python evaluation service, SQL models, scoring adapters and Next.js UI are extracted from this snapshot. This is a local teaching adaptation, not an independent reimplementation. Original platform branding and infrastructure endpoints are replaced for local use.
+The Python evaluation service, SQL models, scoring adapters and UI originate from this snapshot. The adaptation replaces infrastructure-specific configuration and adds learning material, synthetic datasets and bounded agent examples. It is not an independent reimplementation. Preserve applicable source notices when redistributing the code.

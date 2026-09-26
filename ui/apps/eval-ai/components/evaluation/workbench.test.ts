@@ -512,12 +512,12 @@ describe("dataset status for the write-back opt-in", () => {
   // published dataset came back 409 with no way for the operator to clear it.
   const published = {
     dataset_id: "ds-1",
-    dataset_name: "Codex E2E Agent_v5",
+    dataset_name: "Example E2E Agent_v5",
     tenant_id: "tenant-classroom",
     product_id: "proofgrove",
     status: "PUBLISHED",
     version_number: 5,
-    parent_dataset_name: "Codex E2E Agent_v4",
+    parent_dataset_name: "Example E2E Agent_v4",
     dqs: null,
     change_reason: null,
     created_by: "test",
@@ -526,7 +526,7 @@ describe("dataset status for the write-back opt-in", () => {
 
   it("resolves an entry that carries only dataset_name", () => {
     const options = datasetPickerOptions([published]);
-    const match = options.find((option) => option.name === "Codex E2E Agent_v5");
+    const match = options.find((option) => option.name === "Example E2E Agent_v5");
     expect(match).toBeDefined();
     expect(match?.dataset.status).toBe("PUBLISHED");
   });
@@ -545,7 +545,7 @@ describe("retargeting the run at a freshly published version", () => {
   // selects nothing, so the button looked inert.
   const base = {
     dataset_id: "ds-5",
-    dataset_name: "Codex E2E_v5",
+    dataset_name: "Example E2E_v5",
     tenant_id: "tenant-classroom",
     product_id: "proofgrove",
     status: "PUBLISHED",
@@ -559,30 +559,30 @@ describe("retargeting the run at a freshly published version", () => {
   const published = {
     ...base,
     dataset_id: "ds-8",
-    dataset_name: "Codex E2E_v8",
+    dataset_name: "Example E2E_v8",
     version_number: 8,
-    parent_dataset_name: "Codex E2E_v5",
+    parent_dataset_name: "Example E2E_v5",
   } as unknown as DatasetInfo;
 
   it("is not selectable until it is seeded into the inventory", () => {
     const options = datasetPickerOptions([base]).map((option) => option.name);
-    expect(options).not.toContain("Codex E2E_v8");
+    expect(options).not.toContain("Example E2E_v8");
   });
 
   it("becomes the selected option once seeded, replacing the older version", async () => {
-    const seeded = await ensureRequestedDataset([base], "Codex E2E_v8", async () => published);
+    const seeded = await ensureRequestedDataset([base], "Example E2E_v8", async () => published);
     const options = datasetPickerOptions(seeded.items).map((option) => option.name);
     // Latest published per lineage: the new version wins, the old one drops.
-    expect(options).toContain("Codex E2E_v8");
-    expect(options).not.toContain("Codex E2E_v5");
+    expect(options).toContain("Example E2E_v8");
+    expect(options).not.toContain("Example E2E_v5");
   });
 
   it("leaves the picker usable when the new version cannot be read back", async () => {
-    const seeded = await ensureRequestedDataset([base], "Codex E2E_v8", async () => {
+    const seeded = await ensureRequestedDataset([base], "Example E2E_v8", async () => {
       throw new Error("gone");
     });
-    expect(seeded.unreadable).toBe("Codex E2E_v8");
-    expect(datasetPickerOptions(seeded.items).map((o) => o.name)).toEqual(["Codex E2E_v5"]);
+    expect(seeded.unreadable).toBe("Example E2E_v8");
+    expect(datasetPickerOptions(seeded.items).map((o) => o.name)).toEqual(["Example E2E_v5"]);
   });
 });
 

@@ -47,7 +47,7 @@ for route in ('/agents?ready_only=true', '/agents/catalog', '/agents/mcp-servers
     assert isinstance(json.loads(get(ui + '/api/proofgrove' + route)), list)
 assert all('response' not in row['inputs'] and 'response' not in row['expectations'] for row in refunds)
 assert all(not row['inputs']['question'].startswith('Fictional store policy:') for row in refunds)
-for route in ('/', '/learn', '/presenter', '/lab-setup', '/ab-test', '/catalog/prompts', '/catalog/llms', '/datasets', '/evaluations', '/contracts', '/reviews'):
+for route in ('/', '/learn', '/lab-setup', '/ab-test', '/catalog/prompts', '/catalog/llms', '/datasets', '/evaluations', '/contracts', '/reviews'):
     page = get(ui + route)
     assert 'Proofgrove' in page, route
 print(f'PASS: API + UI/BFF, unscored judge, {mode.get('mode', 'offline')} target mode, {len(metrics)} metrics, classroom datasets and {len(complete)} completed runs.')

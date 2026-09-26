@@ -1,30 +1,35 @@
-# Nova lesson and numbered Excalidraw diagrams
+# Evaluation diagram reference
 
-The [app lesson](http://localhost:3010/learn) follows one fictional retail agent through **Why → What → Where → How → Trust**, with manual evidence reveals and one screen visible at a time. The proposed agenda is **45 minutes plus 15 minutes of Q&A**. Read [the plan](SESSION-PLAN.md) and [facilitator guide](../SESSION-GUIDE.md); the [standalone engineering guide](../EVALUATION-ENGINEERING-GUIDE.md) provides technical depth beyond the session.
+These editable Excalidraw diagrams support the [evaluation engineering guide](../EVALUATION-ENGINEERING-GUIDE.md) and the application learning pages. Use diagram 11 for the basic concept, 12 for **Evaluation Lego Blocks**, and 13 for **Types of evaluation**. The remaining diagrams provide deeper workflow and implementation detail.
 
-## Ten editable diagrams
+| Diagram | Focus | Files |
+| --- | --- | --- |
+| What is evaluation? | Expectation, observed outcome, comparison and verdict. | [Excalidraw](diagrams/01-what-is-eval.excalidraw) · [SVG](diagrams/01-what-is-eval.svg) · [PNG](diagrams/01-what-is-eval.png) |
+| Workflow failures | Understanding, retrieval, lookup, action and verification. | [Excalidraw](diagrams/02-workflow-failures.excalidraw) · [SVG](diagrams/02-workflow-failures.svg) · [PNG](diagrams/02-workflow-failures.png) |
+| Evaluation run | Cases, execution, evidence, checks, results and review. | [Excalidraw](diagrams/03-evaluation-flow.excalidraw) · [SVG](diagrams/03-evaluation-flow.svg) · [PNG](diagrams/03-evaluation-flow.png) |
+| Production lifecycle | Testing, release review, runtime permissions, observation and regression cases. | [Excalidraw](diagrams/04-production-loop.excalidraw) · [SVG](diagrams/04-production-loop.svg) · [PNG](diagrams/04-production-loop.png) |
+| Local architecture | Request, load, score, persist and readback responsibilities. | [Excalidraw](diagrams/05-local-architecture-optional.excalidraw) · [SVG](diagrams/05-local-architecture-optional.svg) · [PNG](diagrams/05-local-architecture-optional.png) |
+| Engineering responsibilities | Dataset, target, runner, evidence, checks, experiments, decision and review. | [Excalidraw](diagrams/06-engineering-blocks.excalidraw) · [SVG](diagrams/06-engineering-blocks.svg) · [PNG](diagrams/06-engineering-blocks.png) |
+| OpenTelemetry evidence | Capture, export, optional Collector, storage and evaluation. | [Excalidraw](diagrams/07-otel-evidence.excalidraw) · [SVG](diagrams/07-otel-evidence.svg) · [PNG](diagrams/07-otel-evidence.png) |
+| Evaluation harness | Offline execution, shared telemetry, online evaluation and document registry. | [Excalidraw](diagrams/08-evaluation-harness.excalidraw) · [SVG](diagrams/08-evaluation-harness.svg) · [PNG](diagrams/08-evaluation-harness.png) |
+| Single-turn and agent evaluation | Response grading compared with tools, state and verified outcomes. | [Excalidraw](diagrams/09-single-turn-agent.excalidraw) · [SVG](diagrams/09-single-turn-agent.svg) · [PNG](diagrams/09-single-turn-agent.png) |
+| Quality loop | Observe, identify, curate, check, fix, verify and monitor. | [Excalidraw](diagrams/10-quality-loop.excalidraw) · [SVG](diagrams/10-quality-loop.svg) · [PNG](diagrams/10-quality-loop.png) |
+| One response, two expectations | A response can satisfy format while failing factual correctness. | [Excalidraw](diagrams/11-evaluation-basics.excalidraw) · [SVG](diagrams/11-evaluation-basics.svg) · [PNG](diagrams/11-evaluation-basics.png) |
+| Evaluation Lego Blocks | Numbered components with the question each component answers. | [Excalidraw](diagrams/12-evaluation-questions.excalidraw) · [SVG](diagrams/12-evaluation-questions.svg) · [PNG](diagrams/12-evaluation-questions.png) |
+| Types of evaluation | Offline/online and black-box/white-box as two independent choices. | [Excalidraw](diagrams/13-test-combinations.excalidraw) · [SVG](diagrams/13-test-combinations.svg) · [PNG](diagrams/13-test-combinations.png) |
 
-Open a source file in [Excalidraw](https://excalidraw.com) to edit its shapes, labels and connectors. The app displays SVGs, supports enlargement and offers `.excalidraw` downloads. PNGs provide convenient previews. All ten diagrams have numbering; arrows indicate relationships and execution direction.
+## Read and edit
 
-| Diagram | Source | SVG | Preview |
-| --- | --- | --- | --- |
-| 01 · What is an evaluation? | [Excalidraw](diagrams/01-what-is-eval.excalidraw) | [SVG](diagrams/01-what-is-eval.svg) | [PNG](diagrams/01-what-is-eval.png) |
-| 02 · Where can an agent fail? | [Excalidraw](diagrams/02-workflow-failures.excalidraw) | [SVG](diagrams/02-workflow-failures.svg) | [PNG](diagrams/02-workflow-failures.png) |
-| 03 · The repeatable evaluation flow | [Excalidraw](diagrams/03-evaluation-flow.excalidraw) | [SVG](diagrams/03-evaluation-flow.svg) | [PNG](diagrams/03-evaluation-flow.png) |
-| 04 · Keep testing after release | [Excalidraw](diagrams/04-production-loop.excalidraw) | [SVG](diagrams/04-production-loop.svg) | [PNG](diagrams/04-production-loop.png) |
-| 05 · Local runtime: request, load, score, save and read | [Excalidraw](diagrams/05-local-architecture-optional.excalidraw) | [SVG](diagrams/05-local-architecture-optional.svg) | [PNG](diagrams/05-local-architecture-optional.png) |
-| 06 · Eight engineering responsibilities | [Excalidraw](diagrams/06-engineering-blocks.excalidraw) | [SVG](diagrams/06-engineering-blocks.svg) | [PNG](diagrams/06-engineering-blocks.png) |
-| 07 · From operations to trace evidence | [Excalidraw](diagrams/07-otel-evidence.excalidraw) | [SVG](diagrams/07-otel-evidence.svg) | [PNG](diagrams/07-otel-evidence.png) |
-| 08 · Offline, telemetry and production harness | [Excalidraw](diagrams/08-evaluation-harness.excalidraw) | [SVG](diagrams/08-evaluation-harness.svg) | [PNG](diagrams/08-evaluation-harness.png) |
-| 09 · Single-turn versus agent evaluation | [Excalidraw](diagrams/09-single-turn-agent.excalidraw) | [SVG](diagrams/09-single-turn-agent.svg) | [PNG](diagrams/09-single-turn-agent.png) |
-| 10 · Quality loop and evidence lenses | [Excalidraw](diagrams/10-quality-loop.excalidraw) | [SVG](diagrams/10-quality-loop.svg) | [PNG](diagrams/10-quality-loop.png) |
+Open an `.excalidraw` file in Excalidraw to edit its elements. SVG and PNG files are previews; the application also carries its serving copies under `ui/apps/eval-ai/public/learning/session/diagrams`. Update the corresponding source and exports together when changing a drawing. The [diagram notes](diagrams/README.md) and [manifest](diagrams/manifest.json) describe numbering and export details.
 
-Diagram 06 numbers the eight responsibilities. The runner (3) invokes the endpoint (2), so numerical order is not execution order. Diagram 08 has separate **O1–O5**, **T1–T2** and **P1–P5** lane sequences, plus **D1** for the document registry. These are not one global chronological sequence.
+Numbers identify the reading order or responsibility within a drawing; they are not a universal sequence of service calls. The harness uses separate offline **O**, telemetry **T**, production **P** and document-registry **D** labels. Follow arrows within each lane and the links between lanes.
 
-The sources use the official Excalidraw conversion/export API and contain editable elements rather than screenshots. Diagrams 01–07 are 1230 × 720; the harness is 1630 × 1120; diagrams 09–10 are 1230 × 800. Details are recorded in the [asset manifest](diagrams/manifest.json). App/build checks are recorded in [validation](../VALIDATION.md).
+## Evidence boundaries
 
-## How to use them
+The diagrams are conceptual explanations. Their arrows do not prove that a service ran or that an action succeeded. Illustrated Nova refunds use authored examples; actual local-agent runs collect their own tool results and model answers. No real payment is executed. Trace storage, production monitoring and live A/B traffic routing are separate integrations.
 
-The definition, workflow, engineering, telemetry and production diagrams support the main explanation. **How** has three engineering tabs; the basic flow, local runtime and complete harness remain available on demand. Keep the workspace demonstration to one case and one saved comparison. The presentation and private speaker notes are maintained separately at `/Users/ankit.bhatia/PA/EVAL-session-materials`. They are outside the repository and are not app downloads.
+Missing spans do not prove that an action never happened. Access to selected traces permits checks over that evidence; it does not expose private model reasoning or every internal state. Offline evaluation can be run before or after release and may invoke a network endpoint.
 
-Nova's requests and outcomes are authored fixtures. Diagram arrows do not attest live execution, and the production lanes do not claim that online evaluation or A/B infrastructure is installed. The local application calculates text scores and authored-snapshot checks. A known request defect remains a failure when final-state evidence is unknown.
+## Source references
+
+The original comparison and quality-loop drawings are informed by [Anthropic's agent evaluation guide](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) and [Databricks' observability concepts](https://docs.databricks.com/aws/en/mlflow3/genai/concepts/core-concepts). See [learning resources](../LEARNING-RESOURCES.md) for additional primary sources and [validation](../VALIDATION.md) for code and browser checks.

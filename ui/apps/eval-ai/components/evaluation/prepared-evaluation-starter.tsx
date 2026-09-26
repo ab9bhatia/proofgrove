@@ -57,7 +57,7 @@ function PreparedModelEvaluationStarter() {
     { label: "Saved prompts", ready: Boolean(state.prompt), detail: state.prompt ? `Versions ${state.promptVersions.join(" and ")} · version 2 selected for live runs` : "Nova refund prompt version 2 unavailable" },
     { label: "Metrics", ready: state.metricsReady, detail: state.metricsReady ? "F1, ROUGE-L and BLEU · no judge model required" : `${state.metricIds.length} of 3 text metrics available` },
     { label: "Experiment project", ready: Boolean(state.project), detail: state.project?.name ?? "Active Nova project unavailable" },
-    { label: inventory.lab?.provider === "ollama" ? "Local model" : "Live model", ready: Boolean(state.model), detail: state.model ? (inventory.lab?.provider === "ollama" ? `${state.model.model_id} · configured through Ollama on this Mac; generates fresh answers during the run` : `${state.model.model_id} · configured; connection and access not yet verified`) : "Not configured · connect a model to run live" },
+    { label: inventory.lab?.provider === "ollama" ? "Local model" : "Live model", ready: Boolean(state.model), detail: state.model ? (inventory.lab?.provider === "ollama" ? `${state.model.model_id} · configured through Ollama; generates fresh answers during the run` : `${state.model.model_id} · configured; connection and access not yet verified`) : "Not configured · connect a model to run live" },
   ];
   return (
     <section aria-labelledby="prepared-nova-title" className="panel mt-8 p-5 sm:p-6">

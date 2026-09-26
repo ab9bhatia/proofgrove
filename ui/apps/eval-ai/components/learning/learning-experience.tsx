@@ -84,7 +84,7 @@ export function LearningExperience() {
           "Types of evaluation",
         ][active]}</h1>
         {current.id === "overview" && <>
-          <p className={styles.lead}>Proofgrove is the name I’ve given today’s evaluation framework demo. We’ll start with the ideas, then use a working agent to see how the pieces fit together.</p>
+          <p className={styles.lead}>Proofgrove is an interactive guide to evaluating AI systems. Start with the ideas, then use a working agent to see how the pieces fit together.</p>
           <section className={styles.overviewOutcomes} aria-labelledby="overview-outcomes">
             <h2 id="overview-outcomes">By the end of this session</h2>
             <ol>
