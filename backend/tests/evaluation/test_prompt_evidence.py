@@ -2,7 +2,7 @@
 
 import json
 
-from evalhub.evaluation.prompts import OUTPUT_CONTRACT, build_judge_messages
+from proofgrove.evaluation.prompts import OUTPUT_CONTRACT, build_judge_messages
 
 
 def test_tool_evidence_is_fenced_without_losing_payload():

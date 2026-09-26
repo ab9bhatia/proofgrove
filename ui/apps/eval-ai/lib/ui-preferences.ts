@@ -1,4 +1,4 @@
-export const SIDEBAR_PREFERENCE_KEY = "eval-hub:sidebar";
+export const SIDEBAR_PREFERENCE_KEY = "proofgrove:sidebar";
 
 export function parseSidebarPreference(value: string | null) {
   if (value === "open") return true;

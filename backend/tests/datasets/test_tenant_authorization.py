@@ -11,9 +11,9 @@ from unittest.mock import MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.datasets.exceptions import DatasetNotFoundError
-from evalhub.main import app
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.datasets.exceptions import DatasetNotFoundError
+from proofgrove.main import app
 
 OWNER = "tenant-owner"
 INTRUDER = "tenant-intruder"
@@ -123,7 +123,7 @@ class TestOwningTenantIsUnaffected:
     ) -> None:
         # Sidecar-less in-cluster callers present no header; the pod namespace
         # is the deployment's own tenant and stands in for it.
-        from evalhub.platform import authz
+        from proofgrove.platform import authz
 
         monkeypatch.setattr(authz.settings, "pod_namespace", OWNER)
         mock_svc.get_records.return_value = []
@@ -146,7 +146,7 @@ class TestOwningTenantIsUnaffected:
         # Only the cross-tenant 403 is rewritten to 404. A missing header is a
         # fact about the caller, not about which datasets exist, so it must keep
         # its own status rather than be disguised as a missing dataset.
-        from evalhub.platform import authz
+        from proofgrove.platform import authz
 
         monkeypatch.setattr(authz.settings, "platform_auth_required", True)
         resp = await client.get("/datasets/victim_ds/records")
@@ -169,7 +169,7 @@ class TestEveryDatasetScopedRouteIsCovered:
         # Registering per endpoint means route 17 is protected by memory. This
         # asserts the dependency sits on the router, so a route added later is
         # covered by construction.
-        from evalhub.api.v1.datasets import authorize_dataset_tenant, router
+        from proofgrove.api.v1.datasets import authorize_dataset_tenant, router
 
         registered = [
             dependency.dependency for dependency in (router.dependencies or [])
@@ -180,7 +180,7 @@ class TestEveryDatasetScopedRouteIsCovered:
         # A count threshold is a rubber stamp: a route can disappear, or a new
         # vulnerable one can be added under a differently-named path param,
         # without failing. Freeze the exact set so either forces a decision.
-        from evalhub.api.v1.datasets import router
+        from proofgrove.api.v1.datasets import router
 
         scoped = {
             f"{sorted(route.methods)[0]} {route.path}"
@@ -213,7 +213,7 @@ class TestEveryDatasetScopedRouteIsCovered:
         # differently would be silently unguarded.
         import re
 
-        from evalhub.api.v1.datasets import router
+        from proofgrove.api.v1.datasets import router
 
         for route in router.routes:
             for param in re.findall(r"{(\w+)}", getattr(route, "path", "")):
@@ -340,9 +340,9 @@ class TestTheGuardFailsClosedWithoutIdentity:
     async def test_an_in_cluster_caller_is_identified_by_its_namespace(
         self, client: AsyncClient, mock_svc: MagicMock, monkeypatch
     ) -> None:
-        # Eval Hub deploys per tenant, so a header-less in-cluster caller is
+        # Proofgrove deploys per tenant, so a header-less in-cluster caller is
         # that namespace's tenant — not "unauthenticated but allowed".
-        from evalhub.platform import authz
+        from proofgrove.platform import authz
 
         monkeypatch.setattr(authz.settings, "pod_namespace", OWNER)
         mock_svc.search_datasets.return_value = []
@@ -470,8 +470,8 @@ class TestRestoreRequiresGovernanceApprove:
     async def test_evaluation_run_alone_is_refused_governance_approve_is_allowed(
         self, mock_svc: MagicMock, monkeypatch
     ) -> None:
-        from evalhub.platform import authz
-        from evalhub.settings import settings
+        from proofgrove.platform import authz
+        from proofgrove.settings import settings
 
         mock_svc.restore_as_draft.return_value = MagicMock(
             model_dump=MagicMock(return_value={"dataset_name": "victim_ds", "version_number": 2})
@@ -485,8 +485,8 @@ class TestRestoreRequiresGovernanceApprove:
         async def grant(request, permission):
             allowed = permission in granted
             if allowed:
-                request.state.eval_hub_permissions = {
-                    *getattr(request.state, "eval_hub_permissions", set()),
+                request.state.proofgrove_permissions = {
+                    *getattr(request.state, "proofgrove_permissions", set()),
                     permission,
                 }
             return allowed

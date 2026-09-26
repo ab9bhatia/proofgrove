@@ -17,7 +17,7 @@ def environments(source, root):
         'EVALUATION_RUNTIME': 'local', 'PLATFORM_AUTH_REQUIRED': 'false',
         'POD_NAMESPACE': 'tenant-local-classroom', 'TRACE_ARCHIVE_ENABLED': 'false',
         'TRACE_INDEX_ENABLED': 'false', 'OTEL_SDK_DISABLED': 'true',
-        'EVAL_HUB_API_URL': 'http://127.0.0.1:8010',
+        'PROOFGROVE_API_URL': 'http://127.0.0.1:8010',
         'OPENAI_API_KEY': '', 'AZURE_OPENAI_API_KEY': '',
         'NEXT_TELEMETRY_DISABLED': '1', 'EVALAI_RUM_ENABLED': 'false',
         'PYTHONUNBUFFERED': '1', 'PROOFGROVE_MODE': mode,

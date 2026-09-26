@@ -1,1 +1,1 @@
-"""Tests for Eval Hub platform capabilities."""
+"""Tests for Proofgrove platform capabilities."""

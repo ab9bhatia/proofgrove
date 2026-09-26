@@ -11,12 +11,12 @@ import uuid
 
 import pytest
 
-from evalhub.db.models import EvaluationRunORM
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.run_service import execute_dataset_run
+from proofgrove.db.models import EvaluationRunORM
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.run_service import execute_dataset_run
 
 
 class _FakeInfo:

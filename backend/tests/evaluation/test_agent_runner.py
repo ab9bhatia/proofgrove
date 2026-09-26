@@ -7,13 +7,13 @@ import httpx
 import pytest
 import respx
 
-from evalhub.evaluation import run_service
-from evalhub.evaluation.enums import EvaluationScope, Scenario
-from evalhub.evaluation.models import EvaluationRow, ToolCall
-from evalhub.evaluation.target import agent_runner
-from evalhub.evaluation.target.a2a_client import AgentInvocation, AgentInvocationError
-from evalhub.evaluation.target.agent_runner import AgentRunOutput, _filter_excluded, run_agent_target
-from evalhub.settings import Settings
+from proofgrove.evaluation import run_service
+from proofgrove.evaluation.enums import EvaluationScope, Scenario
+from proofgrove.evaluation.models import EvaluationRow, ToolCall
+from proofgrove.evaluation.target import agent_runner
+from proofgrove.evaluation.target.a2a_client import AgentInvocation, AgentInvocationError
+from proofgrove.evaluation.target.agent_runner import AgentRunOutput, _filter_excluded, run_agent_target
+from proofgrove.settings import Settings
 
 
 def test_filter_excluded_drops_memory_tools_case_insensitive():
@@ -62,7 +62,7 @@ async def test_run_agent_target_rejects_a_foreign_tenant_namespace(monkeypatch):
     """A ``<namespace>/<name>`` target_endpoint naming ANOTHER tenant's
     namespace must be rejected before kagent is ever called.
 
-    ``target_endpoint`` is a tenant-controlled experiment field and Eval Hub
+    ``target_endpoint`` is a tenant-controlled experiment field and Proofgrove
     is deployed one instance per tenant — a mismatched namespace would have
     this service invoke a different tenant's agent.
     """
@@ -129,7 +129,7 @@ async def test_run_agent_target_externalizes_large_session_tool_result(monkeypat
 
 @pytest.mark.asyncio
 async def test_run_rows_continue_on_output_too_large(monkeypatch):
-    from evalhub.evaluation.target.a2a_client import AgentOutputTooLargeError
+    from proofgrove.evaluation.target.a2a_client import AgentOutputTooLargeError
 
     seen: list[str] = []
 
@@ -180,7 +180,7 @@ async def test_run_agent_rows_resolves_an_external_target_once_for_the_whole_fan
     once per row — the target is identical across every row in the run, and
     re-resolving per row opens one redundant DB session per concurrent row.
     """
-    from evalhub.platform.contracts import TargetType, TargetVersion
+    from proofgrove.platform.contracts import TargetType, TargetVersion
 
     resolve_calls = 0
     target = TargetVersion(
@@ -258,7 +258,7 @@ async def test_run_rows_abort_on_technical_invocation_error(monkeypatch):
 @respx.mock
 @pytest.mark.asyncio
 async def test_invoke_agent_raises_output_too_large():
-    from evalhub.evaluation.target.a2a_client import AgentOutputTooLargeError, invoke_agent
+    from proofgrove.evaluation.target.a2a_client import AgentOutputTooLargeError, invoke_agent
 
     # First small frame, then a huge one that crosses the budget.
     small = (
@@ -399,8 +399,8 @@ def test_resolve_active_metrics_includes_attached_quality_contracts():
 
 @pytest.mark.asyncio
 async def test_run_agent_row_scores_from_archived_spans_not_session(monkeypatch):
-    from evalhub.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
-    from evalhub.evaluation.trace_hydrator import TELEMETRY_EVIDENCE_SOURCE
+    from proofgrove.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
+    from proofgrove.evaluation.trace_hydrator import TELEMETRY_EVIDENCE_SOURCE
 
     async def _fake_run(*, query, invocation_id, **kwargs):  # noqa: ARG001
         return AgentRunOutput(
@@ -470,8 +470,8 @@ async def test_run_agent_row_scores_from_archived_spans_not_session(monkeypatch)
 
 @pytest.mark.asyncio
 async def test_run_agent_row_falls_back_to_session_tools_when_archive_missing(monkeypatch):
-    from evalhub.evaluation.models import RunItemTraceEvidence
-    from evalhub.evaluation.trace_hydrator import A2A_FALLBACK_EVIDENCE_SOURCE
+    from proofgrove.evaluation.models import RunItemTraceEvidence
+    from proofgrove.evaluation.trace_hydrator import A2A_FALLBACK_EVIDENCE_SOURCE
 
     async def _fake_run(*, query, invocation_id, **kwargs):  # noqa: ARG001
         return AgentRunOutput(
@@ -512,7 +512,7 @@ async def test_run_agent_row_falls_back_to_session_tools_when_archive_missing(mo
 
 @pytest.mark.asyncio
 async def test_run_agent_row_final_response_scores_a2a_without_waiting_on_archive(monkeypatch):
-    from evalhub.evaluation.trace_hydrator import A2A_FALLBACK_EVIDENCE_SOURCE
+    from proofgrove.evaluation.trace_hydrator import A2A_FALLBACK_EVIDENCE_SOURCE
 
     async def _fake_run(*, query, invocation_id, **kwargs):  # noqa: ARG001
         return AgentRunOutput(
@@ -564,7 +564,7 @@ async def test_kagent_session_is_bound_to_fresh_invocation_identity(foreign_sess
     users = []
     def invoke(request):
         user = request.headers["X-User-ID"]
-        assert user.startswith("eval-hub:tenant-evalai:")
+        assert user.startswith("proofgrove:tenant-evalai:")
         users.append(user)
         frame = {"result": {"contextId": "session-safe", "artifact": {"parts": [{"kind": "text", "text": "answer"}]}}}
         return httpx.Response(200, text="data: " + json.dumps(frame) + "\n\n", headers={"Content-Type": "text/event-stream"})
@@ -586,7 +586,7 @@ async def test_kagent_session_is_bound_to_fresh_invocation_identity(foreign_sess
 @pytest.mark.asyncio
 @pytest.mark.parametrize("namespace, target", [("tenant-foo", "foo/agent"), ("tenant-tenant-foo", "tenant-foo/agent")])
 async def test_agent_namespace_never_uses_tenant_aliases(monkeypatch, namespace, target):
-    from evalhub.settings import settings as global_settings
+    from proofgrove.settings import settings as global_settings
 
     monkeypatch.setattr(global_settings, "pod_namespace", namespace)
     async def forbidden(**kwargs):

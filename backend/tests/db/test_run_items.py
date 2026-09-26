@@ -5,18 +5,18 @@ from sqlalchemy import delete, event
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base, DatasetRowORM, EvaluationRunItemORM
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import MetricStatus, Scenario
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.models import (
+from proofgrove.db.models import Base, DatasetRowORM, EvaluationRunItemORM
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import MetricStatus, Scenario
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.models import (
     EvaluationRow,
     ExperimentDefinition,
     ToolCall,
     ToolResultArtifact,
 )
-from evalhub.settings import settings
+from proofgrove.settings import settings
 
 
 @pytest.fixture

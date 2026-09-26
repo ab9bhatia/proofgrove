@@ -27,7 +27,7 @@ def pause_background_worker(monkeypatch):
     async def wait_for_shutdown(stop):
         await stop.wait()
 
-    monkeypatch.setattr("evalhub.main.run_worker_loop", wait_for_shutdown)
+    monkeypatch.setattr("proofgrove.main.run_worker_loop", wait_for_shutdown)
 
 
 def _unique_experiment(client) -> tuple[str, str]:

@@ -3,7 +3,7 @@
 import { PAGE_FRAME } from "@/lib/page-frame";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { EvaluationRunProgress } from "@/components/evaluation/run-progress";
 import { AutomaticSpanScoringStatus } from "@/components/tracing/span-scoring";
 import { ReportView } from "@/components/report/view";
@@ -56,9 +56,9 @@ export function runLoadErrorMessage(reason: unknown, deepLinkedItemId: string | 
 
 export default function RunDetailPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <RunDetail />
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

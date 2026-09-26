@@ -1,7 +1,7 @@
 """InEval quality-contract template onboarding."""
 
-from evalhub.evaluation.metrics import METRIC_CATALOG
-from evalhub.evaluation.prompts import build_judge_messages
+from proofgrove.evaluation.metrics import METRIC_CATALOG
+from proofgrove.evaluation.prompts import build_judge_messages
 
 #: The tenant this module's client acts as, the way the gateway sets it.
 TENANT = "tenant-a"

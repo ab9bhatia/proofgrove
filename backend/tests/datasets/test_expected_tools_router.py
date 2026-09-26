@@ -10,8 +10,8 @@ from unittest.mock import MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.main import app
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.main import app
 
 OWNER = "tenant-owner"
 INTRUDER = "tenant-intruder"

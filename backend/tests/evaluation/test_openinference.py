@@ -9,9 +9,9 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
 
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.openinference import (
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.openinference import (
     EVALUATION_ANNOTATOR_KIND,
     EVALUATION_EXPLANATION,
     EVALUATION_IDENTIFIER,
@@ -22,8 +22,8 @@ from evalhub.evaluation.openinference import (
     content_attributes,
     evaluator_span,
 )
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.evaluation.target.invocation_span import setup_invocation_tracing
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.evaluation.target.invocation_span import setup_invocation_tracing
 
 
 def _exporter() -> InMemorySpanExporter:
@@ -40,7 +40,7 @@ def test_evaluator_span_emits_portable_feedback_and_target_link():
 
     with evaluator_span(
         tracer=trace.get_tracer("test.openinference"),
-        name="eval_hub.evaluate.correctness",
+        name="proofgrove.evaluate.correctness",
         attributes={"ctx.eval.run_id": "run-1"},
         target_trace_id=target_trace_id,
         target_span_id=target_span_id,

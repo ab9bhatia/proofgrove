@@ -9,7 +9,7 @@ from alembic.config import Config
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
 
-from evalhub.settings import settings
+from proofgrove.settings import settings
 
 
 def _load_migration():
@@ -90,7 +90,7 @@ def test_run_item_migration_upgrades_and_downgrades() -> None:
 def test_alembic_online_upgrade_reaches_head_from_previous_revision(tmp_path) -> None:
     """Exercise the real async Alembic environment, not only migration functions."""
     service_root = Path(__file__).parents[2]
-    database_path = tmp_path / "eval-hub-migration.db"
+    database_path = tmp_path / "proofgrove-migration.db"
     sync_url = f"sqlite:///{database_path}"
     async_url = f"sqlite+aiosqlite:///{database_path}"
 

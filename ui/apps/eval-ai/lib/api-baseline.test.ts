@@ -38,7 +38,7 @@ describe("audited baseline client", () => {
     const result = await evaluationApi.promoteBaseline("exp-1", "run-new");
 
     expect(calls).toHaveLength(1);
-    expect(calls[0].url).toBe("/api/eval-hub/evaluation/experiments/exp-1/baseline");
+    expect(calls[0].url).toBe("/api/proofgrove/evaluation/experiments/exp-1/baseline");
     expect(calls[0].url).not.toContain("/promote");
     expect(calls[0].init?.method).toBe("POST");
     expect(JSON.parse(String(calls[0].init?.body))).toEqual({ run_id: "run-new" });
@@ -51,7 +51,7 @@ describe("audited baseline client", () => {
 
     const result = await evaluationApi.listBaselineHistory("exp-1");
 
-    expect(calls[0].url).toBe("/api/eval-hub/evaluation/experiments/exp-1/baseline/history");
+    expect(calls[0].url).toBe("/api/proofgrove/evaluation/experiments/exp-1/baseline/history");
     expect(calls[0].init?.method).toBeUndefined();
     expect(result).toHaveLength(1);
     expect(result[0].baseline_change_id).toBe("chg-1");
@@ -62,7 +62,7 @@ describe("audited baseline client", () => {
 
     const result = await evaluationApi.undoBaseline("exp-1");
 
-    expect(calls[0].url).toBe("/api/eval-hub/evaluation/experiments/exp-1/baseline/undo");
+    expect(calls[0].url).toBe("/api/proofgrove/evaluation/experiments/exp-1/baseline/undo");
     expect(calls[0].init?.method).toBe("POST");
     expect(calls[0].init?.body).toBeUndefined();
     expect(result.action).toBe("undo");
@@ -76,9 +76,9 @@ describe("audited baseline client", () => {
     await evaluationApi.undoBaseline("exp/1");
 
     expect(calls.map((call) => call.url)).toEqual([
-      "/api/eval-hub/evaluation/experiments/exp%2F1/baseline",
-      "/api/eval-hub/evaluation/experiments/exp%2F1/baseline/history",
-      "/api/eval-hub/evaluation/experiments/exp%2F1/baseline/undo",
+      "/api/proofgrove/evaluation/experiments/exp%2F1/baseline",
+      "/api/proofgrove/evaluation/experiments/exp%2F1/baseline/history",
+      "/api/proofgrove/evaluation/experiments/exp%2F1/baseline/undo",
     ]);
   });
 });

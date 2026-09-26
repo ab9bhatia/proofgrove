@@ -10,7 +10,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, ChevronsUpDown, ChevronUp, Refr
 import { Button, buttonVariants } from "@evalai/shared/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { NavTab, NavTabs } from "@/components/ui/tabs";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import {
   GovernanceCreateDialog,
   type PolicyDraftInput,
@@ -61,9 +61,9 @@ type LifecycleFilter = "all" | "draft" | "validated" | "approved" | "retired";
 
 export default function EvaluationGovernancePage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <EvaluationGovernanceHome />
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

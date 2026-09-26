@@ -6,8 +6,11 @@ import { PAGE_FRAME } from "@/lib/page-frame";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Plus, RefreshCw } from "lucide-react";
 import { Button } from "@evalai/shared/ui/button";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { AgentCatalogList } from "@/components/catalog/agent-catalog-list";
+import { LocalAgentCards } from "@/components/catalog/local-agent-cards";
+import { CatalogToolbar, SearchField } from "@/components/toolbar";
+import { isLocalWorkflowAgent, localAgentText, localAgentStrings } from "@/lib/local-agents";
 import { AgentFormDialog } from "@/components/catalog/agent-form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { agentsApi, type TargetVersion } from "@/lib/api";
@@ -16,9 +19,9 @@ import { Chip } from "@/components/status-badge";
 
 export default function AgentCatalogPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <AgentCatalog />
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 
@@ -37,11 +40,13 @@ function AgentCatalog() {
     const needle = query.trim().toLowerCase();
     if (!needle) return agents;
     return agents.filter((agent) =>
-      [agent.name, agent.target_id, agent.configuration?.model]
+      [agent.name, agent.target_id, agent.model_version, localAgentText(agent, "description"), localAgentText(agent, "example_query"), ...localAgentStrings(agent, "tools")]
         .filter((value): value is string => typeof value === "string")
         .some((value) => value.toLowerCase().includes(needle)),
     );
   }, [agents, query]);
+  const localAgents = visibleAgents.filter(isLocalWorkflowAgent);
+  const externalAgents = visibleAgents.filter((agent) => !isLocalWorkflowAgent(agent));
   const [error, setError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -78,7 +83,7 @@ function AgentCatalog() {
     };
   }, []);
 
-  const currentPage = Math.min(page, Math.max(1, Math.ceil(visibleAgents.length / ROWS_PER_PAGE)));
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(externalAgents.length / ROWS_PER_PAGE)));
 
   async function testAndOnboard(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -103,9 +108,9 @@ function AgentCatalog() {
   return (
     <div className={PAGE_FRAME}>
       <PageHeader
-        section="Configure"
-        title="Agents"
-        description="Browse agents synchronized from this tenant’s platform or connect an external A2A-compatible system."
+        section="Workspace"
+        title="What to test"
+        description="Choose an agent, try a request, then evaluate its answers and tool workflow against a golden dataset."
         actions={
           <>
             <Button
@@ -126,7 +131,7 @@ function AgentCatalog() {
               onClick={() => setAgentFormOpen(true)}
             >
               <Plus className="mr-2 size-4" aria-hidden="true" />
-              New agent
+              Connect an agent
             </Button>
           </>
         }
@@ -155,31 +160,24 @@ function AgentCatalog() {
         </div>
       ) : null}
 
-      <section>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold tracking-tight">Onboarded agents</h2>
-            <p className="text-sm text-muted-foreground">
-              Active platform agents and verified A2A targets available to this tenant.
-            </p>
-          </div>
-          <Chip size="md">
-            {visibleAgents.length} {visibleAgents.length === 1 ? "agent" : "agents"}
-          </Chip>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-primary" />
-          </div>
-        ) : agents.length === 0 ? (
-          <div className="rounded-xl border border-dashed py-14 text-center text-sm text-muted-foreground">
-            No agents have been onboarded yet.
-          </div>
-        ) : (
-          <AgentCatalogList footer={<TablePagination total={visibleAgents.length} page={currentPage} onPageChange={setPage} label="agents" />} agents={visibleAgents.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE)} query={query} onQueryChange={(value) => { setQuery(value); setPage(1); }} />
-        )}
-      </section>
+      <div className="mb-6 rounded-xl border bg-muted/20 px-5 py-4 text-sm leading-6 text-muted-foreground">
+        Each local agent runs tools on synthetic data, then uses your default model to write a fresh response.
+        Tool calls and results are captured for evaluation. Prepared checks assess tool use; review answer quality separately. These workflows do not change external systems.
+      </div>
+      <div className="mb-5 rounded-xl border bg-card">
+        <CatalogToolbar>
+          <SearchField value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search agents, examples or tools…" label="Search agents" />
+          <Chip size="md">{visibleAgents.length} {visibleAgents.length === 1 ? "agent" : "agents"}</Chip>
+        </CatalogToolbar>
+      </div>
+      {loading ? <div role="status" className="flex justify-center gap-2 py-16 text-sm text-muted-foreground"><div className="size-5 animate-spin rounded-full border-2 border-muted border-t-primary" />Loading agents…</div> : <>
+        {localAgents.length ? <section aria-label="Local agents"><LocalAgentCards agents={localAgents} /></section> : null}
+        {externalAgents.length ? <section aria-labelledby="connected-agents" className="mt-8">
+          <h2 id="connected-agents" className="mb-3 text-lg font-semibold tracking-tight">Connected agents</h2>
+          <AgentCatalogList footer={<TablePagination total={externalAgents.length} page={currentPage} onPageChange={setPage} label="agents" />} agents={externalAgents.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE)} />
+        </section> : null}
+        {!visibleAgents.length && !error ? <div className="rounded-xl border border-dashed py-14 text-center text-sm text-muted-foreground">{query ? "No agents match your search." : "No agents are available. Connect an agent to get started."}{query ? <button type="button" className="ml-2 font-medium text-primary underline" onClick={() => setQuery("")}>Clear search</button> : null}</div> : null}
+      </>}
     </div>
   );
 }

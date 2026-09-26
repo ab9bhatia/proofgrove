@@ -16,8 +16,8 @@ os.environ.setdefault("JUDGE_MODE", "mock")
 
 from fastapi.testclient import TestClient
 
-from evalhub.main import app
-from evalhub.settings import settings
+from proofgrove.main import app
+from proofgrove.settings import settings
 
 TENANT = settings.pod_namespace or "local-classroom"
 SLUG = TENANT.removeprefix("tenant-")

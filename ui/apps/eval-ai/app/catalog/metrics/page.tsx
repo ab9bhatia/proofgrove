@@ -6,7 +6,7 @@ import { PAGE_FRAME, COLUMN_HEADER } from "@/lib/page-frame";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@evalai/shared/ui/button";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { MetricCatalogCard } from "@/components/metric-catalog-card";
 import { MetricCatalogFilters } from "@/components/catalog/metric-catalog-filters";
 import { PageHeader } from "@/components/page-header";
@@ -16,9 +16,9 @@ import { Chip } from "@/components/status-badge";
 
 export default function MetricCatalogPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <MetricCatalog />
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

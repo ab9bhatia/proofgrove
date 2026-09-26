@@ -8,7 +8,7 @@ import { Archive, ChevronRight, Plus, RadioTower, RotateCcw, Trash2 } from "luci
 import { Button } from "@evalai/shared/ui/button";
 import { OverlayConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProjectCreateDialog } from "@/components/contract-projects-panel";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState, ErrorState, LoadingState } from "@/components/page-state";
 import { api, platformApi, type EvaluationProject, type TraceProject } from "@/lib/api";
@@ -16,7 +16,7 @@ import { formatDateTime } from "@/lib/format-time";
 import { userFacingError } from "@/lib/api-errors";
 
 export default function ProjectsPage() {
-  return <EvalHubGate><ProjectsView /></EvalHubGate>;
+  return <ProofgroveGate><ProjectsView /></ProofgroveGate>;
 }
 
 function ProjectsView() {

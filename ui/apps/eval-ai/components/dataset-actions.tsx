@@ -35,6 +35,8 @@ import {
   watchGenerationJob,
   writeGenerationJobParam,
 } from "@/lib/dataset-generation";
+import { ApiError } from "@/lib/api-errors";
+import { findSelectedModel, modelSelectionId } from "@/lib/model-selection";
 import { inputClass } from "@/components/evaluation/form-primitives";
 import {
   DatasetModePicker,
@@ -137,41 +139,66 @@ export function DatasetActions({
   const [generationMethod, setGenerationMethod] = useState<GenerationMethod | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [productId, setProductId] = useState("eval-hub");
+  const [productId, setProductId] = useState("proofgrove");
   const [file, setFile] = useState<File | null>(null);
   const [toolServers, setToolServers] = useState<ToolServer[]>([]);
   const [serverName, setServerName] = useState("");
   const [toolName, setToolName] = useState("");
   const [seeds, setSeeds] = useState(DEFAULT_LLM_PROMPT);
-  const [maxRows, setMaxRows] = useState(10);
+  const [maxRows, setMaxRows] = useState(5);
   const [domain, setDomain] = useState("");
   const [model, setModel] = useState("");
-  const [compassModels, setCompassModels] = useState<LlmCatalogEntry[]>([]);
+  const [generationModels, setGenerationModels] = useState<LlmCatalogEntry[]>([]);
+  const [defaultGenerationModel, setDefaultGenerationModel] = useState("");
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [toolsError, setToolsError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [connectionIssue, setConnectionIssue] = useState(false);
+  const [checkingConnection, setCheckingConnection] = useState(false);
 
   const selectedServer = toolServers.find((server) => server.name === serverName);
   const generationInstruction = useMemo(() => seeds.trim(), [seeds]);
 
-  useEffect(() => {
-    Promise.all([agentsApi.toolServers(), evaluationApi.listLlmCatalog()])
-      .then(([listedServers, catalog]) => {
-        const compass = catalog.filter((entry) => entry.source === "compass");
-        setToolServers(listedServers);
-        setCompassModels(compass);
-        setServerName((current) => current || listedServers[0]?.name || "");
-        setToolName((current) => current || listedServers[0]?.tools[0] || "");
-        setModel((current) => {
-          if (current && compass.some((entry) => entry.model_id === current)) return current;
-          return compass[0]?.model_id || "";
-        });
-      })
-      .catch(() => {
-        setToolServers([]);
-        setCompassModels([]);
-      });
+  const loadGenerationResources = useCallback(async () => {
+    setModelsLoading(true);
+    setModelsError(null);
+    setToolsError(null);
+    const [serversResult, modelsResult, providersResult] = await Promise.allSettled([
+      agentsApi.toolServers(), evaluationApi.listLlmCatalog(), evaluationApi.getModelProviders(),
+    ]);
+    if (serversResult.status === "fulfilled") {
+      const listedServers = serversResult.value;
+      setToolServers(listedServers);
+      setServerName((current) => current || listedServers[0]?.name || "");
+      setToolName((current) => current || listedServers[0]?.tools[0] || "");
+    } else {
+      setToolsError("Could not load grounding tools. Retry before using Agent Orchestration.");
+    }
+    if (modelsResult.status === "fulfilled") {
+      const available = modelsResult.value.filter((entry) =>
+        entry.source === "compass" || entry.source === "openai" || entry.source === "ollama",
+      );
+      setGenerationModels(available);
+      const configuredDefault = providersResult.status === "fulfilled" ? providersResult.value.default : null;
+      const initial = configuredDefault ? available.find((entry) =>
+        entry.source === configuredDefault.provider && modelSelectionId(entry) === modelSelectionId(configuredDefault),
+      ) : null;
+      const initialSelection = initial ? modelSelectionId(initial) : "";
+      setDefaultGenerationModel(initialSelection);
+      setModel((current) => findSelectedModel(available, current) ? current : initialSelection);
+    } else {
+      setModelsError("Could not load generation models. Retry or check the Models page.");
+    }
+    setModelsLoading(false);
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- opening the dialog starts catalog I/O and its loading state
+    if (open && mode === "generate") void loadGenerationResources();
+  }, [open, mode, loadGenerationResources]);
 
   const setJobParam = useCallback(
     (jobId: string | null) => {
@@ -224,6 +251,28 @@ export function DatasetActions({
   const visibleGenJob =
     genJob && (!watchedJobId || watchedJobId === genJob.job_id) ? genJob : null;
 
+  function reportRequestError(reason: unknown) {
+    const unavailable = reason instanceof ApiError && [0, 502, 503, 504].includes(reason.status);
+    setConnectionIssue(unavailable);
+    setError(reason instanceof Error ? reason.message : String(reason));
+  }
+
+  async function checkConnection() {
+    setCheckingConnection(true);
+    try {
+      // Read-only probe through the same backend route used by dataset imports.
+      // Never replay an interrupted create request automatically.
+      await api.csvTemplate();
+      setConnectionIssue(false);
+      setError(null);
+      setMessage("Connection is available. If an import was interrupted, check the dataset library for its name before retrying.");
+    } catch (reason) {
+      reportRequestError(reason);
+    } finally {
+      setCheckingConnection(false);
+    }
+  }
+
   async function tenantId() {
     return (await api.tenant()).tenant_id;
   }
@@ -232,8 +281,8 @@ export function DatasetActions({
     return api.createDataset({
       dataset_name: name.trim(),
       tenant_id: await tenantId(),
-      product_id: productId.trim() || "eval-hub",
-      created_by: "eval-hub-ui",
+      product_id: productId.trim() || "proofgrove",
+      created_by: "proofgrove-ui",
       csv_content: csvContent,
     });
   }
@@ -243,9 +292,9 @@ export function DatasetActions({
     setName("");
     setDescription("");
     setDomain("");
-    setMaxRows(10);
+    setMaxRows(5);
     setSeeds(DEFAULT_LLM_PROMPT);
-    setModel(compassModels[0]?.model_id || "");
+    setModel(findSelectedModel(generationModels, defaultGenerationModel) ? defaultGenerationModel : "");
     setServerName(toolServers[0]?.name || "");
     setToolName(toolServers[0]?.tools[0] || "");
     setError(null);
@@ -259,6 +308,7 @@ export function DatasetActions({
       return;
     }
     setBusy(true);
+    setConnectionIssue(false);
     setError(null);
     setMessage(null);
     try {
@@ -267,7 +317,7 @@ export function DatasetActions({
       if (mode === "import") await importDataset();
       await onCreated();
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : String(reason));
+      reportRequestError(reason);
     } finally {
       setBusy(false);
     }
@@ -283,8 +333,9 @@ export function DatasetActions({
     if (!maxRows || maxRows < 1) {
       throw new Error("Size must be at least 1 row.");
     }
-    if (generationMethod === "llms" && !model.trim()) {
-      throw new Error("Select a generation model.");
+    const selectedModel = findSelectedModel(generationModels, model);
+    if (generationMethod === "llms" && (!selectedModel || modelsLoading || modelsError)) {
+      throw new Error(modelsError || "Select an available generation model.");
     }
     if (generationMethod === "tools") {
       if (!selectedServer || !toolName) {
@@ -300,8 +351,9 @@ export function DatasetActions({
       seeds: [generationInstruction],
       num_rows: maxRows,
       domain: domain.trim(),
-      product_id: productId.trim() || "eval-hub",
-      model: generationMethod === "llms" ? model.trim() : null,
+      product_id: productId.trim() || "proofgrove",
+      model: generationMethod === "llms" ? selectedModel?.model_id : null,
+      model_endpoint: generationMethod === "llms" ? selectedModel?.endpoint : null,
       agent: null,
     });
     // The durable job id goes into the URL; the watch effect takes over from
@@ -335,6 +387,9 @@ export function DatasetActions({
   }
 
   async function downloadTemplate() {
+    setError(null);
+    setMessage(null);
+    setConnectionIssue(false);
     try {
       const template = await api.csvTemplate();
       const url = URL.createObjectURL(new Blob([template.csv], { type: "text/csv" }));
@@ -344,7 +399,7 @@ export function DatasetActions({
       anchor.click();
       URL.revokeObjectURL(url);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : String(reason));
+      reportRequestError(reason);
     }
   }
 
@@ -384,6 +439,7 @@ export function DatasetActions({
           mode={mode}
           onModeChange={(next) => {
             setMode(next);
+            setConnectionIssue(false);
             setGenerationMethod(null);
             setError(null);
             setMessage(null);
@@ -411,7 +467,11 @@ export function DatasetActions({
                 generationInstruction={generationInstruction}
                 model={model}
                 setModel={setModel}
-                compassModels={compassModels}
+                generationModels={generationModels}
+                modelsLoading={modelsLoading}
+                modelsError={modelsError}
+                toolsError={toolsError}
+                onRefreshModels={() => void loadGenerationResources()}
                 toolServers={toolServers}
                 serverName={serverName}
                 setServerName={(value) => {
@@ -450,9 +510,17 @@ export function DatasetActions({
           ) : null}
 
           {error && (
-            <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
-              {error}
-            </p>
+            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+              <p>{error}</p>
+              {connectionIssue && (
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  <span>Check the connection without resubmitting your dataset.</span>
+                  <Button type="button" variant="outline" size="sm" disabled={checkingConnection || busy} onClick={() => void checkConnection()}>
+                    {checkingConnection ? "Checking…" : "Check connection"}
+                  </Button>
+                </div>
+              )}
+            </div>
           )}
           {message && (
             <p className="flex items-center gap-2 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm text-success-text dark:text-success">
@@ -593,9 +661,10 @@ export function ImportDatasetLayout(props: {
             <div>
               <h3 className="text-sm font-semibold">CSV file</h3>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                Columns: Serial No, Question, Expected Output, Response, Metadata — only Question
-                is required. Response is the answer to be scored, for evaluating responses you
-                already hold; Expected Output is what it is graded against.
+                Columns: Serial No, Question, Expected Output, Metadata. Only Question is required.
+                Metadata holds case labels and expected tool calls. For a live agent evaluation,
+                leave actual responses out; they are captured during the run. An optional Response
+                column is only for scoring answers you already hold.
               </p>
             </div>
             <Button
@@ -608,6 +677,15 @@ export function ImportDatasetLayout(props: {
               <Download className="mr-1.5 size-4" aria-hidden="true" />
               Template
             </Button>
+          </div>
+
+          <div className="mt-4 rounded-lg border bg-background p-3 text-sm">
+            <a href="/samples/nova-agent-golden.csv" download="nova-agent-golden.csv" className="font-medium text-primary underline underline-offset-4">
+              Download Nova agent sample (4 cases)
+            </a>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              Reviewed refund cases with expected answers and tool arguments. Import with a unique dataset name and product proofgrove-working-agents.
+            </p>
           </div>
 
           <label className="mt-5 flex min-h-48 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-background/70 px-6 py-8 text-center transition-colors hover:border-primary/50 hover:bg-background">
@@ -632,7 +710,7 @@ export function ImportDatasetLayout(props: {
         <Button type="button" variant="outline" onClick={props.onCancel} disabled={props.busy}>
           Cancel
         </Button>
-        <Button type="submit" disabled={props.busy}>
+        <Button type="submit" disabled={props.busy || !props.name.trim() || !props.file}>
           {props.busy && <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />}
           {props.busy ? "Working…" : "Import Draft"}
         </Button>
@@ -657,7 +735,11 @@ function GenerateDatasetLayout(props: {
   generationInstruction: string;
   model: string;
   setModel: (value: string) => void;
-  compassModels: LlmCatalogEntry[];
+  generationModels: LlmCatalogEntry[];
+  modelsLoading: boolean;
+  modelsError: string | null;
+  toolsError: string | null;
+  onRefreshModels: () => void;
   toolServers: ToolServer[];
   serverName: string;
   setServerName: (value: string) => void;
@@ -669,9 +751,7 @@ function GenerateDatasetLayout(props: {
 }) {
   const selectedMethod = METHOD_OPTIONS.find((option) => option.id === props.generationMethod);
   const methodLabel = selectedMethod?.label ?? "—";
-  const selectedCompassModel = props.compassModels.find(
-    (entry) => entry.model_id === props.model,
-  );
+  const selectedGenerationModel = findSelectedModel(props.generationModels, props.model);
   const promptPreview = props.generationInstruction
     ? props.generationInstruction.length > 72
       ? `${props.generationInstruction.slice(0, 72)}…`
@@ -704,7 +784,7 @@ function GenerateDatasetLayout(props: {
               <div>
                 <h3 className="text-sm font-semibold">{methodLabel} configuration</h3>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Define the synthetic golden set Proofgrove will generate with {methodLabel}.
+                  Define the draft evaluation cases Proofgrove will generate with {methodLabel}.
                 </p>
               </div>
 
@@ -754,6 +834,9 @@ function GenerateDatasetLayout(props: {
                     rows
                   </span>
                 </div>
+                <span className="block text-xs text-muted-foreground">
+                  Size sets the row count, even if your prompt mentions a different number.
+                </span>
               </Field>
 
               {props.generationMethod === "llms" ? (
@@ -763,21 +846,31 @@ function GenerateDatasetLayout(props: {
                     value={props.model}
                     onChange={(event) => props.setModel(event.target.value)}
                     required
+                    disabled={props.modelsLoading || Boolean(props.modelsError)}
                   >
                     <option value="">
-                      {props.compassModels.length
-                        ? "Select a generation model"
-                        : "No generation models available"}
+                      {props.modelsLoading ? "Loading generation models…"
+                        : props.modelsError ? "Model catalog unavailable"
+                        : props.generationModels.length ? "Select a generation model"
+                        : "No connected generation models"}
                     </option>
-                    {props.compassModels.map((entry) => (
-                      <option key={entry.model_id} value={entry.model_id}>
-                        {entry.name || entry.model_id}
+                    {props.generationModels.map((entry) => (
+                      <option key={modelSelectionId(entry)} value={modelSelectionId(entry)}>
+                        {entry.name || entry.model_id} · {entry.source === "openai" ? "OpenAI" : entry.source === "ollama" ? "Ollama" : "Platform"}
                       </option>
                     ))}
                   </select>
+                  {props.modelsError ? <span role="alert" className="block text-xs text-red-600">{props.modelsError}</span> : null}
+                  {!props.modelsLoading && !props.modelsError && props.generationModels.length === 0 ? (
+                    <span className="block text-xs text-muted-foreground">Connect OpenAI or start Ollama in <a className="underline" href="/catalog/llms">Models</a>, then refresh.</span>
+                  ) : null}
+                  <Button type="button" variant="outline" size="sm" disabled={props.modelsLoading} onClick={props.onRefreshModels}>Refresh models</Button>
                 </Field>
               ) : null}
 
+              {props.generationMethod === "tools" && props.toolsError ? (
+                <p role="alert" className="text-xs text-red-600">{props.toolsError}</p>
+              ) : null}
               {props.generationMethod === "tools" ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   <Field label="Grounding MCP server">
@@ -821,8 +914,8 @@ function GenerateDatasetLayout(props: {
                 />
               </Field>
               <p className="text-xs text-muted-foreground">
-                Provide one prompt or instruction. Proofgrove will generate exactly{" "}
-                <span className="font-medium text-foreground">{props.maxRows}</span> CSV records
+                Provide one prompt or instruction. Proofgrove will request{" "}
+                <span className="font-medium text-foreground">{props.maxRows}</span> synthetic records
                 (Serial No, Question, Expected Output, Risk)
                 {props.generationMethod === "llms"
                   ? " with the selected generation model."
@@ -848,7 +941,7 @@ function GenerateDatasetLayout(props: {
                   {props.generationMethod === "llms" ? (
                     <SummaryRow
                       label="Model"
-                      value={selectedCompassModel?.name || props.model.trim() || "—"}
+                      value={selectedGenerationModel?.name || props.model.trim() || "—"}
                     />
                   ) : (
                     <SummaryRow label="Model" value="Platform default" />
@@ -875,7 +968,7 @@ function GenerateDatasetLayout(props: {
             <Button type="button" variant="outline" onClick={props.onReset} disabled={props.busy}>
               Reset
             </Button>
-            <Button type="submit" disabled={props.busy}>
+            <Button type="submit" disabled={props.busy || (props.generationMethod === "llms" && (props.modelsLoading || Boolean(props.modelsError) || !selectedGenerationModel))}>
               {props.busy && <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />}
               {props.busy ? "Generating…" : "Generate Dataset"}
             </Button>

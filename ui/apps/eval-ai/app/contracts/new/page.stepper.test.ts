@@ -8,8 +8,8 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: React.ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 vi.mock("@/lib/api", () => ({

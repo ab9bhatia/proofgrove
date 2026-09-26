@@ -12,7 +12,7 @@ import { ContractProfilesPanel, type CatalogueLoadState } from "@/components/con
 import { ContractProjectsPanel } from "@/components/contract-projects-panel";
 import { ContractSectionFeedback, type ContractSectionFeedbackMessage } from "@/components/contract-section-feedback";
 import { ContractTargetsPanel } from "@/components/contract-targets-panel";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { ErrorState, LoadingState } from "@/components/page-state";
 import { Chip } from "@/components/status-badge";
 import { PageHeader } from "@/components/page-header";
@@ -143,9 +143,9 @@ export function contractSectionReadiness(state: {
 
 export default function QualityContractsPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <QualityContractsRouter />
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 
@@ -848,7 +848,7 @@ function QualityContractsWorkspace() {
         purpose: assignmentPurpose.trim() || undefined,
         owner: assignmentOwner.trim() || undefined,
         change_note: assignmentChangeNote.trim() || undefined,
-        created_by: "eval-hub-ui",
+        created_by: "proofgrove-ui",
       });
       setSavedAssignment(assignment);
       const manifest = assignment.resolved_run_manifest ?? await platformApi.getManifest(assignment.run_manifest_id, tenantId);

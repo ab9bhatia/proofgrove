@@ -6,7 +6,7 @@ import asyncio
 import pytest
 from fastapi.testclient import TestClient
 
-from evalhub.main import _drain_workers, _log_worker_exit, app
+from proofgrove.main import _drain_workers, _log_worker_exit, app
 
 
 def test_readiness_reports_a_stopped_background_worker() -> None:

@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import (
+from proofgrove.db.models import (
     Base,
     CapturedSpanIndexORM,
     CapturedTraceIndexORM,
@@ -27,12 +27,12 @@ from evalhub.db.models import (
     ExperimentORM,
     TargetProjectBindingORM,
 )
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
-from evalhub.platform.payloads import TRUNCATION_MARKER
-from evalhub.settings import settings
-from evalhub.tracing.index_worker import run_trace_index_tick
-from evalhub.tracing.models import (
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
+from proofgrove.platform.payloads import TRUNCATION_MARKER
+from proofgrove.settings import settings
+from proofgrove.tracing.index_worker import run_trace_index_tick
+from proofgrove.tracing.models import (
     SPAN_INDEX_REV,
     SPAN_PREVIEW_MAX_CHARS,
     TraceLifecycleState,
@@ -843,7 +843,7 @@ def test_token_counts_are_read_only_from_whole_non_negative_numbers(recorded, ex
 
 def test_a_preview_never_exceeds_its_bound_even_below_the_marker_length(monkeypatch):
     """The bound is the promise; the truncation marker does not get to break it."""
-    monkeypatch.setattr("evalhub.tracing.models.SPAN_PREVIEW_MAX_CHARS", 4)
+    monkeypatch.setattr("proofgrove.tracing.models.SPAN_PREVIEW_MAX_CHARS", 4)
     span = _span(
         "trace",
         "s",

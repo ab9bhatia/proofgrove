@@ -1,9 +1,9 @@
 """Tests for root-cause diagnosis."""
 
-from evalhub.evaluation.enums import GateResult
-from evalhub.evaluation.metrics import METRIC_CATALOG
-from evalhub.evaluation.models import MetricResult
-from evalhub.evaluation.rca import REMEDIATION_MAP, _metric_label, diagnose_root_cause
+from proofgrove.evaluation.enums import GateResult
+from proofgrove.evaluation.metrics import METRIC_CATALOG
+from proofgrove.evaluation.models import MetricResult
+from proofgrove.evaluation.rca import REMEDIATION_MAP, _metric_label, diagnose_root_cause
 
 
 def _metric_result(metric_id: str, row_id: str, gate: GateResult) -> MetricResult:

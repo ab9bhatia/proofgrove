@@ -2,9 +2,9 @@
 
 import pytest
 
-from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-from evalhub.evaluation.engine import EvaluationEngine, _row_defect_rate
-from evalhub.evaluation.enums import (
+from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+from proofgrove.evaluation.engine import EvaluationEngine, _row_defect_rate
+from proofgrove.evaluation.enums import (
     CoverageLabel,
     GateResult,
     MetricApplicability,
@@ -17,11 +17,11 @@ from evalhub.evaluation.enums import (
     UnscoredReason,
     VerdictStatus,
 )
-from evalhub.evaluation.judge import MockJudge, set_row_overrides
-from evalhub.evaluation.kpis import KPI_CATALOG
-from evalhub.evaluation.lineage import build_lineage, compute_comparison_basis_hash
-from evalhub.evaluation.llm_judge import JudgeResult
-from evalhub.evaluation.models import (
+from proofgrove.evaluation.judge import MockJudge, set_row_overrides
+from proofgrove.evaluation.kpis import KPI_CATALOG
+from proofgrove.evaluation.lineage import build_lineage, compute_comparison_basis_hash
+from proofgrove.evaluation.llm_judge import JudgeResult
+from proofgrove.evaluation.models import (
     EvaluationRow,
     EvaluatorConfig,
     ExperimentDefinition,
@@ -29,14 +29,14 @@ from evalhub.evaluation.models import (
     RunLineage,
     ToolCall,
 )
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.platform.contracts import (
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.platform.contracts import (
     ResolvedKpiComposition,
     ResolvedMetricRequirement,
     ResolvedRunManifest,
     TargetType,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 
 def test_duplicate_example_ids_are_rejected_before_scoring():
@@ -1137,12 +1137,12 @@ def test_metric_subject_identity(not_applicable):
 @pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize("zero_tolerance", [False, True])
 def test_span_results_do_not_change_case_calculations(monkeypatch, span_status, legacy, zero_tolerance):
-    import evalhub.evaluation.engine as engine_module
+    import proofgrove.evaluation.engine as engine_module
 
     engine = EvaluationEngine(judge=_ScoredTestJudge())
     rows = get_sample_rows("exp-llm-core-v1")[:1]
     rows[0].span_id = "execution-link"
-    monkeypatch.setattr("evalhub.evaluation.judge.ROW_SCORE_OVERRIDES", {rows[0].row_id: {"llm.relevance": 5.0, "llm.coherence": 5.0}})
+    monkeypatch.setattr("proofgrove.evaluation.judge.ROW_SCORE_OVERRIDES", {rows[0].row_id: {"llm.relevance": 5.0, "llm.coherence": 5.0}})
     monkeypatch.setitem(KPI_CATALOG, "kpi.response_quality", KPI_CATALOG["kpi.response_quality"].model_copy(update={"zero_tolerance": zero_tolerance}))
     manifest = _two_metric_manifest()
     manifest.hard_blocker_metric_ids = ["llm.relevance"]

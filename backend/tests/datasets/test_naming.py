@@ -1,6 +1,6 @@
 """Version stamping must not say the version twice."""
 
-from evalhub.datasets.naming import dataset_version_label
+from proofgrove.datasets.naming import dataset_version_label
 
 
 def test_a_name_already_carrying_this_version_is_left_alone():

@@ -15,10 +15,10 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 from fastapi.testclient import TestClient
-from evalhub.api.dependencies import get_evaluation_engine
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.models import EvaluationRow, ExperimentDefinition
+from proofgrove.api.dependencies import get_evaluation_engine
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.models import EvaluationRow, ExperimentDefinition
 from seed_demo import METRICS, SLUG, TENANT, app, request
 
 ROOT = Path(__file__).resolve().parents[1]

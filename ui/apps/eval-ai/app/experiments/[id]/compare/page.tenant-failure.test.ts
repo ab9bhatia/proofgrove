@@ -30,8 +30,8 @@ vi.mock("@/lib/api", () => ({
 }));
 
 // The gate probes `/api/status`; readiness is covered by its own tests.
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: React.ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // A stable params instance, exactly as the router hands out: a fresh object per

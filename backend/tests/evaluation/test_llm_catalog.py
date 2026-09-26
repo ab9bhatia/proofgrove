@@ -8,8 +8,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pydantic import SecretStr
 
-from evalhub.api.v1 import llms as llm_routes
-from evalhub.evaluation.llm_catalog import (
+from proofgrove.api.v1 import llms as llm_routes
+from proofgrove.evaluation.llm_catalog import (
     CustomLlmOnboardRequest,
     LlmCatalogEntry,
     compass_catalog_entries,
@@ -17,9 +17,9 @@ from evalhub.evaluation.llm_catalog import (
     merge_catalog,
     validate_custom_llm_endpoint,
 )
-from evalhub.platform.contracts import TargetType, TargetVersion
-from evalhub.platform.url_guard import AgentCatalogError
-from evalhub.settings import settings
+from proofgrove.platform.contracts import TargetType, TargetVersion
+from proofgrove.platform.url_guard import AgentCatalogError
+from proofgrove.settings import settings
 
 
 def test_merge_catalog_prefers_custom_over_compass():
@@ -101,7 +101,7 @@ def test_onboard_custom_llm_persists_with_custom_source(client, monkeypatch):
     async def _resolve(host, port):
         return [ipaddress.ip_address("93.184.216.34")]
 
-    from evalhub.evaluation.target import catalog as target_catalog
+    from proofgrove.evaluation.target import catalog as target_catalog
 
     monkeypatch.setattr(target_catalog, "resolve_endpoint_addresses", _resolve)
     monkeypatch.setattr(settings, "openai_api_key", SecretStr("test-key"))
@@ -180,8 +180,8 @@ async def test_validate_custom_llm_endpoint_accepts_a_public_endpoint():
         return [ipaddress.ip_address("93.184.216.34")]
 
     request = CustomLlmOnboardRequest(model_id="my-model", endpoint="https://api.example.com/v1")
-    with patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", dns):
-        validated = await validate_custom_llm_endpoint(request, "eval-hub")
+    with patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", dns):
+        validated = await validate_custom_llm_endpoint(request, "proofgrove")
     assert validated.endpoint == "https://api.example.com/v1"
 
 
@@ -191,17 +191,17 @@ async def test_validate_custom_llm_endpoint_rejects_a_hostname_resolving_to_meta
         return [ipaddress.ip_address("169.254.169.254")]
 
     request = CustomLlmOnboardRequest(model_id="my-model", endpoint="https://sneaky.example.com/v1")
-    with patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", dns):
+    with patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", dns):
         with pytest.raises(AgentCatalogError, match="private or local"):
-            await validate_custom_llm_endpoint(request, "eval-hub")
+            await validate_custom_llm_endpoint(request, "proofgrove")
 
 
 @pytest.mark.asyncio
 async def test_validate_custom_llm_endpoint_rejects_a_loopback_literal():
     request = CustomLlmOnboardRequest(model_id="my-model", endpoint="http://127.0.0.1:8000/v1")
-    with patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses") as dns:
+    with patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses") as dns:
         with pytest.raises(AgentCatalogError):
-            await validate_custom_llm_endpoint(request, "eval-hub")
+            await validate_custom_llm_endpoint(request, "proofgrove")
     dns.assert_not_called()
 
 
@@ -221,13 +221,13 @@ def test_gateway_listing_failure_is_logged_by_type_only(client, monkeypatch, cap
     with (
         patch.object(llm_routes, "OpenAI") as openai_cls,
         patch.object(llm_routes, "run_in_threadpool", side_effect=immediate),
-        caplog.at_level(logging.WARNING, logger="evalhub"),
+        caplog.at_level(logging.WARNING, logger="proofgrove"),
     ):
         openai_cls.return_value.models.list.side_effect = RuntimeError("401 at http://ai-gateway.example/v1/models key=sk-sentinel-fragment")
         response = client.get("/evaluation/llm-catalog", headers={"x-evalai-tenant": "llm-catalog-a"})
 
     assert response.status_code == 200
-    warnings = [record for record in caplog.records if record.name == "evalhub.api.v1.llms"]
+    warnings = [record for record in caplog.records if record.name == "proofgrove.api.v1.llms"]
     assert warnings and warnings[0].error_type == "RuntimeError"
     for record in warnings:
         assert "sk-sentinel-fragment" not in str(vars(record))
@@ -243,7 +243,7 @@ def test_catalog_returns_newest_endpoint_for_same_model(client, monkeypatch):
     async def compass():
         return ["shared-model"], False
 
-    monkeypatch.setattr("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", resolve)
+    monkeypatch.setattr("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", resolve)
     monkeypatch.setattr(llm_routes, "_list_compass_models", compass)
     headers = {"x-evalai-tenant": "llm-catalog-newest"}
     registrations = []

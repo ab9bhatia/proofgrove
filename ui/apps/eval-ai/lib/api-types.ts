@@ -173,6 +173,7 @@ export interface GenerateRequest {
   agent?: string | null;
   product_id?: string;
   model?: string | null;
+  model_endpoint?: string | null;
   generation_method?: "llms" | "tools" | "agents" | null;
 }
 
@@ -189,6 +190,12 @@ export interface AgentSummary {
   revision: string;
   tools: string[];
   grounding_url: string | null;
+  /** Local workflow catalog metadata. Availability remains server-owned. */
+  execution_mode?: string;
+  recommended_dataset_id?: string;
+  recommended_metric_ids?: string[];
+  example_query?: string;
+  availability_message?: string;
   /** Active tenant system Project bound to this logical agent target, when configured. */
   system_project_id?: string | null;
 }

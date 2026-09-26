@@ -1,7 +1,7 @@
 """Projects -> captured tracing contract tests."""
 
-import evalhub.api.v1.evaluation as evaluation_module
-from evalhub.evaluation.models import RunItemTraceEvidence
+import proofgrove.api.v1.evaluation as evaluation_module
+from proofgrove.evaluation.models import RunItemTraceEvidence
 from tests.tracing._helpers import create_project as _create_project_base
 from tests.tracing._helpers import run_with_captured_row as _run_with_captured_row_base
 

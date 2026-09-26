@@ -5,12 +5,12 @@ from uuid import uuid4
 import pytest
 from fastapi import HTTPException, Request
 
-from evalhub.platform.authz import (
+from proofgrove.platform.authz import (
     enforce_tenant,
     namespace_for_tenant,
     tenants_match,
 )
-from evalhub.settings import settings
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 
@@ -71,7 +71,7 @@ def test_middleware_refuses_a_tenant_id_that_is_not_the_callers(client, monkeypa
     """Governance lists authorize the caller and query the same tenant."""
     from unittest.mock import AsyncMock
 
-    from evalhub.platform import authz
+    from proofgrove.platform import authz
 
     monkeypatch.setattr(settings, "platform_auth_required", True)
     monkeypatch.setattr(authz, "check_permission", AsyncMock(return_value=True))
@@ -91,7 +91,7 @@ def test_middleware_fails_closed_when_a_route_never_checks_a_tenant(monkeypatch)
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from evalhub.platform import authz
+    from proofgrove.platform import authz
 
     monkeypatch.setattr(settings, "platform_auth_required", True)
     monkeypatch.setattr(authz, "check_permission", AsyncMock(return_value=True))
@@ -119,8 +119,8 @@ def test_middleware_lets_declared_no_tenant_routes_through(client, monkeypatch):
     """
     from unittest.mock import AsyncMock
 
-    from evalhub.api.v1 import agents as agents_api
-    from evalhub.platform import authz
+    from proofgrove.api.v1 import agents as agents_api
+    from proofgrove.platform import authz
 
     monkeypatch.setattr(settings, "platform_auth_required", True)
     monkeypatch.setattr(authz, "check_permission", AsyncMock(return_value=True))
@@ -304,7 +304,7 @@ def test_regression_replay_refuses_a_foreign_source_before_execution(monkeypatch
 
     import pytest
 
-    from evalhub.api.v1.platform import ReplayRequest, replay_regression
+    from proofgrove.api.v1.platform import ReplayRequest, replay_regression
 
     monkeypatch.setattr(settings, "platform_auth_required", False)
     request = Request({"type": "http", "headers": [(b"x-evalai-tenant", b"tenant-own")]})
@@ -339,10 +339,10 @@ def test_governance_read_routes_authorize_and_scope_queries(monkeypatch, path, m
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from evalhub.api.dependencies import get_evaluation_store
-    from evalhub.api.v1.platform import router
-    from evalhub.db.store import EvaluationStore
-    from evalhub.platform import authz
+    from proofgrove.api.dependencies import get_evaluation_store
+    from proofgrove.api.v1.platform import router
+    from proofgrove.db.store import EvaluationStore
+    from proofgrove.platform import authz
 
     monkeypatch.setattr(settings, "platform_auth_required", True)
     monkeypatch.setattr(authz, "check_permission", AsyncMock(return_value=True))

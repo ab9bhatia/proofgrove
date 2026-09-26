@@ -4,7 +4,7 @@ import httpx
 import pytest
 import respx
 
-from evalhub.evaluation.target.discovery import (
+from proofgrove.evaluation.target.discovery import (
     list_tenant_agents,
     list_tenant_tool_servers,
 )

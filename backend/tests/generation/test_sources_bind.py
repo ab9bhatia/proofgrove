@@ -2,7 +2,7 @@
 
 import pytest
 
-from evalhub.generation.sources import bind_tool_arguments
+from proofgrove.generation.sources import bind_tool_arguments
 
 
 def test_prefers_query_when_present():
@@ -72,7 +72,7 @@ async def test_grounding_fetch_enforces_configured_deadline(monkeypatch):
     import mcp.client.streamable_http
     import pytest
 
-    from evalhub.generation.sources import McpToolGroundingSource
+    from proofgrove.generation.sources import McpToolGroundingSource
 
     @asynccontextmanager
     async def transport(*args, **kwargs):
@@ -95,8 +95,8 @@ async def test_grounding_fetch_enforces_configured_deadline(monkeypatch):
     monkeypatch.setattr(mcp, "ClientSession", StalledSession)
     # The grounding URL is a literal address here so the connect-time
     # resolve+pin step has nothing to look up.
-    from evalhub.evaluation.target import discovery
-    from evalhub.evaluation.target.discovery import ToolServerSummary
+    from proofgrove.evaluation.target import discovery
+    from proofgrove.evaluation.target.discovery import ToolServerSummary
 
     async def catalogued(**kwargs):  # noqa: ARG001 — the pair is in the tenant catalog
         return [ToolServerSummary(name="mcp", namespace="tenant-test", url="http://93.184.216.34/mcp", tools=["search"])]

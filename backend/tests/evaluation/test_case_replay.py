@@ -14,12 +14,12 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_evaluation_store
-from evalhub.evaluation.lineage import hash_system_prompt
-from evalhub.evaluation.models import CaseReplay, EvidencePolicy, RunItemDetail, RunItemExecution
-from evalhub.evaluation.target.llm_runner import LlmInvocationError, LlmTargetOutput
-from evalhub.main import app
-from evalhub.platform.prompts import PromptVersion
+from proofgrove.api.dependencies import get_evaluation_store
+from proofgrove.evaluation.lineage import hash_system_prompt
+from proofgrove.evaluation.models import CaseReplay, EvidencePolicy, RunItemDetail, RunItemExecution
+from proofgrove.evaluation.target.llm_runner import LlmInvocationError, LlmTargetOutput
+from proofgrove.main import app
+from proofgrove.platform.prompts import PromptVersion
 
 OWNER = "tenant-owner"
 
@@ -134,7 +134,7 @@ def llm_ok(monkeypatch: pytest.MonkeyPatch) -> AsyncMock:
         completion_tokens=40,
     )
     stub = AsyncMock(return_value=out)
-    monkeypatch.setattr("evalhub.api.v1.evaluation.run_llm_target", stub)
+    monkeypatch.setattr("proofgrove.api.v1.evaluation.run_llm_target", stub)
     return stub
 
 
@@ -192,7 +192,7 @@ class TestReplayRefusals:
 
     async def test_unresolvable_endpoint_is_refused(self, client, mock_store, monkeypatch) -> None:
         mock_store.get_run_job.return_value = _job(params={"target_model": "gpt-4.1-mini"})
-        monkeypatch.setattr("evalhub.api.v1.evaluation.settings.openai_base_url", "")
+        monkeypatch.setattr("proofgrove.api.v1.evaluation.settings.openai_base_url", "")
         resp = await _post(client, {"system_prompt": "x"})
         assert resp.json()["detail"]["code"] == "replay_endpoint_unresolvable"
 
@@ -272,7 +272,7 @@ class TestReplayInvocation:
 
     async def test_failed_invocation_is_persisted_and_returned(self, client, mock_store, monkeypatch) -> None:
         monkeypatch.setattr(
-            "evalhub.api.v1.evaluation.run_llm_target",
+            "proofgrove.api.v1.evaluation.run_llm_target",
             AsyncMock(side_effect=LlmInvocationError("upstream 502")),
         )
         resp = await _post(client, {"system_prompt": "Answer tersely."})
@@ -351,8 +351,8 @@ class TestReplayPersistence:
     """Against the real EvaluationStore — the redaction and tenant claims."""
 
     async def test_create_redacts_and_list_is_tenant_scoped(self) -> None:
-        from evalhub.db.session import async_session
-        from evalhub.db.store import EvaluationStore
+        from proofgrove.db.session import async_session
+        from proofgrove.db.store import EvaluationStore
 
         async with async_session() as session:
             store = EvaluationStore(session)

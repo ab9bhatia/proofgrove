@@ -1,7 +1,7 @@
 """Payload-size and persistence-redaction controls."""
 
-from evalhub.platform.payloads import redact_artifact_content, redact_for_persistence
-from evalhub.settings import settings
+from proofgrove.platform.payloads import redact_artifact_content, redact_for_persistence
+from proofgrove.settings import settings
 
 
 def test_redaction_masks_credentials_email_and_bounds_text():

@@ -1,7 +1,7 @@
 """Judge prompt construction -- dataset text must not impersonate prompt structure."""
 
-from evalhub.evaluation import prompts
-from evalhub.evaluation.prompts import build_judge_messages
+from proofgrove.evaluation import prompts
+from proofgrove.evaluation.prompts import build_judge_messages
 
 
 def test_fenced_wraps_text_between_matching_fence_lines():

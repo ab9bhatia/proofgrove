@@ -7,9 +7,9 @@ fabricated zero. A metric only gates when an approved Quality Contract
 explicitly elevates it to ``required``.
 """
 
-from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import (
+from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import (
     GateResult,
     MetricRequirement,
     MetricRequirementSource,
@@ -17,15 +17,15 @@ from evalhub.evaluation.enums import (
     UnscoredReason,
     VerdictStatus,
 )
-from evalhub.evaluation.judge import MockJudge, set_row_overrides
-from evalhub.evaluation.models import EvaluationRow, MetricResult
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS
-from evalhub.platform.contracts import (
+from proofgrove.evaluation.judge import MockJudge, set_row_overrides
+from proofgrove.evaluation.models import EvaluationRow, MetricResult
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS
+from proofgrove.platform.contracts import (
     ResolvedKpiComposition,
     ResolvedMetricRequirement,
     ResolvedScoringConfiguration,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 LLM_CORE = SAMPLE_EXPERIMENTS[0]
 
@@ -262,8 +262,8 @@ def test_token_efficiency_with_token_telemetry_is_scored():
 def test_explicitly_selected_ops_metric_resolves_optional():
     # Resolver path (not just the engine fallback): an ad-hoc explicitly selected
     # ops metric is OPTIONAL/non-gating unless a contract elevates it.
-    from evalhub.evaluation.enums import EvaluationScope, MetricRequirement, Scenario
-    from evalhub.platform.resolver import resolve_scoring_configuration
+    from proofgrove.evaluation.enums import EvaluationScope, MetricRequirement, Scenario
+    from proofgrove.platform.resolver import resolve_scoring_configuration
 
     config = resolve_scoring_configuration(
         metric_ids=["ops.latency", "llm.relevance"],
@@ -287,7 +287,7 @@ def test_operational_metrics_have_no_invented_scale():
     agent failed latency on every case forever. Both were constants dressed as
     findings.
     """
-    from evalhub.evaluation.normalization import normalise_operational
+    from proofgrove.evaluation.normalization import normalise_operational
 
     for seconds in (0.5, 4.9, 9.1, 15.0, 120.0):
         assert normalise_operational(seconds, "ops.latency") is None
@@ -339,7 +339,7 @@ def test_a_diagnostic_metric_raises_no_finding_even_with_a_real_threshold():
     so it must not put a case in front of a reviewer as a CRITICAL finding while
     the run report labels that same metric "does not gate".
     """
-    from evalhub.evaluation.rca import metric_result_failed
+    from proofgrove.evaluation.rca import metric_result_failed
 
     def result(requirement: MetricRequirement, threshold: GateResult | None) -> MetricResult:
         # The model requires a complete verdict or none at all, so the no-verdict

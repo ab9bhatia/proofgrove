@@ -4,8 +4,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: React.ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const query = vi.hoisted(() => ({ value: "" }));

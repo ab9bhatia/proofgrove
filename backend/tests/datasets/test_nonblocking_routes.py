@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.main import app
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.main import app
 
 
 async def test_dataset_list_authorization_and_records_run_off_loop():
@@ -37,8 +37,8 @@ async def test_dataset_list_authorization_and_records_run_off_loop():
 
 
 async def test_generation_persistence_runs_off_loop(monkeypatch):
-    from evalhub.datasets import generation_service
-    from evalhub.datasets.models import DatasetRecord
+    from proofgrove.datasets import generation_service
+    from proofgrove.datasets.models import DatasetRecord
 
     loop_thread = threading.get_ident()
     calls = []

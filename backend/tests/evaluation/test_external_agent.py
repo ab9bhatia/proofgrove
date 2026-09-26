@@ -9,19 +9,19 @@ import httpx
 import pytest
 import respx
 
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
-from evalhub.evaluation.readiness import assess_evidence_readiness
-from evalhub.evaluation.run_service import execute_dataset_run
-from evalhub.evaluation.target import catalog
-from evalhub.evaluation.target.agent_runner import run_agent_target
-from evalhub.evaluation.target.external import credential_headers, invocation_endpoint, resolve_external_target
-from evalhub.platform.contracts import EvaluationProject, TargetType, TargetVersion
-from evalhub.settings import Settings
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
+from proofgrove.evaluation.readiness import assess_evidence_readiness
+from proofgrove.evaluation.run_service import execute_dataset_run
+from proofgrove.evaluation.target import catalog
+from proofgrove.evaluation.target.agent_runner import run_agent_target
+from proofgrove.evaluation.target.external import credential_headers, invocation_endpoint, resolve_external_target
+from proofgrove.platform.contracts import EvaluationProject, TargetType, TargetVersion
+from proofgrove.settings import Settings
 
 
 def _target(tenant="tenant-external"):
@@ -99,7 +99,7 @@ async def test_external_agent_catalog_readiness_and_real_a2a_transport(monkeypat
 
     # Exercise the framework through persistence, with an archived tool result
     # arriving on the exact trace created by the real external A2A transport.
-    from evalhub.evaluation import run_service, trace_hydrator
+    from proofgrove.evaluation import run_service, trace_hydrator
 
     cfg.trace_archive_completion_settle_seconds = 0
     cfg.trace_archive_completion_min_identical_observations = 1
@@ -123,7 +123,7 @@ async def test_external_agent_catalog_readiness_and_real_a2a_transport(monkeypat
 
     monkeypatch.setattr(trace_hydrator, "TraceArchiveReader", lambda _: Archive())
     registry = SimpleNamespace(
-        get_dataset=lambda _, tenant_id=None: SimpleNamespace(version_number=1, product_id="eval-hub", tenant_id="tenant-external", status="PUBLISHED"),
+        get_dataset=lambda _, tenant_id=None: SimpleNamespace(version_number=1, product_id="proofgrove", tenant_id="tenant-external", status="PUBLISHED"),
         get_records=lambda _, tenant_id=None: [{"dataset_record_id": "math-row", "inputs": {"query": "12 times 7"}, "expectations": {"expected_output": "84"}}],
     )
     async with async_session() as session:
@@ -236,7 +236,7 @@ async def test_agent_card_fetch_failure_log_omits_url_and_exception_text(monkeyp
     respx.get("https://93.184.216.34/a2a/.well-known/agent.json").mock(
         side_effect=httpx.ConnectError(secret_detail)
     )
-    with caplog.at_level(logging.WARNING, logger="evalhub.evaluation.target.catalog"):
+    with caplog.at_level(logging.WARNING, logger="proofgrove.evaluation.target.catalog"):
         with pytest.raises(catalog.AgentCatalogError, match="Could not connect"):
             await catalog.test_agent_connectivity(
                 "https://agent.example/a2a", tenant_namespace="tenant-catalog-test"

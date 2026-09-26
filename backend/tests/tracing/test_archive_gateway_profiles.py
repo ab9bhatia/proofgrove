@@ -6,9 +6,9 @@ from unittest.mock import Mock
 import pytest
 from azure.storage.blob import BlobPrefix
 
-from evalhub.evaluation.trace_archive import AzureBlobS3Adapter
-from evalhub.settings import Settings
-from evalhub.tracing.archive_gateway import TraceArchiveGateway
+from proofgrove.evaluation.trace_archive import AzureBlobS3Adapter
+from proofgrove.settings import Settings
+from proofgrove.tracing.archive_gateway import TraceArchiveGateway
 
 
 @pytest.mark.parametrize("auth_mode", ["accessKey", "workloadIdentity"])
@@ -17,8 +17,8 @@ def test_discovery_reuses_the_profile_selected_by_reader(monkeypatch, auth_mode)
     client.list_objects_v2.return_value = {"CommonPrefixes": []}
     azure = Mock(return_value=client)
     s3 = Mock(return_value=client)
-    monkeypatch.setattr("evalhub.evaluation.trace_archive.AzureBlobS3Adapter", azure)
-    monkeypatch.setattr("evalhub.evaluation.trace_archive.boto3.client", s3)
+    monkeypatch.setattr("proofgrove.evaluation.trace_archive.AzureBlobS3Adapter", azure)
+    monkeypatch.setattr("proofgrove.evaluation.trace_archive.boto3.client", s3)
     gateway = TraceArchiveGateway(Settings(app_env="test", trace_archive_auth_mode=auth_mode))
     assert gateway._list_sync("tenant-a", 10) == []
     assert gateway.reader.client is client

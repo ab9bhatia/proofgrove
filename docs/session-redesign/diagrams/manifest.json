@@ -1,6 +1,6 @@
 {
   "generator": "Official @excalidraw/excalidraw 0.18.0 convertToExcalidrawElements + exportToSvg",
-  "story": "Nova retail operations; authored fixture outcomes only; no refund executed",
+  "story": "Generic evaluation concepts and Nova retail examples; authored tool outcomes only; no refund executed",
   "generatedAt": "2026-09-24",
   "drawings": [
     {
@@ -110,6 +110,45 @@
         }
       ],
       "teachingExtension": "Black-box/white-box evidence lenses and their independent offline/online applicability are a Proofgrove teaching extension."
+    },
+    {
+      "name": "11-evaluation-basics",
+      "elements": 27,
+      "editableArrows": 0,
+      "width": 1230,
+      "height": 810,
+      "minimumFontSize": 22,
+      "numbering": "01 the task, 02 the response, 03 check each expectation. Assess correctness and format separately.",
+      "sources": [
+        {
+          "title": "Demystifying evals for AI agents",
+          "publisher": "Anthropic",
+          "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+          "accessed": "2026-09-25"
+        }
+      ],
+      "teachingExtension": "Original deadline example informed by the task / outcome / grading distinction. No source artwork copied; the shown response is an authored teaching example."
+    },
+    {
+      "name": "12-evaluation-questions",
+      "elements": 36,
+      "editableArrows": 7,
+      "width": 1230,
+      "height": 765,
+      "minimumFontSize": 22,
+      "numbering": "Eight numbered engineering components, with italic explanatory questions below each box.",
+      "captionStyle": "SVG/PNG captions use italic text. Editable source retains caption intent in customData; native Excalidraw text does not expose italic styling.",
+      "title": "Evaluation Lego Blocks"
+    },
+    {
+      "name": "13-test-combinations",
+      "elements": 54,
+      "editableArrows": 8,
+      "width": 1230,
+      "height": 740,
+      "minimumFontSize": 22,
+      "numbering": "Two independent axes; each of four combinations has a three-step data flow."
     }
-  ]
+  ],
+  "updatedAt": "2026-09-25"
 }

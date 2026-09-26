@@ -274,7 +274,7 @@ def test_two_tenants_can_own_the_same_assignment_identity(client):
                 "metric_ids": ["agent.task_adherence", "safety.general"],
                 "evidence_requirements": ["input", "final_output"],
                 "hard_blocker_metric_ids": ["safety.general"],
-                "approver_roles": ["eval-hub-approver"],
+                "approver_roles": ["proofgrove-approver"],
             },
         )
         assert profile.status_code == 201, profile.text
@@ -286,7 +286,7 @@ def test_two_tenants_can_own_the_same_assignment_identity(client):
                 "tenant_id": tenant,
                 "name": f"{tenant} gate",
                 "required_evidence": ["tool_calls"],
-                "required_approver_roles": ["eval-hub-approver"],
+                "required_approver_roles": ["proofgrove-approver"],
             },
         )
         assert gate.status_code == 201, gate.text

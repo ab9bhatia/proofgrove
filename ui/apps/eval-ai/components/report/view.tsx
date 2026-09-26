@@ -218,7 +218,7 @@ export function resolveDeepLinkedCase(
   return { status: "not_found" };
 }
 
-/** InEval-aligned evaluation run report using eval-hub run evidence. */
+/** InEval-aligned evaluation run report using proofgrove run evidence. */
 export function ReportView({
   run,
   embedded = false,
@@ -783,6 +783,13 @@ export function ReportView({
                 <HeaderProvenanceFact label="Quality contract" value="Attached" />
               ) : null}
             </dl>
+            {run.metric_results.some((result) => result.metric_id.startsWith("agent.tool_")) && run.metric_results.every((result) =>
+              result.metric_id.startsWith("ops.") || ["agent.tool_call_accuracy", "agent.tool_selection", "agent.tool_input_accuracy"].includes(result.metric_id),
+            ) ? (
+              <p className="mt-3 text-sm text-muted-foreground">
+                These checks assess tool choice and arguments. A pass does not establish that the final answer is correct; compare each response with its expected answer below.
+              </p>
+            ) : null}
           </div>
           <div className="flex min-w-0 flex-wrap items-center gap-2 border-t pt-4">
             <div className="flex w-full flex-col gap-2 sm:contents">

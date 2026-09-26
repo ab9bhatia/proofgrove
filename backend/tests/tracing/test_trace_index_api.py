@@ -13,12 +13,12 @@ from datetime import UTC, datetime
 import pytest
 from fastapi.testclient import TestClient
 
-import evalhub.api.dependencies as api_dependencies
-import evalhub.main as main_module
-from evalhub.db.session import async_session_factory
-from evalhub.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
-from evalhub.settings import settings
-from evalhub.tracing.index_worker import run_trace_index_tick
+import proofgrove.api.dependencies as api_dependencies
+import proofgrove.main as main_module
+from proofgrove.db.session import async_session_factory
+from proofgrove.evaluation.models import ArchivedTraceSpan, RunItemTraceEvidence
+from proofgrove.settings import settings
+from proofgrove.tracing.index_worker import run_trace_index_tick
 from tests.tracing import _helpers as tracing_helpers
 
 TENANT = "tenant-index-api"
@@ -27,7 +27,7 @@ NOW = datetime(2026, 8, 23, 12, 0, 0, tzinfo=UTC)
 
 @pytest.fixture
 def client(tmp_path, monkeypatch):
-    monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{tmp_path}/eval-hub-index.db")
+    monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{tmp_path}/proofgrove-index.db")
     # `main` and `api.dependencies` bind the session factory at import time (to
     # the shared in-memory URL); rebind them to the per-test file database so
     # the app (portal loop) and the worker tick (test loop) share state through
@@ -231,7 +231,7 @@ async def test_unassigned_pseudo_project_lists_non_evaluation_traces(client, mon
     assert item["run_id"] is None
     assert item["root_span_name"] == "cron.job"
 
-    from evalhub.api.v1 import tracing
+    from proofgrove.api.v1 import tracing
 
     monkeypatch.setattr(tracing, "TraceArchiveReader", lambda _: FakeGateway({"prod-orphan": _evidence("prod-orphan")}))
     detail_path = "/tracing/projects/unassigned/traces/prod-orphan"
@@ -448,7 +448,7 @@ async def test_spans_page_lists_model_work_and_omits_transport_spans(client, mon
 def test_span_scoring_preview_submission_and_retry(client, monkeypatch):
     from unittest.mock import AsyncMock
 
-    from evalhub.api.v1 import tracing
+    from proofgrove.api.v1 import tracing
 
     project_id = _create_project(client)
     trace_id = "trace-span-scoring"
@@ -484,8 +484,8 @@ async def test_span_scoring_posts_need_evidence_read_and_hiding_needs_review(cli
     job). Hiding a trace is evidence curation and maps to ``governance.review``."""
     from unittest.mock import AsyncMock
 
-    from evalhub.api.v1 import tracing
-    from evalhub.platform import authz
+    from proofgrove.api.v1 import tracing
+    from proofgrove.platform import authz
 
     monkeypatch.setattr(settings, "trace_archive_enabled", True)
     project_id = _create_project(client)
@@ -503,7 +503,7 @@ async def test_span_scoring_posts_need_evidence_read_and_hiding_needs_review(cli
     async def grant(request, permission):
         allowed = permission in granted
         if allowed:
-            request.state.eval_hub_permissions = {*getattr(request.state, "eval_hub_permissions", set()), permission}
+            request.state.proofgrove_permissions = {*getattr(request.state, "proofgrove_permissions", set()), permission}
         return allowed
 
     monkeypatch.setattr(settings, "platform_auth_required", True)

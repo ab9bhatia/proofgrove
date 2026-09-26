@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.main import _json_unhandled_handler, app
+from proofgrove.main import _json_unhandled_handler, app
 
 
 @pytest.mark.asyncio
@@ -36,7 +36,7 @@ async def test_unhandled_error_response_hides_the_exception_detail() -> None:
 
     @probe.get("/boom")
     async def _boom() -> None:
-        raise RuntimeError("postgresql://user:s3cret@db.internal/evalhub")
+        raise RuntimeError("postgresql://user:s3cret@db.internal/proofgrove")
 
     transport = ASGITransport(app=probe, raise_app_exceptions=False)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
@@ -102,7 +102,7 @@ def test_readiness_failure_log_names_exception_type_only(monkeypatch, caplog):
     sentinel-bearing exception instead: the assertion flips if the handler
     ever logs the exception message again (the pre-fix `%s: exc` shape).
     """
-    from evalhub.api import health as health_module
+    from proofgrove.api import health as health_module
 
     class _ExplodingSession:
         async def __aenter__(self):

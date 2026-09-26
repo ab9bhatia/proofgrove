@@ -1,6 +1,6 @@
-const STORAGE_KEY = "evalhub:run-form-memory";
-const DRAFT_STORAGE_KEY = "evalhub:run-form-drafts";
-const TENANT_KEY = "evalhub:run-form-tenant";
+const STORAGE_KEY = "proofgrove:run-form-memory";
+const DRAFT_STORAGE_KEY = "proofgrove:run-form-drafts";
+const TENANT_KEY = "proofgrove:run-form-tenant";
 
 /**
  * Version of the persisted payload shape. Bump it whenever the stored shape

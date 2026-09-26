@@ -5,7 +5,7 @@ import json
 import pytest
 import respx
 
-from evalhub.evaluation.target.sessions import fetch_session_tool_calls, parse_tool_calls_from_events
+from proofgrove.evaluation.target.sessions import fetch_session_tool_calls, parse_tool_calls_from_events
 
 
 def _event(parts: list[dict]) -> dict:
@@ -76,7 +76,7 @@ def test_parse_tolerates_malformed_events():
 @pytest.mark.parametrize("bad_field", [None, "id", "user_id", "agent_id", "missing_session", "missing_events"])
 @respx.mock
 async def test_session_lookup_checks_ownership_before_reading_events(bad_field):
-    session = {"id": "session-1", "user_id": "eval-hub:tenant-a:random", "agent_id": "tenant_a__NS__my_agent"}
+    session = {"id": "session-1", "user_id": "proofgrove:tenant-a:random", "agent_id": "tenant_a__NS__my_agent"}
     data = {"session": session, "events": [_event([{"function_call": {"name": "search", "args": {}}}])]}
     if bad_field in session:
         session[bad_field] = "foreign"
@@ -84,14 +84,14 @@ async def test_session_lookup_checks_ownership_before_reading_events(bad_field):
         data.pop("session")
     elif bad_field == "missing_events":
         data.pop("events")
-    route = respx.get("http://kagent/api/sessions/session-1", params={"user_id": "eval-hub:tenant-a:random"}).respond(200, json={"data": data})
-    args = dict(kagent_url="http://kagent", session_id="session-1", user_id="eval-hub:tenant-a:random", namespace="tenant-a", agent_name="my-agent")
+    route = respx.get("http://kagent/api/sessions/session-1", params={"user_id": "proofgrove:tenant-a:random"}).respond(200, json={"data": data})
+    args = dict(kagent_url="http://kagent", session_id="session-1", user_id="proofgrove:tenant-a:random", namespace="tenant-a", agent_name="my-agent")
     if bad_field:
         with pytest.raises(ValueError):
             await fetch_session_tool_calls(**args)
     else:
         assert [call.name for call in await fetch_session_tool_calls(**args)] == ["search"]
-    assert route.calls.last.request.headers["X-User-ID"] == "eval-hub:tenant-a:random"
+    assert route.calls.last.request.headers["X-User-ID"] == "proofgrove:tenant-a:random"
 
 
 @pytest.mark.asyncio

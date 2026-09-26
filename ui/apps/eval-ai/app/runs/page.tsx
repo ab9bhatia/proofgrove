@@ -5,7 +5,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@evalai/shared/ui/button";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { ExperimentsLibrary } from "@/components/experiments-library";
 import { PageHeader } from "@/components/page-header";
 import { LoadingState } from "@/components/page-state";
@@ -18,11 +18,11 @@ const POLL_MS = 2000;
 
 export default function RunsPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<LoadingState label="Loading runs…" className="min-h-[60vh] border-0" />}>
         <RunsList />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

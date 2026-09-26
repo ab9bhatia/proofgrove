@@ -7,7 +7,7 @@ import { Button } from "@evalai/shared/ui/button";
 import { cn } from "@evalai/shared/utils";
 import { api, type DatasetInfo } from "@/lib/api";
 import { userFacingError } from "@/lib/api-errors";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { DatasetActions } from "@/components/dataset-actions";
 import { DatasetLibrary } from "@/components/dataset-library";
 import { PageHeader } from "@/components/page-header";
@@ -15,9 +15,9 @@ import { PageHeader } from "@/components/page-header";
 export default function DatasetsPage() {
   return (
     <Suspense>
-      <EvalHubGate>
+      <ProofgroveGate>
         <DatasetsList />
-      </EvalHubGate>
+      </ProofgroveGate>
     </Suspense>
   );
 }
@@ -82,7 +82,7 @@ export function DatasetsList() {
       />
 
       <DatasetActions open={addDatasetOpen} onOpenChange={setAddDatasetOpen} onCreated={load} />
-      <div className="mb-5 flex flex-wrap gap-4 rounded-lg border border-border bg-card p-4 text-sm"><a href="/samples/nova-refunds-golden.csv" download className="font-semibold text-brand-text underline">Download refund sample CSV</a><a href="/samples/generate-refund-dataset.txt" download className="text-brand-text underline">Download dataset-generation prompt</a><span className="text-muted-foreground">8 synthetic cases. Add dataset → Import CSV, then validate, review and publish.</span></div>
+      <div className="mb-5 flex flex-wrap gap-4 rounded-lg border border-border bg-card p-4 text-sm"><a href="/samples/nova-agent-golden.csv" download className="font-semibold text-brand-text underline">Download Nova agent sample (4 cases)</a><a href="/samples/generate-refund-dataset.txt" download className="text-brand-text underline">Download dataset-generation prompt</a><span className="text-muted-foreground">4 reviewed Nova cases with expected answers and tool arguments. Import CSV → review → validate → approve → publish.</span></div>
 
       <DatasetLibrary datasets={datasets} loading={loading} error={error} onChanged={load} />
     </div>

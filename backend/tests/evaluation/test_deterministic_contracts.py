@@ -2,7 +2,7 @@
 
 import pytest
 
-from evalhub.evaluation.adapters.deterministic_adapter import _gleu, _meteor
+from proofgrove.evaluation.adapters.deterministic_adapter import _gleu, _meteor
 
 
 @pytest.mark.parametrize("reference,candidate,expected", [

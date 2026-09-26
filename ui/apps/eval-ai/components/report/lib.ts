@@ -162,7 +162,7 @@ export function scoringMethodForRun(run: RunResult): { label: string; detail: st
     if (evaluator.includes("ragas")) modes.add("RAGAS");
     else if (evaluator.includes("deepeval")) modes.add("DeepEval");
     else if (evaluator.startsWith("trace.")) modes.add("Trace scoring");
-    else if (evaluator === "builtin.native" || evaluator === "builtin.deterministic" || evaluator.startsWith("native.") || evaluator.startsWith("deterministic.")) modes.add("Deterministic scoring");
+    else if (evaluator === "builtin.trace" || evaluator === "builtin.native" || evaluator === "builtin.deterministic" || evaluator.startsWith("native.") || evaluator.startsWith("deterministic.")) modes.add("Deterministic scoring");
     else if (result.judge_model?.trim()) modes.add("LLM judge");
   }
   const judgedResults = run.metric_results.filter((result) => Boolean(result.judge_model?.trim()));

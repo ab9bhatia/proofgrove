@@ -15,8 +15,8 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => navigation.params,
 }));
 
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: React.ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 vi.mock("@/lib/api", () => ({
@@ -70,7 +70,7 @@ function arrange({
       metric_ids: ["llm.relevance"],
       evidence_requirements: ["input"],
       hard_blocker_metric_ids: [],
-      approver_roles: ["eval-hub-approver"],
+      approver_roles: ["proofgrove-approver"],
     },
   ] as never);
   vi.mocked(platformApi.listGatePolicies).mockResolvedValue([] as never);
@@ -351,7 +351,7 @@ describe("evaluation governance home", () => {
         metric_ids: ["llm.relevance"],
         evidence_requirements: ["input"],
         hard_blocker_metric_ids: [],
-        approver_roles: ["eval-hub-approver"],
+        approver_roles: ["proofgrove-approver"],
         test_status: "not_tested",
       },
     ] as never);
@@ -385,7 +385,7 @@ describe("evaluation governance home", () => {
       profile_id: "claims-quality", version: "1.0.0", tenant_id: "tenant-classroom",
       name: "Claims quality", status: "draft", test_status: "not_tested",
       metric_ids: ["llm.relevance"], evidence_requirements: ["input"],
-      hard_blocker_metric_ids: [], approver_roles: ["eval-hub-approver"],
+      hard_blocker_metric_ids: [], approver_roles: ["proofgrove-approver"],
     }] as never);
     vi.mocked(platformApi.markProfileTested).mockRejectedValue(new Error("override unavailable"));
     render(createElement(EvaluationGovernancePage));
@@ -433,7 +433,7 @@ describe("evaluation governance home", () => {
         profile_id: "claims-quality", version: "1.0.0", tenant_id: "tenant-classroom",
         name: "Claims quality", status: "validated", test_status: "tested",
         metric_ids: ["llm.relevance"], evidence_requirements: ["input"],
-        hard_blocker_metric_ids: [], approver_roles: ["eval-hub-approver"],
+        hard_blocker_metric_ids: [], approver_roles: ["proofgrove-approver"],
       },
     ] as never);
     let finishTransition: (() => void) | undefined;
@@ -507,7 +507,7 @@ describe("evaluation governance home", () => {
       profile_id: "claims-quality", version: "1.0.0", tenant_id: "tenant-classroom",
       name: "Claims quality", status: "validated", test_status: "tested",
       metric_ids: ["llm.relevance"], evidence_requirements: ["input"],
-      hard_blocker_metric_ids: [], approver_roles: ["eval-hub-approver"],
+      hard_blocker_metric_ids: [], approver_roles: ["proofgrove-approver"],
     }] as never);
     vi.mocked(platformApi.transitionProfile)
       .mockResolvedValueOnce({} as never)

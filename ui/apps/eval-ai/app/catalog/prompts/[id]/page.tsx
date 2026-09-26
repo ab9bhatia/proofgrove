@@ -10,7 +10,7 @@ import { Button } from "@evalai/shared/ui/button";
 import { OverlayConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@evalai/shared/utils";
 
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/page-state";
 import { PromptFormDialog } from "@/components/catalog/prompt-form-dialog";
@@ -36,9 +36,9 @@ import {
 
 export default function PromptDetailPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<ListSkeleton label="Loading this prompt…" />}><PromptDetail /></Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

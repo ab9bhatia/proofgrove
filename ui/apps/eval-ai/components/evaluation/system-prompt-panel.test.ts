@@ -37,7 +37,7 @@ function render(props: Partial<Parameters<typeof SystemPromptPanel>[0]> = {}) {
 
 describe("SystemPromptPanel", () => {
   it("never offers saving to a caller who lacks the role", () => {
-    // The endpoint requires eval-hub-approver; a button that 403s is worse than none.
+    // The endpoint requires proofgrove-approver; a button that 403s is worse than none.
     expect(render({ value: "Be terse.", canSave: false })).not.toContain("Save to library");
   });
 

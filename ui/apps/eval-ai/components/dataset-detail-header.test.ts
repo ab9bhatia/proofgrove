@@ -15,7 +15,7 @@ const dataset: DatasetInfo = {
   parent_dataset_name: null,
   dqs: null,
   change_reason: null,
-  created_by: "eval-hub-ui",
+  created_by: "proofgrove-ui",
   record_count: 12,
 };
 

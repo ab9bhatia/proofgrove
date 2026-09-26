@@ -37,7 +37,7 @@ describe("runReportRequest", () => {
     // including ids that need percent-encoding.
     const finding = { run_id: "run/xyz+1", row_id: "row 7cfd:501a" };
     const href = runEvidenceHref(finding);
-    const url = new URL(href, "https://evalhub.test");
+    const url = new URL(href, "https://proofgrove.test");
     const [, , rawId] = url.pathname.split("/");
     const request = runReportRequest(rawId, url.searchParams);
     expect(request.runId).toBe(finding.run_id);

@@ -4,12 +4,12 @@ import json
 
 import pytest
 
-from evalhub.generation.prompt_generator import (
+from proofgrove.generation.prompt_generator import (
     PromptGenerationError,
     expand_instruction_to_seeds,
     generate_records_from_prompt,
 )
-from evalhub.generation.prompts import build_prompt_batch_messages, build_seed_expansion_messages
+from proofgrove.generation.prompts import build_prompt_batch_messages, build_seed_expansion_messages
 
 
 def test_build_prompt_batch_messages_includes_size_and_instruction():

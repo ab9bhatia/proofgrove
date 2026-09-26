@@ -1,7 +1,7 @@
 """Tests for score normalisation."""
 
-from evalhub.evaluation.enums import GateResult, ScoringType
-from evalhub.evaluation.normalization import normalise_score, threshold_result, worst_gate
+from proofgrove.evaluation.enums import GateResult, ScoringType
+from proofgrove.evaluation.normalization import normalise_score, threshold_result, worst_gate
 
 
 def test_binary_normalisation():

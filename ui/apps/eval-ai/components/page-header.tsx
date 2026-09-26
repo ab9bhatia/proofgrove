@@ -36,7 +36,7 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {section ? (
-          <p className="eval-hub-eyebrow mb-2 text-eyebrow">{section}</p>
+          <p className="proofgrove-eyebrow mb-2 text-eyebrow">{section}</p>
         ) : null}
         <h1 className="text-balance font-display text-3xl font-semibold tracking-tight text-foreground sm:text-[2rem]">
           {title}

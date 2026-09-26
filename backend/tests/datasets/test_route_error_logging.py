@@ -11,19 +11,19 @@ import logging
 import pytest
 from fastapi import HTTPException
 
-from evalhub.api.v1.datasets import _handle_error
+from proofgrove.api.v1.datasets import _handle_error
 
 
 def test_unhandled_route_error_logs_type_only(caplog):
     sentinel = "INSERT INTO golden_dataset_records ... ('customer-question-sentinel')"
-    with caplog.at_level(logging.ERROR, logger="evalhub"), pytest.raises(HTTPException) as raised:
+    with caplog.at_level(logging.ERROR, logger="proofgrove"), pytest.raises(HTTPException) as raised:
         try:
             raise RuntimeError(sentinel)
         except RuntimeError as exc:
             _handle_error(exc)
     assert raised.value.status_code == 500
     assert "customer-question-sentinel" not in raised.value.detail
-    records = [record for record in caplog.records if record.name == "evalhub.api.v1.datasets"]
+    records = [record for record in caplog.records if record.name == "proofgrove.api.v1.datasets"]
     assert records, "the failure must still be logged"
     for record in records:
         assert record.exc_info is None
@@ -34,7 +34,7 @@ def test_unhandled_route_error_logs_type_only(caplog):
 @pytest.mark.parametrize("mode", ["inline", "upload"])
 @pytest.mark.parametrize("expectation_count", [20, 21])
 def test_csv_expectation_limit_returns_json_validation_error(client, monkeypatch, mode, expectation_count):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "")
     headers = {"x-evalai-tenant": "csv-validation"}

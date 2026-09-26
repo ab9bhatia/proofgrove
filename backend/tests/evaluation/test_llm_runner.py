@@ -11,15 +11,15 @@ import httpx
 import pytest
 from openai import OpenAI
 
-from evalhub.evaluation.models import EvaluationRow
-from evalhub.evaluation.run_service import _run_llm_row, _run_llm_rows
-from evalhub.evaluation.target.llm_runner import (
+from proofgrove.evaluation.models import EvaluationRow
+from proofgrove.evaluation.run_service import _run_llm_row, _run_llm_rows
+from proofgrove.evaluation.target.llm_runner import (
     LlmInvocationError,
     LlmTargetOutput,
     resolve_llm_base_url,
     run_llm_target,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 _PUBLIC_ADDRESS = ipaddress.ip_address("93.184.216.34")
 
@@ -49,7 +49,7 @@ async def test_run_llm_target_sends_model_routing_header():
     completion.choices = [MagicMock(message=MagicMock(content="Hello from Compass"))]
     completion.usage = MagicMock(prompt_tokens=3, completion_tokens=4)
 
-    with patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls:
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls:
         openai_cls.return_value.chat.completions.create.return_value = completion
         out = await run_llm_target(
             settings=settings,
@@ -71,15 +71,15 @@ async def test_run_llm_target_sends_model_routing_header():
 def test_llm_completion_without_recording_keeps_trace_identity_absent(monkeypatch):
     from opentelemetry import trace
 
-    from evalhub.evaluation.target import invocation_span
-    from evalhub.evaluation.target.llm_runner import _invoke_sync
+    from proofgrove.evaluation.target import invocation_span
+    from proofgrove.evaluation.target.llm_runner import _invoke_sync
 
     monkeypatch.setattr(invocation_span, "setup_invocation_tracing", lambda: False)
     monkeypatch.setattr(invocation_span.trace, "get_tracer", lambda *_: trace.NoOpTracerProvider().get_tracer("test"))
     completion = MagicMock()
     completion.choices = [MagicMock(message=MagicMock(content="A generated answer"))]
     completion.usage = None
-    with patch("evalhub.evaluation.target.llm_runner.OpenAI") as provider:
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as provider:
         provider.return_value.chat.completions.create.return_value = completion
         result = _invoke_sync(
             settings=Settings(), base_url="https://example.com/v1", model_id="test-model", query="Question",
@@ -111,7 +111,7 @@ async def test_run_llm_target_with_no_usage_object_reports_none_not_zero():
     completion.choices = [MagicMock(message=MagicMock(content="Hello from Compass"))]
     completion.usage = None
 
-    with patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls:
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls:
         openai_cls.return_value.chat.completions.create.return_value = completion
         out = await run_llm_target(
             settings=settings,
@@ -136,7 +136,7 @@ async def test_run_llm_target_with_genuine_zero_usage_reports_zero():
     completion.choices = [MagicMock(message=MagicMock(content="Hello from Compass"))]
     completion.usage = MagicMock(prompt_tokens=0, completion_tokens=0)
 
-    with patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls:
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls:
         openai_cls.return_value.chat.completions.create.return_value = completion
         out = await run_llm_target(
             settings=settings,
@@ -186,7 +186,7 @@ async def test_run_llm_target_preserves_per_counter_reportedness(usage, expected
     completion.choices = [MagicMock(message=MagicMock(content="Hello from Compass"))]
     completion.usage = usage
 
-    with patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls:
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls:
         openai_cls.return_value.chat.completions.create.return_value = completion
         out = await run_llm_target(
             settings=settings,
@@ -202,8 +202,8 @@ async def test_run_llm_target_preserves_per_counter_reportedness(usage, expected
 @pytest.mark.asyncio
 async def test_run_llm_row_keeps_only_reported_counters_for_partial_usage():
     """A one-sided report persists one key; the readers see only that side."""
-    from evalhub.evaluation.engine import usage_total_tokens
-    from evalhub.evaluation.trace_hydrator import _reported_usage_total
+    from proofgrove.evaluation.engine import usage_total_tokens
+    from proofgrove.evaluation.trace_hydrator import _reported_usage_total
 
     row = EvaluationRow(row_id="r1", query="Q?", response="")
     out = LlmTargetOutput(
@@ -213,7 +213,7 @@ async def test_run_llm_row_keeps_only_reported_counters_for_partial_usage():
         prompt_tokens=7,
         completion_tokens=None,
     )
-    with patch("evalhub.evaluation.run_service.run_llm_target", return_value=out):
+    with patch("proofgrove.evaluation.run_service.run_llm_target", return_value=out):
         await _run_llm_row(
             row,
             target_endpoint=None,
@@ -240,7 +240,7 @@ async def test_run_llm_row_fills_response_and_aborts_on_empty():
         prompt_tokens=1,
         completion_tokens=2,
     )
-    with patch("evalhub.evaluation.run_service.run_llm_target", return_value=out):
+    with patch("proofgrove.evaluation.run_service.run_llm_target", return_value=out):
         await _run_llm_row(
             row,
             target_endpoint="https://gateway.example/v1",
@@ -256,7 +256,7 @@ async def test_run_llm_row_fills_response_and_aborts_on_empty():
     empty_row = EvaluationRow(row_id="r2", query="Q?", response="")
     with (
         patch(
-            "evalhub.evaluation.run_service.run_llm_target",
+            "proofgrove.evaluation.run_service.run_llm_target",
             side_effect=LlmInvocationError("empty completion"),
         ),
         pytest.raises(LlmInvocationError, match="Failed to retrieve LLM output"),
@@ -277,8 +277,8 @@ async def test_run_llm_row_omits_token_counts_when_provider_reported_no_usage():
     those keys at all -- a present key with value 0 is indistinguishable from
     a genuine reported zero to every downstream reader.
     """
-    from evalhub.evaluation.adapters.deterministic_adapter import usage_total_tokens
-    from evalhub.evaluation.trace_hydrator import _reported_usage_total
+    from proofgrove.evaluation.adapters.deterministic_adapter import usage_total_tokens
+    from proofgrove.evaluation.trace_hydrator import _reported_usage_total
 
     row = EvaluationRow(row_id="r3", query="Q?", response="")
     out = LlmTargetOutput(
@@ -288,7 +288,7 @@ async def test_run_llm_row_omits_token_counts_when_provider_reported_no_usage():
         prompt_tokens=None,
         completion_tokens=None,
     )
-    with patch("evalhub.evaluation.run_service.run_llm_target", return_value=out):
+    with patch("proofgrove.evaluation.run_service.run_llm_target", return_value=out):
         await _run_llm_row(
             row,
             target_endpoint="https://gateway.example/v1",
@@ -308,7 +308,7 @@ async def test_run_llm_row_omits_token_counts_when_provider_reported_no_usage():
 @pytest.mark.asyncio
 async def test_run_llm_row_keeps_genuine_zero_usage():
     """A provider-reported zero still flows through and scores as today."""
-    from evalhub.evaluation.adapters.deterministic_adapter import usage_total_tokens
+    from proofgrove.evaluation.adapters.deterministic_adapter import usage_total_tokens
 
     row = EvaluationRow(row_id="r4", query="Q?", response="")
     out = LlmTargetOutput(
@@ -318,7 +318,7 @@ async def test_run_llm_row_keeps_genuine_zero_usage():
         prompt_tokens=0,
         completion_tokens=0,
     )
-    with patch("evalhub.evaluation.run_service.run_llm_target", return_value=out):
+    with patch("proofgrove.evaluation.run_service.run_llm_target", return_value=out):
         await _run_llm_row(
             row,
             target_endpoint="https://gateway.example/v1",
@@ -344,7 +344,7 @@ async def test_run_llm_rows_invokes_in_parallel():
             model_id="gpt-4.1-mini",
         )
 
-    with patch("evalhub.evaluation.run_service.run_llm_target", side_effect=fake_run):
+    with patch("proofgrove.evaluation.run_service.run_llm_target", side_effect=fake_run):
         await _run_llm_rows(
             rows,
             target_endpoint="https://gateway.example/v1",
@@ -384,7 +384,7 @@ async def test_run_llm_rows_cancels_the_other_row_on_first_failure():
         await slow_started.wait()
         raise LlmInvocationError("boom")
 
-    with patch("evalhub.evaluation.run_service.run_llm_target", side_effect=fake_run):
+    with patch("proofgrove.evaluation.run_service.run_llm_target", side_effect=fake_run):
         with pytest.raises(LlmInvocationError, match="boom"):
             await _run_llm_rows(
                 rows,
@@ -410,10 +410,10 @@ async def test_deadline_bound_target_does_not_retry_upstream_timeout():
     with httpx.Client(transport=httpx.MockTransport(fail_request)) as http_client:
         with (
             patch(
-                "evalhub.evaluation.target.llm_runner.OpenAI",
+                "proofgrove.evaluation.target.llm_runner.OpenAI",
                 side_effect=lambda **kwargs: OpenAI(**{**kwargs, "http_client": http_client}),
             ),
-            patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", dns),
+            patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", dns),
         ):
             with pytest.raises(LlmInvocationError, match="timed out"):
                 await run_llm_target(
@@ -435,8 +435,8 @@ async def test_run_llm_target_rejects_endpoint_resolving_to_metadata_address():
         return [ipaddress.ip_address("169.254.169.254")]
 
     with (
-        patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", dns),
-        patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls,
+        patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", dns),
+        patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls,
     ):
         with pytest.raises(LlmInvocationError, match="private or local"):
             await run_llm_target(
@@ -457,8 +457,8 @@ async def test_run_llm_target_rejects_endpoint_resolving_to_cross_namespace_serv
         return [ipaddress.ip_address("10.42.7.9")]
 
     with (
-        patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", dns),
-        patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls,
+        patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", dns),
+        patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls,
     ):
         with pytest.raises(LlmInvocationError, match="private or local"):
             await run_llm_target(
@@ -482,8 +482,8 @@ async def test_run_llm_target_allows_endpoint_resolving_to_public_address():
     completion.usage = MagicMock(prompt_tokens=1, completion_tokens=1)
 
     with (
-        patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", dns),
-        patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls,
+        patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", dns),
+        patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls,
     ):
         openai_cls.return_value.chat.completions.create.return_value = completion
         out = await run_llm_target(
@@ -501,8 +501,8 @@ async def test_run_llm_target_skips_dns_check_for_catalog_placeholder():
     resolved through the SSRF guard -- only an explicit target_endpoint is."""
 
     with (
-        patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses") as dns,
-        patch("evalhub.evaluation.target.llm_runner.OpenAI") as openai_cls,
+        patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses") as dns,
+        patch("proofgrove.evaluation.target.llm_runner.OpenAI") as openai_cls,
     ):
         completion = MagicMock()
         completion.choices = [MagicMock(message=MagicMock(content="hi"))]
@@ -543,8 +543,8 @@ async def test_target_credentials_and_dns_are_bound_to_destination(endpoint, cre
         return [_PUBLIC_ADDRESS]
 
     with (
-        patch("evalhub.evaluation.target.llm_runner.httpx.Client", Client),
-        patch("evalhub.evaluation.target.catalog.resolve_endpoint_addresses", side_effect=dns) as lookup,
+        patch("proofgrove.evaluation.target.llm_runner.httpx.Client", Client),
+        patch("proofgrove.evaluation.target.catalog.resolve_endpoint_addresses", side_effect=dns) as lookup,
     ):
         result = await run_llm_target(
             settings=Settings(openai_api_key="configured-secret", openai_base_url="https://gateway.example/v1"),
@@ -578,7 +578,7 @@ async def test_target_does_not_follow_redirects():
         def __init__(self, **kwargs):
             super().__init__(transport=httpx.MockTransport(redirect), **kwargs)
 
-    with patch("evalhub.evaluation.target.llm_runner.httpx.Client", Client):
+    with patch("proofgrove.evaluation.target.llm_runner.httpx.Client", Client):
         with pytest.raises(LlmInvocationError):
             await run_llm_target(
                 settings=Settings(openai_api_key="test-key", openai_base_url="https://gateway.example/v1"),
@@ -592,10 +592,75 @@ async def test_llm_failure_logs_omit_private_evidence(caplog):
     private = "private customer provider diagnostic"
     row = EvaluationRow(row_id="r-private", query="query", response="")
     with (
-        patch("evalhub.evaluation.run_service.run_llm_target", side_effect=LlmInvocationError(private)),
+        patch("proofgrove.evaluation.run_service.run_llm_target", side_effect=LlmInvocationError(private)),
         pytest.raises(LlmInvocationError, match=private),
     ):
         await _run_llm_row(row, target_endpoint=None, target_model="model")
     assert row.invocation_error == private
     assert caplog.records
     assert private not in caplog.text
+
+
+@pytest.mark.parametrize("content", ["", "Incomplete refund proposal"])
+def test_target_rejects_token_limited_completions(content):
+    """Neither reasoning-only output nor a truncated final answer is scored."""
+    from proofgrove.evaluation.target.llm_runner import _invoke_sync
+
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(
+            finish_reason="length",
+            message=SimpleNamespace(content=content, reasoning="PRIVATE_REASONING"),
+        )],
+        usage=SimpleNamespace(prompt_tokens=241, completion_tokens=1024),
+    )
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as provider:
+        provider.return_value.chat.completions.create.return_value = completion
+        with pytest.raises(LlmInvocationError, match="output token limit") as error:
+            _invoke_sync(
+                settings=Settings(), base_url="https://example.com/v1",
+                model_id="deepseek-r1:1.5b", query="Propose a refund",
+            )
+    assert "PRIVATE_REASONING" not in str(error.value)
+    assert "Incomplete refund proposal" not in str(error.value)
+    provider.return_value.close.assert_called_once()
+
+
+def test_reasoning_only_response_is_a_safe_actionable_invocation_error():
+    from proofgrove.evaluation.target.llm_runner import _invoke_sync
+
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(
+            finish_reason="stop",
+            message=SimpleNamespace(content="", reasoning="PRIVATE_REASONING"),
+        )],
+    )
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as provider:
+        provider.return_value.chat.completions.create.return_value = completion
+        with pytest.raises(LlmInvocationError, match="returned no final answer") as error:
+            _invoke_sync(
+                settings=Settings(), base_url="https://example.com/v1",
+                model_id="test-model", query="A private user query",
+            )
+    assert "PRIVATE_REASONING" not in str(error.value)
+    assert "private user query" not in str(error.value)
+    assert error.value.__suppress_context__ is True
+
+
+def test_completed_final_answer_is_used_without_reasoning():
+    from proofgrove.evaluation.target.llm_runner import _invoke_sync
+
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(
+            finish_reason="stop",
+            message=SimpleNamespace(content="Propose AED 250.", reasoning="PRIVATE_REASONING"),
+        )],
+        usage=SimpleNamespace(prompt_tokens=7, completion_tokens=21),
+    )
+    with patch("proofgrove.evaluation.target.llm_runner.OpenAI") as provider:
+        provider.return_value.chat.completions.create.return_value = completion
+        result = _invoke_sync(
+            settings=Settings(), base_url="https://example.com/v1",
+            model_id="test-model", query="Propose a refund",
+        )
+    assert result.response == "Propose AED 250."
+    assert result.completion_tokens == 21

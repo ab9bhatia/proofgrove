@@ -11,14 +11,14 @@ from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from evalhub.platform import authz
-from evalhub.platform.authz import (
+from proofgrove.platform import authz
+from proofgrove.platform.authz import (
     AuthorizationMiddleware,
     enforce_tenant,
     require_caller_tenant,
     resolve_requested_tenant,
 )
-from evalhub.settings import settings
+from proofgrove.settings import settings
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def auth_required(monkeypatch):
     settings.authz_app_name = "eval-ai"
 
     async def _always_allowed(request: Request, permission: str) -> bool:
-        request.state.eval_hub_permissions = {permission}
+        request.state.proofgrove_permissions = {permission}
         return True
 
     monkeypatch.setattr(authz, "check_permission", _always_allowed)
@@ -101,7 +101,7 @@ def test_require_caller_tenant_does_not_mark_scope_checked_directly():
         }
     )
     require_caller_tenant(request)
-    assert not getattr(request.state, "eval_hub_tenant_scope_checked", False)
+    assert not getattr(request.state, "proofgrove_tenant_scope_checked", False)
 
 
 def test_enforce_tenant_marks_scope_checked_directly():
@@ -114,7 +114,7 @@ def test_enforce_tenant_marks_scope_checked_directly():
         }
     )
     enforce_tenant(request, "acme")
-    assert request.state.eval_hub_tenant_scope_checked is True
+    assert request.state.proofgrove_tenant_scope_checked is True
 
 
 # Rows two tenants own — the foreign row must never leave the building.
@@ -187,7 +187,7 @@ def test_resolve_requested_tenant_does_not_forge_the_ownership_mark():
         }
     )
     resolve_requested_tenant(request, None)
-    assert not getattr(request.state, "eval_hub_tenant_scope_checked", False)
+    assert not getattr(request.state, "proofgrove_tenant_scope_checked", False)
 
 
 def test_resolve_requested_tenant_preserves_an_earlier_ownership_mark():
@@ -201,7 +201,7 @@ def test_resolve_requested_tenant_preserves_an_earlier_ownership_mark():
     )
     enforce_tenant(request, "acme")  # a real owner comparison happened first
     resolve_requested_tenant(request, None)
-    assert request.state.eval_hub_tenant_scope_checked is True
+    assert request.state.proofgrove_tenant_scope_checked is True
 
 
 def test_resolve_requested_tenant_still_rejects_a_foreign_tenant(auth_required):
@@ -256,7 +256,7 @@ def test_regression_replay_permission_satisfies_reviewer_guard(auth_required):
     @app.post("/platform/regressions/{case_id}/replay")
     async def replay(request: Request, case_id: str):
         enforce_tenant(request, "acme")
-        authz.require_role(request, "eval-hub-reviewer")
+        authz.require_role(request, "proofgrove-reviewer")
         return {"case_id": case_id}
 
     with TestClient(app) as client:

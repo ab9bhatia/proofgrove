@@ -7,15 +7,15 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import update
 
-from evalhub import runs_worker
-from evalhub.api.dependencies import get_registry_service
-from evalhub.db.models import EvaluationRunORM, RunJobORM
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.enums import EvaluationScope, EvidenceReadiness
-from evalhub.evaluation.models import EvidenceReadinessResult, ReadinessDetail
-from evalhub.evaluation.readiness import ReadinessBlockedError, scope_options
-from evalhub.main import app
+from proofgrove import runs_worker
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.db.models import EvaluationRunORM, RunJobORM
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.enums import EvaluationScope, EvidenceReadiness
+from proofgrove.evaluation.models import EvidenceReadinessResult, ReadinessDetail
+from proofgrove.evaluation.readiness import ReadinessBlockedError, scope_options
+from proofgrove.main import app
 
 # Run read endpoints require a tenant. In-flight async jobs are not yet
 # tenant-attributed, so any non-empty tenant satisfies the query param here.
@@ -167,7 +167,7 @@ async def test_run_configuration_returns_exact_tenant_scoped_launch_inputs():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stored_tenant", [TENANT, TENANT.removeprefix("tenant-")])
 async def test_cancel_run_is_tenant_scoped_idempotent_and_terminal(stored_tenant, monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", TENANT)
     await _clear_pending()
@@ -894,9 +894,9 @@ async def test_list_runs_includes_running_and_failed_jobs():
 async def test_temporal_startup_preserves_running_jobs(monkeypatch):
     from contextlib import asynccontextmanager
 
-    from evalhub.main import app, lifespan
-    from evalhub.orchestrator import temporal
-    from evalhub.settings import settings
+    from proofgrove.main import app, lifespan
+    from proofgrove.orchestrator import temporal
+    from proofgrove.settings import settings
 
     @asynccontextmanager
     async def worker_context():

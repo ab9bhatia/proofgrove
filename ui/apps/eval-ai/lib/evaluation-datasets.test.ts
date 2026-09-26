@@ -7,7 +7,7 @@ function dataset(overrides: Partial<DatasetInfo>): DatasetInfo {
   return {
     dataset_name: "support",
     tenant_id: "tenant-a",
-    product_id: "eval-hub",
+    product_id: "proofgrove",
     status: "PUBLISHED",
     version_number: 1,
     ...overrides,

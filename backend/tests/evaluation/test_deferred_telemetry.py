@@ -6,10 +6,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import (
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import (
     EvaluationScope,
     EvidenceReadiness,
     ProvenanceStatus,
@@ -17,26 +17,26 @@ from evalhub.evaluation.enums import (
     Scenario,
     TriggerReason,
 )
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.models import (
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.models import (
     ArchivedTraceSpan,
     EvaluationRow,
     EvidenceReadinessResult,
     ExperimentDefinition,
     RunItemTraceEvidence,
 )
-from evalhub.evaluation.run_service import (
+from proofgrove.evaluation.run_service import (
     DATASET_RUN_DEFERRED,
     _score_and_persist_run,
     execute_deferred_telemetry_score,
 )
-from evalhub.evaluation.trace_hydrator import (
+from proofgrove.evaluation.trace_hydrator import (
     TELEMETRY_EVIDENCE_SOURCE,
     TELEMETRY_PENDING_SOURCE,
     apply_a2a_capture_scoring,
     apply_telemetry_to_row,
 )
-from evalhub.runs_worker import process_one_completed_telemetry_watch, process_one_deferred_telemetry_job, process_one_job
+from proofgrove.runs_worker import process_one_completed_telemetry_watch, process_one_deferred_telemetry_job, process_one_job
 
 
 def _snapshot(
@@ -104,8 +104,8 @@ async def test_completed_watch_archive_failure_records_retry_after_rollback(monk
     async def unavailable(**kwargs):
         raise OSError("Archive temporarily unavailable")
 
-    monkeypatch.setattr("evalhub.runs_worker.execute_deferred_telemetry_score", unavailable)
-    monkeypatch.setattr("evalhub.runs_worker.settings.trace_archive_deferred_poll_seconds", 0)
+    monkeypatch.setattr("proofgrove.runs_worker.execute_deferred_telemetry_score", unavailable)
+    monkeypatch.setattr("proofgrove.runs_worker.settings.trace_archive_deferred_poll_seconds", 0)
     assert await process_one_completed_telemetry_watch() is True
 
     async with async_session() as session:
@@ -142,11 +142,11 @@ async def test_execute_deferred_repark_when_trajectory_still_incomplete(monkeypa
         row.output_data = output
 
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.hydrate_row_from_archive",
+        "proofgrove.evaluation.run_service.hydrate_row_from_archive",
         _still_pending,
     )
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.settings.trace_archive_score_grace_seconds",
+        "proofgrove.evaluation.run_service.settings.trace_archive_score_grace_seconds",
         3600.0,
     )
 
@@ -178,7 +178,7 @@ async def test_execute_deferred_scores_completed_trajectory(monkeypatch):
         row.tool_evidence_source = TELEMETRY_EVIDENCE_SOURCE
 
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.hydrate_row_from_archive",
+        "proofgrove.evaluation.run_service.hydrate_row_from_archive",
         _complete,
     )
 
@@ -217,7 +217,7 @@ async def test_deferred_snapshot_without_a_source_reads_it_from_provenance(monke
         row.output_data = output
 
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.hydrate_row_from_archive",
+        "proofgrove.evaluation.run_service.hydrate_row_from_archive",
         _complete,
     )
 
@@ -255,7 +255,7 @@ async def test_process_one_job_does_not_complete_deferred_eval(monkeypatch):
             )
         return DATASET_RUN_DEFERRED
 
-    monkeypatch.setattr("evalhub.runs_worker.execute_dataset_run", _defer)
+    monkeypatch.setattr("proofgrove.runs_worker.execute_dataset_run", _defer)
 
     assert await process_one_job() is True
     async with async_session() as session:
@@ -273,7 +273,7 @@ async def test_process_one_deferred_job_completes_when_ready(monkeypatch):
         row.output_data = output
 
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.hydrate_row_from_archive",
+        "proofgrove.evaluation.run_service.hydrate_row_from_archive",
         _complete,
     )
 
@@ -321,15 +321,15 @@ async def test_grace_expiry_falls_back_instead_of_waiting(monkeypatch):
         row.output_data = output
 
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.hydrate_row_from_archive",
+        "proofgrove.evaluation.run_service.hydrate_row_from_archive",
         _keep_pending,
     )
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.settings.trace_archive_score_grace_seconds",
+        "proofgrove.evaluation.run_service.settings.trace_archive_score_grace_seconds",
         3600.0,
     )
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.settings.trace_archive_score_fallback_to_capture",
+        "proofgrove.evaluation.run_service.settings.trace_archive_score_fallback_to_capture",
         True,
     )
 
@@ -465,7 +465,7 @@ async def test_enrichment_expiry_disables_watch_even_when_never_activated(monkey
         output["response_source"] = TELEMETRY_PENDING_SOURCE
         row.output_data = output
 
-    monkeypatch.setattr("evalhub.evaluation.run_service.hydrate_row_from_archive", _still_pending)
+    monkeypatch.setattr("proofgrove.evaluation.run_service.hydrate_row_from_archive", _still_pending)
 
     async with async_session() as session:
         store = EvaluationStore(session)
@@ -516,8 +516,8 @@ async def test_late_complete_trace_enriches_original_run_id(monkeypatch):
 
     # Exercise the real archive wait with I/O overhead and fresh retrieval
     # timestamps on each read. Stable execution content must still settle.
-    from evalhub.evaluation import trace_hydrator
-    from evalhub.settings import settings
+    from proofgrove.evaluation import trace_hydrator
+    from proofgrove.settings import settings
 
     clock = SimpleNamespace(now=0.0, reads=0)
     monkeypatch.setattr(trace_hydrator, "time", SimpleNamespace(monotonic=lambda: clock.now))
@@ -639,7 +639,7 @@ async def test_settled_late_span_change_rescores_an_already_completed_run(monkey
         row.response = output["response"]
 
     monkeypatch.setattr(
-        "evalhub.evaluation.run_service.hydrate_row_from_archive",
+        "proofgrove.evaluation.run_service.hydrate_row_from_archive",
         _late_change,
     )
 
@@ -679,7 +679,7 @@ async def test_settled_late_span_change_rescores_an_already_completed_run(monkey
     async def _unexpected_rescore(**kwargs):
         pytest.fail("Unchanged interpreted evidence must not trigger another rescore")
 
-    monkeypatch.setattr("evalhub.evaluation.run_service._score_and_persist_run", _unexpected_rescore)
+    monkeypatch.setattr("proofgrove.evaluation.run_service._score_and_persist_run", _unexpected_rescore)
     async with async_session() as session:
         await execute_deferred_telemetry_score(
             run_id=run_id, store=EvaluationStore(session), engine=EvaluationEngine(judge=MockJudge()),

@@ -69,7 +69,7 @@ export function EvaluationRunProgress({
             {terminal ? <span className="text-lg font-semibold">!</span> : <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
           </span>
           <div className="min-w-0">
-            <p className="eval-hub-eyebrow text-[0.6875rem] text-evalai-purple">
+            <p className="proofgrove-eyebrow text-[0.6875rem] text-evalai-purple">
               {heading ? title : "Evaluation progress"}
             </p>
             <h1 id={titleId} className="mt-1 text-xl font-semibold tracking-tight">

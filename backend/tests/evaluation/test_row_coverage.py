@@ -10,7 +10,7 @@ mode can run, so it is deliberately not consulted here.
 
 from __future__ import annotations
 
-from evalhub.evaluation.dataset_bridge import missing_row_fields
+from proofgrove.evaluation.dataset_bridge import missing_row_fields
 
 
 def _record(inputs=None, expectations=None):

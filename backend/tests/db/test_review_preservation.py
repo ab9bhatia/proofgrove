@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy import event, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from evalhub.db.models import (
+from proofgrove.db.models import (
     Base,
     EvaluationRunItemORM,
     FindingCommentORM,
@@ -17,9 +17,9 @@ from evalhub.db.models import (
     ReviewTaskORM,
     WaiverORM,
 )
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.enums import RunStatus
-from evalhub.evaluation.models import EvaluationRow, ExperimentDefinition, ReviewQueueItem, RunResult
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.enums import RunStatus
+from proofgrove.evaluation.models import EvaluationRow, ExperimentDefinition, ReviewQueueItem, RunResult
 
 
 @pytest.mark.asyncio

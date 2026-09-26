@@ -35,7 +35,7 @@ function datasetRow(name: string, status: string) {
     dataset_id: `id-${name}`,
     dataset_name: name,
     tenant_id: "tenant-1",
-    product_id: "eval-hub",
+    product_id: "proofgrove",
     status,
     version_number: 1,
     parent_dataset_name: null,
@@ -143,7 +143,7 @@ describe("promote orchestration", () => {
     await waitFor(() => screen.getAllByText(/pub-ds_v2/));
     expect(screen.getByText(/validate, approve and publish/)).toBeTruthy();
     const promoteCall = calls.find((call) => call.url.includes("/promotions"));
-    expect(promoteCall?.url).toBe("/api/eval-hub/datasets/pub-ds/promotions");
+    expect(promoteCall?.url).toBe("/api/proofgrove/datasets/pub-ds/promotions");
     expect(JSON.parse(String(promoteCall?.init?.body)).create_version_if_immutable).toBe(true);
 
     // A stale success must not survive picking a different target.

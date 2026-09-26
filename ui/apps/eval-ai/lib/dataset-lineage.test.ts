@@ -7,13 +7,13 @@ function ds(partial: Partial<DatasetInfo> & { name: string }): DatasetInfo {
     dataset_id: partial.dataset_id || `id-${partial.name}`,
     name: partial.name,
     tenant_id: "t1",
-    product_id: partial.product_id || "eval-hub",
+    product_id: partial.product_id || "proofgrove",
     status: partial.status || "DRAFT",
     version_number: partial.version_number ?? 1,
     parent_dataset_name: partial.parent_dataset_name ?? null,
     dqs: null,
     change_reason: null,
-    created_by: partial.created_by || "eval-hub-ui",
+    created_by: partial.created_by || "proofgrove-ui",
     record_count: partial.record_count ?? 0,
   };
 }

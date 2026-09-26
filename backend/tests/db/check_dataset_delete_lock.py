@@ -10,11 +10,11 @@ from uuid import uuid4
 
 from sqlalchemy import select
 
-from evalhub.datasets.exceptions import DatasetImmutableError
-from evalhub.datasets.models import DatasetMetadata
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.db.models import GoldenDatasetORM
-from evalhub.settings import settings
+from proofgrove.datasets.exceptions import DatasetImmutableError
+from proofgrove.datasets.models import DatasetMetadata
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.db.models import GoldenDatasetORM
+from proofgrove.settings import settings
 
 
 def main():

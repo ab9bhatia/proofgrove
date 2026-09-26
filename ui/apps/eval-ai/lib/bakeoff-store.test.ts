@@ -78,7 +78,7 @@ describe("launch record", () => {
 
   it("ignores corrupt contents rather than losing the page", () => {
     const store = fakeStorage();
-    store.setItem("evalhub:bakeoff-launches", "{not json");
+    store.setItem("proofgrove:bakeoff-launches", "{not json");
     (globalThis as { window?: unknown }).window = { localStorage: store };
     expect(readLaunches()).toEqual([]);
   });

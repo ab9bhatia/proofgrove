@@ -6,8 +6,8 @@ import sys
 
 import pytest
 
-from evalhub.logging_config import JsonLogFormatter
-from evalhub.settings import settings
+from proofgrove.logging_config import JsonLogFormatter
+from proofgrove.settings import settings
 
 
 @pytest.mark.parametrize("persistence_redaction", [True, False])
@@ -18,7 +18,7 @@ def test_log_message_exception_and_extra_redact_credentials(monkeypatch, persist
     try:
         raise ValueError(f"Authorization: Bearer {bearer}; key={key}")
     except ValueError:
-        record = logging.LogRecord("evalhub.test", logging.ERROR, "test.py", 1, "Failed: Bearer %s %s", (bearer, key), sys.exc_info())
+        record = logging.LogRecord("proofgrove.test", logging.ERROR, "test.py", 1, "Failed: Bearer %s %s", (bearer, key), sys.exc_info())
     record.password = "synthetic-password"
     record.prompt_tokens = 12
     payload = json.loads(JsonLogFormatter().format(record))
@@ -36,7 +36,7 @@ def test_log_message_exception_and_extra_redact_credentials(monkeypatch, persist
 @pytest.mark.parametrize("persistence_redaction", [True, False])
 def test_opaque_extra_value_is_redacted_after_string_conversion(monkeypatch, persistence_redaction):
     monkeypatch.setattr(settings, "payload_redaction_enabled", persistence_redaction)
-    record = logging.LogRecord("evalhub.test", logging.ERROR, "test.py", 1, "Failed", (), None)
+    record = logging.LogRecord("proofgrove.test", logging.ERROR, "test.py", 1, "Failed", (), None)
     record.detail = ValueError("Bearer synthetic_private_token")
     payload = json.loads(JsonLogFormatter().format(record))
     assert payload["detail"] == "Bearer [REDACTED]"

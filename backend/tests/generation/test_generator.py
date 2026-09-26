@@ -4,9 +4,9 @@ import json
 
 import pytest
 
-from evalhub.datasets.csv_parser import parse_csv
-from evalhub.evaluation.dataset_bridge import records_to_rows
-from evalhub.generation.generator import DatasetGenerator, rows_to_csv
+from proofgrove.datasets.csv_parser import parse_csv
+from proofgrove.evaluation.dataset_bridge import records_to_rows
+from proofgrove.generation.generator import DatasetGenerator, rows_to_csv
 
 
 class _FakeSource:
@@ -100,10 +100,10 @@ async def test_generation_logs_never_carry_the_seed_text(caplog):
     sentinel = "customer-wording-sentinel"
     insufficient = DatasetGenerator(source=_FakeSource(), complete=_complete_returning({"expected_response": "INSUFFICIENT_MATERIAL"}))
     invalid = DatasetGenerator(source=_FakeSource(), complete=lambda messages: "not json")  # noqa: ARG005
-    with caplog.at_level(logging.WARNING, logger="evalhub"):
+    with caplog.at_level(logging.WARNING, logger="proofgrove"):
         assert await insufficient.generate([sentinel]) == []
         assert await invalid.generate([sentinel]) == []
-    records = [record for record in caplog.records if record.name.startswith("evalhub")]
+    records = [record for record in caplog.records if record.name.startswith("proofgrove")]
     assert len(records) == 2
     for record in records:
         assert sentinel not in record.getMessage()

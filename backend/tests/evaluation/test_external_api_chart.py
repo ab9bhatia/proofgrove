@@ -10,7 +10,7 @@ CHART = Path(__file__).resolve().parents[2] / "chart"
 
 
 def _render(*values, namespace="tenant-evalai"):
-    args = ["helm", "template", "eval-hub", str(CHART), "--namespace", namespace]
+    args = ["helm", "template", "proofgrove", str(CHART), "--namespace", namespace]
     for value in values:
         args.extend(["--set", value])
     return subprocess.run(args, capture_output=True, text=True, check=False)
@@ -19,7 +19,7 @@ def _render(*values, namespace="tenant-evalai"):
 def test_external_gateway_route_is_opt_in():
     result = _render()
     assert result.returncode == 0, result.stderr
-    assert "name: eval-hub-external-api" not in result.stdout
+    assert "name: proofgrove-external-api" not in result.stdout
     assert "EXTERNAL_AGENT_CREDENTIALS" not in result.stdout
 
 
@@ -43,23 +43,23 @@ def test_external_gateway_binds_identity_and_uses_secret_references():
     )
     assert result.returncode == 0, result.stderr
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    route = next(doc for doc in docs if doc["kind"] == "HTTPRoute" and doc["metadata"]["name"] == "eval-hub-external-api")
+    route = next(doc for doc in docs if doc["kind"] == "HTTPRoute" and doc["metadata"]["name"] == "proofgrove-external-api")
     assert route["spec"]["parentRefs"] == [{"name": "tenant-ai-gateway", "namespace": "tenant-evalai", "sectionName": "http"}]
     modifier = route["spec"]["rules"][0]["filters"][0]["requestHeaderModifier"]
     assert {item["name"]: item["value"] for item in modifier["set"]} == {
         "x-evalai-tenant": "evalai", "x-evalai-sub": "service:external-evaluator",
     }
     assert "x-evalai-subject" in modifier["remove"]
-    policy = next(doc for doc in docs if doc["kind"] == "SecurityPolicy" and doc["metadata"]["name"] == "eval-hub-external-api")
+    policy = next(doc for doc in docs if doc["kind"] == "SecurityPolicy" and doc["metadata"]["name"] == "proofgrove-external-api")
     auth = policy["spec"]["apiKeyAuth"]
     assert auth["sanitize"] is True
-    assert auth["extractFrom"] == [{"headers": ["x-eval-hub-api-key"]}]
-    assert auth["credentialRefs"] == [{"name": "eval-hub-external-api-key"}]
-    deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "eval-hub")
+    assert auth["extractFrom"] == [{"headers": ["x-proofgrove-api-key"]}]
+    assert auth["credentialRefs"] == [{"name": "proofgrove-external-api-key"}]
+    deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "proofgrove")
     env = deployment["spec"]["template"]["spec"]["containers"][0]["env"]
     credentials = next(item for item in env if item["name"] == "EXTERNAL_AGENT_CREDENTIALS")
     assert credentials["valueFrom"]["secretKeyRef"] == {"name": "agent-connections", "key": "credentials"}
-    netpol = next(doc for doc in docs if doc["kind"] == "NetworkPolicy" and doc["metadata"]["name"] == "allow-eval-hub-egress")
+    netpol = next(doc for doc in docs if doc["kind"] == "NetworkPolicy" and doc["metadata"]["name"] == "allow-proofgrove-egress")
     assert {"to": [{"ipBlock": {"cidr": "93.184.216.34/32"}}], "ports": [{"port": 443, "protocol": "TCP"}]} in netpol["spec"]["egress"]
 
 
@@ -68,7 +68,7 @@ def test_llm_gateway_is_tenant_scoped_without_shared_credentials(namespace):
     result = _render(namespace=namespace)
     assert result.returncode == 0, result.stderr
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "eval-hub")
+    deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "proofgrove")
     env = {item["name"]: item for item in deployment["spec"]["template"]["spec"]["containers"][0]["env"]}
     assert env["OPENAI_BASE_URL"]["value"] == "http://tenant-ai-gateway:8080/v1"
     assert env["OPENAI_API_KEY"] == {"name": "OPENAI_API_KEY", "value": "tenant-gateway"}
@@ -90,7 +90,7 @@ def test_custom_judge_gateway_uses_explicit_required_secret():
                      "aiGateway.name=custom-gateway", "aiGateway.gatewayNamespace=tenant-custom")
     assert result.returncode == 0, result.stderr
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "eval-hub")
+    deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "proofgrove")
     env = {item["name"]: item for item in deployment["spec"]["template"]["spec"]["containers"][0]["env"]}
     assert env["OPENAI_BASE_URL"]["value"] == "http://custom-gateway:8080/v1"
     assert env["OPENAI_API_KEY"]["valueFrom"]["secretKeyRef"] == {"name": "custom-key", "key": "apiKey"}
@@ -112,8 +112,8 @@ def test_role_setup_can_reach_managed_postgres(managed, migrations):
     )
     assert result.returncode == 0, result.stderr
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    jobs = [doc for doc in docs if doc["kind"] == "Job" and doc["metadata"]["name"] == "eval-hub-postgres-role-setup"]
-    policies = [doc for doc in docs if doc["kind"] == "NetworkPolicy" and doc["metadata"]["name"] == "allow-eval-hub-role-setup-postgres"]
+    jobs = [doc for doc in docs if doc["kind"] == "Job" and doc["metadata"]["name"] == "proofgrove-postgres-role-setup"]
+    policies = [doc for doc in docs if doc["kind"] == "NetworkPolicy" and doc["metadata"]["name"] == "allow-proofgrove-role-setup-postgres"]
     assert bool(jobs) == bool(policies) == (managed and migrations)
     if jobs:
         labels = jobs[0]["spec"]["template"]["metadata"]["labels"]
@@ -154,33 +154,33 @@ def test_profile_networking_and_service_account_follow_evalai_conventions(profil
             "appInfra.serviceBusNamespace=review.servicebus.windows.net",
             "appInfra.serviceBusQueue=traces",
             "telemetry.objectStore.authMode=workloadIdentity",
-            "telemetry.sink.ingestAuthTokenSecretName=eval-hub-ingest-token",
+            "telemetry.sink.ingestAuthTokenSecretName=proofgrove-ingest-token",
         ]
     result = _render(*values)
     assert result.returncode == 0, result.stderr
     docs = [doc for doc in yaml.safe_load_all(result.stdout) if doc]
-    assert not any(doc["metadata"]["name"] == "eval-hub-telemetry-profile" for doc in docs)
-    account = next(doc for doc in docs if doc["kind"] == "ServiceAccount" and doc["metadata"]["name"] == "eval-hub")
+    assert not any(doc["metadata"]["name"] == "proofgrove-telemetry-profile" for doc in docs)
+    account = next(doc for doc in docs if doc["kind"] == "ServiceAccount" and doc["metadata"]["name"] == "proofgrove")
     assert account["automountServiceAccountToken"] is False
     if profile == "azure":
-        admin = next(doc for doc in docs if doc["kind"] == "ExternalSecret" and doc["metadata"]["name"] == "eval-hub-postgres-admin-credentials")
-        assert admin["spec"]["secretStoreRef"] == {"name": "eval-hub-admin-infra", "kind": "SecretStore"}
-        store = next(doc for doc in docs if doc["kind"] == "SecretStore" and doc["metadata"]["name"] == "eval-hub-admin-infra")
-        assert store["spec"]["provider"]["azurekv"]["serviceAccountRef"]["name"] == "eval-hub-admin-secrets"
+        admin = next(doc for doc in docs if doc["kind"] == "ExternalSecret" and doc["metadata"]["name"] == "proofgrove-postgres-admin-credentials")
+        assert admin["spec"]["secretStoreRef"] == {"name": "proofgrove-admin-infra", "kind": "SecretStore"}
+        store = next(doc for doc in docs if doc["kind"] == "SecretStore" and doc["metadata"]["name"] == "proofgrove-admin-infra")
+        assert store["spec"]["provider"]["azurekv"]["serviceAccountRef"]["name"] == "proofgrove-admin-secrets"
         assert account["metadata"]["annotations"]["azure.workload.identity/client-id"] == "00000000-0000-0000-0000-000000000002"
     if profile == "azure":
-        from evalhub.settings import Settings
+        from proofgrove.settings import Settings
 
-        deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "eval-hub")
+        deployment = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == "proofgrove")
         migration = deployment["spec"]["template"]["spec"]["initContainers"][0]
         env = {item["name"]: item for item in migration["env"]}
-        assert env["DATABASE_URL"]["valueFrom"]["secretKeyRef"]["name"] == "eval-hub-postgres-admin-credentials"
+        assert env["DATABASE_URL"]["valueFrom"]["secretKeyRef"]["name"] == "proofgrove-postgres-admin-credentials"
         assert env["AUTHZ_CHECK_TOKEN"]["valueFrom"]["secretKeyRef"]
         Settings(_env_file=None, app_env=env["APP_ENV"]["value"],
                  platform_auth_required=env["PLATFORM_AUTH_REQUIRED"]["value"],
                  authz_check_token="synthetic-bootstrap-test",
-                 database_url="postgresql://admin:injected@db.example:5432/evalhub?sslmode=require")
-    for name in ("eval-hub", "trace-archive-sink"):
+                 database_url="postgresql://admin:injected@db.example:5432/proofgrove?sslmode=require")
+    for name in ("proofgrove", "trace-archive-sink"):
         pod = next(doc for doc in docs if doc["kind"] == "Deployment" and doc["metadata"]["name"] == name)["spec"]["template"]
         assert (pod["metadata"]["labels"].get("evalai.ai/egress-internet") == "true") == (profile == "azure")
         if profile == "azure":

@@ -1,6 +1,6 @@
 import type { SpanScoreSelection, SpanScorePreview, SpanScoreJob } from "@/lib/api-types";
 // Browser-side client for the Proofgrove backend, via the server BFF proxy
-// (/api/eval-hub/*). Never calls the backend directly.
+// (/api/proofgrove/*). Never calls the backend directly.
 
 import { sessionAwareFetch } from "@evalai/shared/session";
 import {
@@ -76,7 +76,7 @@ import type {
 // import site for callers.
 export type * from "@/lib/api-types";
 
-const BASE = "/api/eval-hub";
+const BASE = "/api/proofgrove";
 
 export const spanScoringApi = {
   preview: (project: string, tenant: string, spans: SpanScoreSelection[]) => request<SpanScorePreview>(
@@ -405,6 +405,12 @@ export const agentsApi = {
   toolServers: () => request<ToolServer[]>("/agents/mcp-servers"),
 
   catalog: () => request<TargetVersion[]>("/agents/catalog"),
+
+  invokeLocal: (agentRef: string, query: string) =>
+    request<{ response: string; tool_calls: unknown[]; invocation_id: string; trace_id: string; model: string }>(
+      `/agents/local/${encodeURIComponent(agentRef.replace(/^local:/, ""))}/invoke`,
+      { method: "POST", body: JSON.stringify({ query }) },
+    ),
 
   testAndOnboard: (endpoint: string) =>
     request<TargetVersion>("/agents/catalog", {

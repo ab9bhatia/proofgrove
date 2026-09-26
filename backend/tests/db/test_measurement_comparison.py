@@ -1,7 +1,7 @@
 """Operational measurements compare on their own values, not on a score."""
 
-from evalhub.db.store import measurement_values
-from evalhub.evaluation.models import MetricResult, RunResult
+from proofgrove.db.store import measurement_values
+from proofgrove.evaluation.models import MetricResult, RunResult
 
 
 def _run(*results: MetricResult) -> RunResult:
@@ -58,9 +58,9 @@ def test_a_single_metric_can_be_isolated():
 async def _comparison_for_scores(candidate_scores):
     from unittest.mock import AsyncMock, MagicMock
 
-    from evalhub.db.store import EvaluationStore
-    from evalhub.evaluation.enums import Scenario
-    from evalhub.evaluation.models import ExperimentDefinition
+    from proofgrove.db.store import EvaluationStore
+    from proofgrove.evaluation.enums import Scenario
+    from proofgrove.evaluation.models import ExperimentDefinition
 
     experiment = ExperimentDefinition(
         name="comparison", dataset_version="v", target_endpoint="https://target.example", scenario=Scenario.LLM_CORE,

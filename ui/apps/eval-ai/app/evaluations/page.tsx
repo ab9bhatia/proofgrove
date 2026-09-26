@@ -3,7 +3,7 @@
 import { PAGE_FRAME } from "@/lib/page-frame";
 import { Suspense, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { PageHeader } from "@/components/page-header";
 import { TableSkeleton } from "@/components/page-state";
 import { RunsList } from "@/app/runs/page";
@@ -22,11 +22,11 @@ export { evaluationViewForKey } from "@/lib/evaluations-tab";
 
 export default function EvaluationsPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<TableSkeleton label="Loading evaluations…" rows={8} className="min-h-[60vh]" />}>
         <EvaluationsLibrary />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

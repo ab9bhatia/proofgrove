@@ -38,7 +38,7 @@ import { Label } from "@evalai/shared/ui/label";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@evalai/shared/utils";
 import { CopyIdButton } from "@/components/copyable-id";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { PageHeader } from "@/components/page-header";
 import { ErrorState, LoadingState, TableSkeleton } from "@/components/page-state";
 import { useUIState } from "@/components/ui-state";
@@ -202,11 +202,11 @@ type FindingDetails = {
 
 export default function ReviewsPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<LoadingState label="Loading review workspace…" className="min-h-48" />}>
         <ReviewsView />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

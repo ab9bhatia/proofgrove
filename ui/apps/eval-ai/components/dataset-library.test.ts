@@ -26,7 +26,7 @@ function ds(overrides: Partial<DatasetInfo> = {}): DatasetInfo {
     parent_dataset_name: null,
     dqs: null,
     change_reason: null,
-    created_by: "eval-hub-ui",
+    created_by: "proofgrove-ui",
     record_count: 12,
     updated_at: "2026-08-20T12:00:00Z",
     ...overrides,

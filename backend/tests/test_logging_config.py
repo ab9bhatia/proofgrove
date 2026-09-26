@@ -3,7 +3,7 @@
 import json
 import logging
 
-from evalhub.logging_config import JsonLogFormatter
+from proofgrove.logging_config import JsonLogFormatter
 
 
 def _format(**extra) -> dict:

@@ -1,0 +1,32 @@
+.types { color: #233b32; min-width: 0; }
+.types .lead { font-size: 18px; line-height: 1.65; color: #52665b; margin: 0 0 24px; }
+.choices, .combinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.choices > section { padding: 22px; border: 1px solid #d7e0d6; border-radius: 12px; background: #f6f8f2; min-width: 0; }
+.types h2 { font-size: 20px; line-height: 1.4; font-weight: 600; margin: 0 0 16px; }
+.choices h2 { display: flex; align-items: center; gap: 12px; }
+.choices h2 span { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #225846; color: #fff; font-size: 15px; }
+.choices dl { margin: 0; }
+.choices dl > div + div { margin-top: 18px; }
+.choices dt { font-size: 18px; font-weight: 600; }
+.choices dd { margin: 3px 0 0; font-size: 15px; line-height: 1.6; }
+.types .choices section > p { margin-top: 18px; font-size: 13px; line-height: 1.6; color: #617367; }
+.types .rule { margin: 22px 0 34px; font-size: 16px; line-height: 1.65; }
+.example { border-left: 3px solid #789d86; padding-left: 20px; margin: 0 0 22px; }
+.example h2 { margin-bottom: 9px; }
+.example p { font-size: 15px; line-height: 1.7; max-width: 860px; }
+.card { min-width: 0; padding: 22px; border: 1px solid #d7e0d6; border-radius: 12px; background: white; }
+.card h3 { margin: 8px 0 10px; font-size: 20px; line-height: 1.4; font-weight: 600; }
+.number { color: #225846; font-size: 12px; font-weight: 600; letter-spacing: .09em; }
+.types .card .action { font-size: 16px; font-weight: 600; color: #225846; margin: 0 0 12px; }
+.card p { font-size: 14px; line-height: 1.7; }
+.card details { border-top: 1px solid #e4e9e0; margin-top: 18px; padding-top: 14px; }
+.card summary, .diagramReference summary { font-size: 13px; font-weight: 600; cursor: pointer; color: #225846; }
+.types .card details p { margin: 14px 0 12px; }
+.card pre { overflow: auto; max-width: 100%; padding: 14px; border-radius: 7px; background: #f4f6f1; font-size: 11px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.card small { color: #617367; font-size: 12px; }
+.demo { margin: 24px 0 16px; padding: 20px 22px; border-radius: 10px; background: #eaf3ee; }
+.demo strong { color: #225846; font-size: 17px; }
+.types .demo p { margin-top: 8px; font-size: 15px; line-height: 1.7; }
+.types .note { font-size: 13px; line-height: 1.7; color: #617367; margin: 16px 0 22px; }
+.diagramReference { border-top: 1px solid #d7e0d6; padding-top: 18px; }
+@media (max-width: 740px) { .choices, .combinations { grid-template-columns: 1fr; } .choices > section, .card { padding: 18px; } }

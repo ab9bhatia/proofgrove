@@ -7,7 +7,7 @@ import { useParams, usePathname, useRouter, useSearchParams } from "next/navigat
 import { Suspense, useCallback, useEffect, useId, useMemo, useState } from "react";
 import { ArrowLeft, GitCompareArrows, Plus, Undo2 } from "lucide-react";
 import { Button, buttonVariants } from "@evalai/shared/ui/button";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { LegacyEvaluationRouteRedirect } from "@/components/legacy-evaluation-redirect";
 import { PageHeader } from "@/components/page-header";
 import { formatDateTime } from "@/lib/format-time";
@@ -38,11 +38,11 @@ import { RunOutcomeBadge } from "@/components/run-outcome-badge";
 // Shared implementation, rendered at the canonical `/evaluations/:id` route.
 export function ExperimentDetailPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<LoadingState label="Loading experiment…" className="min-h-[60vh] border-0" />}>
         <ExperimentDetail />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

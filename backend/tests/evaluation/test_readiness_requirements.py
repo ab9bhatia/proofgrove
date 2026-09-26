@@ -12,22 +12,22 @@ from unittest.mock import MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.evaluation.enums import (
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.evaluation.enums import (
     EvaluationScope,
     MetricRequirement,
     MetricRequirementSource,
     Scenario,
 )
-from evalhub.main import app
-from evalhub.platform.contracts import (
+from proofgrove.main import app
+from proofgrove.platform.contracts import (
     EvaluationProject,
     QualityProfileVersion,
     TargetType,
     TargetVersion,
     VersionLifecycle,
 )
-from evalhub.platform.resolver import resolve_run_manifest, resolve_scoring_configuration
+from proofgrove.platform.resolver import resolve_run_manifest, resolve_scoring_configuration
 
 
 def test_explicitly_selected_non_default_metric_resolves_optional_not_required():

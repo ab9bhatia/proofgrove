@@ -1,8 +1,8 @@
 import { api, evaluationApi, type ExperimentDefinition, type JobStatus, type RunResult, type Scenario } from "@/lib/api";
 import { recallRunForm, recallRunLabel } from "@/lib/run-form-memory";
 
-const STORAGE_KEY = "evalhub:active-run-ids";
-const FIRST_SEEN_KEY = "evalhub:run-first-seen";
+const STORAGE_KEY = "proofgrove:active-run-ids";
+const FIRST_SEEN_KEY = "proofgrove:run-first-seen";
 const ACTIVE = new Set(["pending", "running", "awaiting_trace"]);
 
 function isRunResult(value: RunResult | JobStatus): value is RunResult {

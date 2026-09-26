@@ -16,7 +16,7 @@ export function scrollIntoPane(
 ): void {
   if (!(element instanceof HTMLElement)) return;
   const { behavior = "auto", block = "start" } = options;
-  const pane = element.closest<HTMLElement>(".eval-hub-workspace-scroll");
+  const pane = element.closest<HTMLElement>(".proofgrove-workspace-scroll");
   if (!pane) {
     element.scrollIntoView({ behavior, block });
     return;

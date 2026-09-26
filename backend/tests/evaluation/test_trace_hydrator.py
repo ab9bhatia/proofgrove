@@ -5,14 +5,14 @@ from types import SimpleNamespace
 
 import pytest
 
-from evalhub.evaluation.enums import EvaluationScope, ProvenanceStatus
-from evalhub.evaluation.models import (
+from proofgrove.evaluation.enums import EvaluationScope, ProvenanceStatus
+from proofgrove.evaluation.models import (
     ArchivedTraceSpan,
     EvaluationRow,
     RunItemTraceEvidence,
     ToolCall,
 )
-from evalhub.evaluation.trace_hydrator import (
+from proofgrove.evaluation.trace_hydrator import (
     A2A_FALLBACK_EVIDENCE_SOURCE,
     TELEMETRY_EVIDENCE_SOURCE,
     TELEMETRY_PENDING_SOURCE,
@@ -24,7 +24,7 @@ from evalhub.evaluation.trace_hydrator import (
     uses_a2a_capture_for_scoring,
     wait_for_archived_trace,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 TRACE_ID = "0123456789abcdef0123456789abcdef"
 
@@ -195,7 +195,7 @@ def test_standard_tool_attributes_take_precedence_over_kagent(output_key):
 
 
 def test_trace_fingerprint_changes_when_attribute_interpretation_improves(monkeypatch):
-    from evalhub.evaluation import trace_hydrator
+    from proofgrove.evaluation import trace_hydrator
 
     evidence = RunItemTraceEvidence(state="available", trace_id=TRACE_ID, spans=[
         _span("tool", **{
@@ -564,7 +564,7 @@ def test_trace_fingerprint_ignores_retrieval_time_but_keeps_execution_changes():
 @pytest.mark.parametrize("settle_seconds", [0, 2])
 async def test_completed_root_with_too_few_observations_reports_unsettled_archive(monkeypatch, settle_seconds):
     clock = SimpleNamespace(now=0.0)
-    monkeypatch.setattr("evalhub.evaluation.trace_hydrator.time", SimpleNamespace(monotonic=lambda: clock.now))
+    monkeypatch.setattr("proofgrove.evaluation.trace_hydrator.time", SimpleNamespace(monotonic=lambda: clock.now))
 
     class _Reader:
         async def find(self, **kwargs):  # noqa: ARG002
@@ -806,7 +806,7 @@ def test_final_response_scope_uses_a2a_capture_instead_of_deferred_trace_wait():
 
 
 def test_archive_filter_preserves_retrieval_used_for_scoring():
-    from evalhub.evaluation.trace_archive import _relevant_spans
+    from proofgrove.evaluation.trace_archive import _relevant_spans
 
     root = _span("agent", **{"openinference.span.kind": "AGENT"})
     retriever = _span("retriever", **{

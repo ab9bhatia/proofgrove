@@ -3,8 +3,8 @@
 import asyncio
 from urllib.parse import quote
 
-from evalhub.evaluation.sample_data import SAMPLE_TENANT_ID
-from evalhub.runs_worker import process_one_job
+from proofgrove.evaluation.sample_data import SAMPLE_TENANT_ID
+from proofgrove.runs_worker import process_one_job
 
 # Run/run-item read endpoints are tenant-scoped. Sample experiments carry a
 # stable tenant (``SAMPLE_TENANT_ID``); runs created from them are read back with
@@ -29,7 +29,7 @@ def test_ready_returns_503_when_db_unavailable(client, monkeypatch):
     def boom():
         raise RuntimeError("database unavailable")
 
-    monkeypatch.setattr("evalhub.api.health.async_session", boom)
+    monkeypatch.setattr("proofgrove.api.health.async_session", boom)
     resp = client.get("/health/ready")
     assert resp.status_code == 503
     assert resp.json()["status"] == "not ready"

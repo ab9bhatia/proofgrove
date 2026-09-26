@@ -54,7 +54,7 @@ export default async function RootLayout({
       className={initialResolvedMode === "dark" ? "dark" : undefined}
       style={{ colorScheme: initialResolvedMode }}
     >
-      <body className="eval-hub-skin antialiased min-h-dvh bg-background text-foreground">
+      <body className="proofgrove-skin antialiased min-h-dvh bg-background text-foreground">
         <TelemetryProvider config={telemetry} routeTemplates={ROUTE_TEMPLATES} />
         <BakeoffResume />
         <ThemeProvider initialResolvedMode={initialResolvedMode}>

@@ -6,8 +6,8 @@ import httpx
 import pytest
 import respx
 
-from evalhub.evaluation.models import ToolCall
-from evalhub.evaluation.target.a2a_client import (
+from proofgrove.evaluation.models import ToolCall
+from proofgrove.evaluation.target.a2a_client import (
     AgentInvocationError,
     _aggregate,
     _aggregate_usage,

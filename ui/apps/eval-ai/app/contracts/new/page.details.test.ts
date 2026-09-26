@@ -10,8 +10,8 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => navigation.params,
 }));
 
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: React.ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 vi.mock("@/lib/api", () => ({
@@ -70,7 +70,7 @@ const manifest = {
   prompt_version: null,
   tool_versions: {},
   resolved_at: "2026-08-15T00:00:00Z",
-  resolved_by: "eval-hub-ui",
+  resolved_by: "proofgrove-ui",
 };
 
 const assignment = {

@@ -68,7 +68,7 @@ export function groupDatasetsByLineage(datasets: DatasetInfo[]): DatasetLineageG
 /**
  * Provenance category for the Source column.
  *
- * `created_by` is a raw pipeline name (`playwright`, `eval-hub-generator`, …),
+ * `created_by` is a raw pipeline name (`playwright`, `proofgrove-generator`, …),
  * not vocabulary a reader should have to decode. Every recognised value maps
  * to one of a small set of categories; anything unrecognised still gets a
  * readable label instead of leaking the raw string.

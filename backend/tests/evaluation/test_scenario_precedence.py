@@ -11,17 +11,17 @@ the consolidation.
 
 import pytest
 
-from evalhub.evaluation.enums import Scenario
-from evalhub.evaluation.run_service import stable_experiment_id
-from evalhub.evaluation.scenario_policy import DEFAULT_SCENARIO, resolve_scenario
-from evalhub.platform.contracts import (
+from proofgrove.evaluation.enums import Scenario
+from proofgrove.evaluation.run_service import stable_experiment_id
+from proofgrove.evaluation.scenario_policy import DEFAULT_SCENARIO, resolve_scenario
+from proofgrove.platform.contracts import (
     EvaluationProject,
     QualityProfileVersion,
     TargetType,
     TargetVersion,
     VersionLifecycle,
 )
-from evalhub.platform.resolver import ContractResolutionError, resolve_run_manifest
+from proofgrove.platform.resolver import ContractResolutionError, resolve_run_manifest
 
 
 @pytest.mark.parametrize(
@@ -172,7 +172,7 @@ def test_resolve_run_manifest_accepts_equivalent_tenant_spellings(monkeypatch):
     of the same tenant must both resolve — ``tenants_match`` is the same
     normalization the tenant-scoped store queries use, not a raw ``==``.
     """
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-scenario")
     project = _project()

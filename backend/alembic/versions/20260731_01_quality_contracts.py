@@ -1,4 +1,4 @@
-"""Add Eval Hub quality-contract control-plane records.
+"""Add Proofgrove quality-contract control-plane records.
 
 Revision ID: 20260731_01
 Revises:

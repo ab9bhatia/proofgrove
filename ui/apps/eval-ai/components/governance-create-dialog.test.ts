@@ -64,7 +64,7 @@ describe("GovernanceCreateDialog", () => {
     fireEvent.click(screen.getByRole("checkbox", { name: /Approver/ }));
     fireEvent.click(screen.getByRole("button", { name: "Create draft Quality Profile" }));
 
-    expect(onCreateProfile.mock.calls[0]![0].approver_roles).toEqual(["eval-hub-approver"]);
+    expect(onCreateProfile.mock.calls[0]![0].approver_roles).toEqual(["proofgrove-approver"]);
   });
 
   it("leaves approver roles empty so the platform default still applies", () => {

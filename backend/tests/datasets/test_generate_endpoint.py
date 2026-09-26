@@ -3,8 +3,8 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.datasets import generation_service
-from evalhub.main import app
+from proofgrove.datasets import generation_service
+from proofgrove.main import app
 
 #: Generation attributes jobs to POD_NAMESPACE, which is unset under test and
 #: falls back to "local"; the caller acts as that same tenant.
@@ -44,7 +44,7 @@ async def test_csv_template_metadata_reaches_the_keys_the_bridge_reads():
     Expected actions and context live inside ``Metadata`` now; they must still
     land where ``dataset_bridge`` grades them.
     """
-    from evalhub.datasets.csv_parser import parse_csv
+    from proofgrove.datasets.csv_parser import parse_csv
 
     transport = ASGITransport(app=app)
     async with AsyncClient(
@@ -152,8 +152,8 @@ def _catalog(monkeypatch, servers):
     """Stub discovery with a fixed tenant catalog and DNS with a private in-cluster address."""
     import ipaddress
 
-    from evalhub.evaluation.target import catalog, discovery
-    from evalhub.evaluation.target.discovery import ToolServerSummary
+    from proofgrove.evaluation.target import catalog, discovery
+    from proofgrove.evaluation.target.discovery import ToolServerSummary
 
     async def resolve(_hostname, _port):
         return [ipaddress.ip_address("10.10.10.10")]

@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   ApiError,
   apiErrorFromResponse,
-  classifyEvalHubGate,
-  evalHubGateCopy,
+  classifyProofgroveGate,
+  proofgroveGateCopy,
   publicApiError,
   publicApiErrorFromUpstream,
   userFacingError,
@@ -119,7 +119,7 @@ describe("apiErrorFromResponse", () => {
   it("never reflects raw upstream text", () => {
     const error = apiErrorFromResponse(
       500,
-      "postgresql://admin:secret@database/evalhub stack trace",
+      "postgresql://admin:secret@database/proofgrove stack trace",
     );
     expect(error.message).not.toContain("secret");
     expect(error.message).not.toContain("postgresql");
@@ -218,43 +218,43 @@ describe("userFacingError", () => {
   });
 });
 
-describe("classifyEvalHubGate", () => {
+describe("classifyProofgroveGate", () => {
   it("maps a 403 to permission-denied with distinct recovery copy", () => {
-    const state = classifyEvalHubGate({ status: 403 });
+    const state = classifyProofgroveGate({ status: 403 });
     expect(state).toBe("permission-denied");
-    expect(evalHubGateCopy(state).title).toBe("You do not have access to Proofgrove");
-    expect(evalHubGateCopy(state).autoRecovers).toBe(false);
+    expect(proofgroveGateCopy(state).title).toBe("You do not have access to Proofgrove");
+    expect(proofgroveGateCopy(state).autoRecovers).toBe(false);
   });
 
   it("maps a 401 to session-expired", () => {
-    const state = classifyEvalHubGate({ status: 401 });
+    const state = classifyProofgroveGate({ status: 401 });
     expect(state).toBe("session-expired");
-    expect(evalHubGateCopy(state).title).toBe("Your session has expired");
+    expect(proofgroveGateCopy(state).title).toBe("Your session has expired");
   });
 
   it("maps a network error to offline", () => {
-    expect(classifyEvalHubGate({ networkError: true })).toBe("offline");
-    expect(classifyEvalHubGate({ online: false })).toBe("offline");
-    expect(evalHubGateCopy("offline").title).toBe("You appear to be offline");
+    expect(classifyProofgroveGate({ networkError: true })).toBe("offline");
+    expect(classifyProofgroveGate({ online: false })).toBe("offline");
+    expect(proofgroveGateCopy("offline").title).toBe("You appear to be offline");
   });
 
   it("maps a 503 (and other 5xx/timeouts) to service-unavailable", () => {
-    expect(classifyEvalHubGate({ status: 503 })).toBe("service-unavailable");
-    expect(classifyEvalHubGate({ status: 500 })).toBe("service-unavailable");
-    expect(classifyEvalHubGate({ status: 408 })).toBe("service-unavailable");
-    expect(evalHubGateCopy("service-unavailable").title).toBe(
+    expect(classifyProofgroveGate({ status: 503 })).toBe("service-unavailable");
+    expect(classifyProofgroveGate({ status: 500 })).toBe("service-unavailable");
+    expect(classifyProofgroveGate({ status: 408 })).toBe("service-unavailable");
+    expect(proofgroveGateCopy("service-unavailable").title).toBe(
       "Proofgrove is temporarily unavailable",
     );
   });
 
   it("maps the genuine health signal (available: false) to unprovisioned", () => {
-    const state = classifyEvalHubGate({ available: false });
+    const state = classifyProofgroveGate({ available: false });
     expect(state).toBe("unprovisioned");
-    expect(evalHubGateCopy(state).title).toBe("Start the local evaluation service");
+    expect(proofgroveGateCopy(state).title).toBe("Start the local evaluation service");
   });
 
   it("prioritises connectivity over an HTTP status", () => {
-    expect(classifyEvalHubGate({ online: false, status: 403 })).toBe("offline");
+    expect(classifyProofgroveGate({ online: false, status: 403 })).toBe("offline");
   });
 });
 
@@ -272,7 +272,7 @@ describe("spans archive 503 stays out of the workspace gate", () => {
       "Part of Proofgrove is temporarily unavailable. Try again shortly.",
     );
     expect(error.message).not.toMatch(/workspace/i);
-    expect(error.message).not.toBe(evalHubGateCopy("unprovisioned").description);
+    expect(error.message).not.toBe(proofgroveGateCopy("unprovisioned").description);
   });
 
   it("a body-less 503 (gateway-stripped) also falls back to outage copy", () => {
@@ -285,7 +285,7 @@ describe("spans archive 503 stays out of the workspace gate", () => {
     // The gate's classifier only consumes /api/status probe signals; a 503
     // there means outage. "unprovisioned" requires a clean probe response
     // reporting available: false — a data fetch can never produce it.
-    expect(classifyEvalHubGate({ status: 503 })).toBe("service-unavailable");
-    expect(classifyEvalHubGate({ status: 503 })).not.toBe("unprovisioned");
+    expect(classifyProofgroveGate({ status: 503 })).toBe("service-unavailable");
+    expect(classifyProofgroveGate({ status: 503 })).not.toBe("unprovisioned");
   });
 });

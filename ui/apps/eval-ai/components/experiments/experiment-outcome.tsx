@@ -53,7 +53,7 @@ export function ExperimentOutcome({
   return (
     <section className="panel mb-5 overflow-hidden" aria-labelledby="experiment-outcome-title">
       <div className="border-b border-border px-5 py-4 sm:px-6">
-        <p className="eval-hub-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Outcome</p>
+        <p className="proofgrove-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Outcome</p>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <h2 id="experiment-outcome-title" className="font-display text-lg font-semibold tracking-tight">

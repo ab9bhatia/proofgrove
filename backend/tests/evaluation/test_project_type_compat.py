@@ -1,6 +1,6 @@
 """Project system_type ↔ response_source compatibility for run creation."""
 
-from evalhub.api.v1.evaluation import compatible_project_types
+from proofgrove.api.v1.evaluation import compatible_project_types
 
 
 def test_rag_source_accepts_rag_and_application() -> None:

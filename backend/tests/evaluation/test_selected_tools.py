@@ -11,13 +11,13 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import update
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.db.models import EvaluationRunORM, RunJobORM
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.adapters import build_judge
-from evalhub.evaluation.engine import EvaluationEngine, scoped_row_for_tool_selection
-from evalhub.evaluation.enums import (
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.db.models import EvaluationRunORM, RunJobORM
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.adapters import build_judge
+from proofgrove.evaluation.engine import EvaluationEngine, scoped_row_for_tool_selection
+from proofgrove.evaluation.enums import (
     EvaluationScope,
     EvidenceReadiness,
     MetricStatus,
@@ -26,23 +26,23 @@ from evalhub.evaluation.enums import (
     UnscoredReason,
     VerdictStatus,
 )
-from evalhub.evaluation.lineage import (
+from proofgrove.evaluation.lineage import (
     build_lineage,
     compute_comparison_basis_hash,
     compute_experiment_version_id,
 )
-from evalhub.evaluation.models import (
+from proofgrove.evaluation.models import (
     EvaluationRow,
     ExperimentDefinition,
     ToolCall,
 )
-from evalhub.evaluation.readiness import assess_evidence_readiness
-from evalhub.evaluation.run_service import tool_context_texts
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.evaluation.scenario_router import build_evaluator_configs
-from evalhub.evaluation.target.discovery import AgentSummary
-from evalhub.main import app
-from evalhub.settings import Settings, settings
+from proofgrove.evaluation.readiness import assess_evidence_readiness
+from proofgrove.evaluation.run_service import tool_context_texts
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.evaluation.scenario_router import build_evaluator_configs
+from proofgrove.evaluation.target.discovery import AgentSummary
+from proofgrove.main import app
+from proofgrove.settings import Settings, settings
 
 TENANT = "tenant-selected-tools"
 
@@ -78,7 +78,7 @@ def _patch_agents(monkeypatch, agent: AgentSummary) -> None:
     async def _agents(**kwargs):  # noqa: ARG001
         return [agent]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
 
 
 async def _assess(*, selected_tool_ids=None, tools=None, agent_type="Declarative", scope=EvaluationScope.TOOL_INTERACTIONS, settings_obj=None):

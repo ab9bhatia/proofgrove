@@ -15,16 +15,16 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from pydantic import SecretStr
 
-from evalhub.api import dependencies
-from evalhub.api.dependencies import get_evaluation_store, get_registry_service
-from evalhub.datasets.enums import DatasetStatus
-from evalhub.datasets.exceptions import DatasetNotFoundError
-from evalhub.datasets.models import CreateDatasetRequest, DatasetInfo, PromoteRunItemResult, WriteExpectedToolsResult
-from evalhub.evaluation.models import EvidencePolicy, RunItemDetail, RunItemExecution
-from evalhub.main import app
-from evalhub.platform import authz
-from evalhub.platform.authz import actor_from_request
-from evalhub.settings import settings
+from proofgrove.api import dependencies
+from proofgrove.api.dependencies import get_evaluation_store, get_registry_service
+from proofgrove.datasets.enums import DatasetStatus
+from proofgrove.datasets.exceptions import DatasetNotFoundError
+from proofgrove.datasets.models import CreateDatasetRequest, DatasetInfo, PromoteRunItemResult, WriteExpectedToolsResult
+from proofgrove.evaluation.models import EvidencePolicy, RunItemDetail, RunItemExecution
+from proofgrove.main import app
+from proofgrove.platform import authz
+from proofgrove.platform.authz import actor_from_request
+from proofgrove.settings import settings
 from tests.platform.test_action_authorization import _AuthzClient
 
 TENANT = "tenant-actor-binding"
@@ -254,7 +254,7 @@ def test_lifecycle_history_actor_is_really_persisted(client, monkeypatch, auth_r
     registry = dependencies.get_registry_service()
     name = f"history-actor-{auth_required}"
     registry.create_dataset(CreateDatasetRequest(dataset_name=name, tenant_id=TENANT, product_id="p", created_by="original"))
-    from evalhub.datasets.models import DatasetRecord
+    from proofgrove.datasets.models import DatasetRecord
 
     registry.merge_records(
         name,

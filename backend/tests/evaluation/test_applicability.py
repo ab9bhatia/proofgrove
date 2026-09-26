@@ -8,9 +8,9 @@ target kind/capability and the dataset — WITHOUT inventing runtime evidence.
 
 from __future__ import annotations
 
-from evalhub.evaluation.enums import PreRunApplicability, Scenario
-from evalhub.evaluation.readiness import _dataset_has_reference, classify_pre_run_applicability
-from evalhub.evaluation.scenario_router import select_metrics
+from proofgrove.evaluation.enums import PreRunApplicability, Scenario
+from proofgrove.evaluation.readiness import _dataset_has_reference, classify_pre_run_applicability
+from proofgrove.evaluation.scenario_router import select_metrics
 
 
 def _metric(metric_id: str):

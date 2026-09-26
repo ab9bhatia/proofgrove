@@ -2,13 +2,13 @@
 
 import pytest
 
-from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-from evalhub.evaluation.adapters.trace_adapter import TraceJudge, supported_metrics
-from evalhub.evaluation.dataset_bridge import record_to_row
-from evalhub.evaluation.enums import Adapter, ScoringType
-from evalhub.evaluation.metrics import METRIC_CATALOG
-from evalhub.evaluation.models import EvaluationRow, EvaluatorConfig, ToolCall
-from evalhub.settings import Settings
+from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+from proofgrove.evaluation.adapters.trace_adapter import TraceJudge, supported_metrics
+from proofgrove.evaluation.dataset_bridge import record_to_row
+from proofgrove.evaluation.enums import Adapter, ScoringType
+from proofgrove.evaluation.metrics import METRIC_CATALOG
+from proofgrove.evaluation.models import EvaluationRow, EvaluatorConfig, ToolCall
+from proofgrove.settings import Settings
 
 
 def _config(metric_id: str) -> EvaluatorConfig:
@@ -163,7 +163,7 @@ def test_a_supported_metric_with_no_branch_raises_instead_of_scoring(monkeypatch
     # `called - expected` against an unrelated expectation and report 0.0 — a
     # defect nobody caused, which is this module's own bug in reverse.
     monkeypatch.setattr(
-        "evalhub.evaluation.adapters.trace_adapter.supported_metrics",
+        "proofgrove.evaluation.adapters.trace_adapter.supported_metrics",
         lambda: {
             "agent.tool_call_accuracy",
             "agent.tool_selection",

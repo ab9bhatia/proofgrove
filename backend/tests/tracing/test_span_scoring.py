@@ -5,15 +5,15 @@ from unittest.mock import AsyncMock
 import pytest
 from sqlalchemy import func, select
 
-from evalhub.db.models import EvaluationRunORM
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore, RunCancelledError
-from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.metrics import get_metric
-from evalhub.evaluation.models import ArchivedTraceSpan
-from evalhub.settings import Settings
-from evalhub.tracing.scoring import SpanSelection, execute_span_scoring, preview_fingerprint, preview_span
+from proofgrove.db.models import EvaluationRunORM
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore, RunCancelledError
+from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.metrics import get_metric
+from proofgrove.evaluation.models import ArchivedTraceSpan
+from proofgrove.settings import Settings
+from proofgrove.tracing.scoring import SpanSelection, execute_span_scoring, preview_fingerprint, preview_span
 
 
 def evidence(**attributes):
@@ -48,7 +48,7 @@ def test_compatibility_uses_recorded_kind_and_own_evidence():
 
 @pytest.mark.asyncio
 async def test_measurements_are_persisted_only_on_span_job_and_retries_reuse_results(monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-tenant")
     span = evidence()
@@ -108,11 +108,11 @@ def test_retrieval_check_binds_only_openinference_documents():
 
 @pytest.mark.asyncio
 async def test_automatic_checks_match_recorded_types_and_do_not_duplicate(monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-tenant")
-    from evalhub.evaluation.enums import EvaluationScope
-    from evalhub.tracing.scoring import enqueue_automatic_span_checks, full_execution_span_checks
+    from proofgrove.evaluation.enums import EvaluationScope
+    from proofgrove.tracing.scoring import enqueue_automatic_span_checks, full_execution_span_checks
 
     definitions = [get_metric(mid).model_dump(mode="json") for mid in ["ops.latency", "llm.correctness", "llm.relevance"]]
     assert full_execution_span_checks(EvaluationScope.FINAL_RESPONSE, definitions, ["ops.latency"]) is None
@@ -158,7 +158,7 @@ async def test_automatic_checks_match_recorded_types_and_do_not_duplicate(monkey
     ({"gen_ai.conversation.id": "id", "tool.name": "advertised"}, None, None),
 ])
 def test_explicit_compatibility_is_shared_by_serialization_index_and_scoring(attributes, kind, source):
-    from evalhub.tracing.models import span_index_rows_from_spans
+    from proofgrove.tracing.models import span_index_rows_from_spans
     span = evidence()
     span.name = "call_llm tool network"
     span.attributes = attributes

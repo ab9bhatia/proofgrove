@@ -1,7 +1,7 @@
-from evalhub.configs.app_config import (
+from proofgrove.configs.app_config import (
     resolve_telemetry_profile,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 
 def test_default_profile_keeps_minio_access_keys() -> None:

@@ -5,7 +5,7 @@ import { UsageDashboard } from "@/components/usage-dashboard";
 
 const mock = vi.hoisted(() => ({ getUsage: vi.fn(), tenant: vi.fn() }));
 vi.mock("@/lib/api", () => ({ api: { tenant: mock.tenant }, evaluationApi: { getUsage: mock.getUsage } }));
-vi.mock("@/components/eval-hub-gate", () => ({ EvalHubGate: ({ children }: { children: React.ReactNode }) => children }));
+vi.mock("@/components/proofgrove-gate", () => ({ ProofgroveGate: ({ children }: { children: React.ReactNode }) => children }));
 vi.mock("recharts", () => {
   const Chart = () => null;
   return { ResponsiveContainer: Chart, LineChart: Chart, Line: Chart, CartesianGrid: Chart, XAxis: Chart, YAxis: Chart, Tooltip: Chart, Legend: Chart };

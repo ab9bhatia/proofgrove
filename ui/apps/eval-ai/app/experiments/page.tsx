@@ -155,7 +155,7 @@ export function ExperimentsView({ embedded = false }: { embedded?: boolean }) {
         <div className="panel overflow-hidden">
           <div className="border-b border-border px-5 py-4 sm:px-6">
             <div className="min-w-0">
-              <p className="eval-hub-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Hypothesis</p>
+              <p className="proofgrove-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Hypothesis</p>
               <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 Group compatible historical runs around a hypothesis, choose a baseline, and compare model, prompt, agent, or tool variants.
               </p>

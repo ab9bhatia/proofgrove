@@ -9,7 +9,7 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import (
+from proofgrove.db.models import (
     Base,
     EvaluationRunORM,
     ExperimentORM,
@@ -18,7 +18,7 @@ from evalhub.db.models import (
     ReviewDecisionORM,
     ReviewTaskORM,
 )
-from evalhub.db.store import EvaluationStore
+from proofgrove.db.store import EvaluationStore
 
 TENANT = "acme"
 

@@ -3,10 +3,10 @@
 import pytest
 from pydantic import ValidationError
 
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 PRODUCTION_DATABASE_URL = (
-    "postgresql+asyncpg://evalhub:injected@postgres.example:5432/evalhub?sslmode=require"
+    "postgresql+asyncpg://proofgrove:injected@postgres.example:5432/proofgrove?sslmode=require"
 )
 
 
@@ -51,10 +51,10 @@ def test_production_accepts_key_vault_postgres_and_workload_identity_archive() -
 
 @pytest.mark.parametrize(
     "database_url",
-    ["", "postgresql+asyncpg://eval-hub:eval-hub@localhost:5432/eval-hub"],
+    ["", "postgresql+asyncpg://proofgrove:proofgrove@localhost:5432/proofgrove"],
 )
 def test_production_refuses_missing_or_development_postgres_credentials(database_url: str) -> None:
-    with pytest.raises(ValidationError, match="eval-hub-postgres-credentials Secret"):
+    with pytest.raises(ValidationError, match="proofgrove-postgres-credentials Secret"):
         _settings(database_url=database_url)
 
 
@@ -101,7 +101,7 @@ def test_development_keeps_local_bootstrap_defaults() -> None:
     configured = Settings(
         _env_file=None,
         app_env="dev",
-        database_url="postgresql+asyncpg://eval-hub:eval-hub@localhost:5432/eval-hub",
+        database_url="postgresql+asyncpg://proofgrove:proofgrove@localhost:5432/proofgrove",
     )
 
-    assert configured.database_url.endswith("@localhost:5432/eval-hub")
+    assert configured.database_url.endswith("@localhost:5432/proofgrove")

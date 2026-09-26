@@ -9,14 +9,14 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-from evalhub.evaluation import trace_archive as trace_archive_module
-from evalhub.evaluation.parquet_traces import spans_from_parquet
-from evalhub.evaluation.trace_archive import (
+from proofgrove.evaluation import trace_archive as trace_archive_module
+from proofgrove.evaluation.parquet_traces import spans_from_parquet
+from proofgrove.evaluation.trace_archive import (
     TraceArchiveReader,
     spans_for_trace,
     tenant_from_namespace,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 TRACE_ID = "0123456789abcdef0123456789abcdef"
 

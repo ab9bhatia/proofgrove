@@ -1,8 +1,8 @@
 """Tests for scenario router."""
 
-from evalhub.evaluation.enums import Scenario
-from evalhub.evaluation.metrics import METRIC_CATALOG
-from evalhub.evaluation.scenario_router import select_kpis, select_metrics
+from proofgrove.evaluation.enums import Scenario
+from proofgrove.evaluation.metrics import METRIC_CATALOG
+from proofgrove.evaluation.scenario_router import select_kpis, select_metrics
 
 
 def test_rag_metrics_include_cross_cutting():

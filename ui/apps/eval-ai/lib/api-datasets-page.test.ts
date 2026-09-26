@@ -48,7 +48,7 @@ describe("api.listDatasetsPage", () => {
 
     const url = sessionAwareFetch.mock.calls[0][0] as string;
     const parsed = new URL(url, "http://x");
-    expect(parsed.pathname).toBe("/api/eval-hub/datasets");
+    expect(parsed.pathname).toBe("/api/proofgrove/datasets");
     expect(parsed.searchParams.get("limit")).toBe("50");
     expect(parsed.searchParams.has("offset")).toBe(false);
     expect(parsed.searchParams.has("cursor")).toBe(false);
@@ -87,7 +87,7 @@ describe("api.getRecordsPage", () => {
 
     const url = sessionAwareFetch.mock.calls[0][0] as string;
     const parsed = new URL(url, "http://x");
-    expect(parsed.pathname).toBe("/api/eval-hub/datasets/my%20ds%2Fv1/records");
+    expect(parsed.pathname).toBe("/api/proofgrove/datasets/my%20ds%2Fv1/records");
     expect(parsed.searchParams.get("limit")).toBe("50");
     expect(parsed.searchParams.get("offset")).toBe("50");
     expect(result).toEqual(recordsEnvelope);
@@ -102,7 +102,7 @@ describe("legacy unpaged dataset calls", () => {
 
     const url = sessionAwareFetch.mock.calls[0][0] as string;
     const parsed = new URL(url, "http://x");
-    expect(parsed.pathname).toBe("/api/eval-hub/datasets");
+    expect(parsed.pathname).toBe("/api/proofgrove/datasets");
     expect(parsed.searchParams.has("limit")).toBe(false);
   });
 
@@ -113,7 +113,7 @@ describe("legacy unpaged dataset calls", () => {
 
     const url = sessionAwareFetch.mock.calls[0][0] as string;
     const parsed = new URL(url, "http://x");
-    expect(parsed.pathname).toBe("/api/eval-hub/datasets/ds/records");
+    expect(parsed.pathname).toBe("/api/proofgrove/datasets/ds/records");
     expect(parsed.searchParams.has("limit")).toBe(false);
   });
 });

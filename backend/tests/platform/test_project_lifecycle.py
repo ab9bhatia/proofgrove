@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import uuid
 
-from evalhub.settings import settings
+from proofgrove.settings import settings
 
 
 def _project(client, tenant: str) -> str:
@@ -88,7 +88,7 @@ def test_delete_refuses_while_a_target_version_still_points_at_the_project(clien
 def test_lifecycle_endpoints_reject_another_tenants_project(client, monkeypatch):
     from unittest.mock import AsyncMock
 
-    from evalhub.platform import authz
+    from proofgrove.platform import authz
 
     tenant = f"tenant-{uuid.uuid4().hex[:8]}"
     # Act as the tenant this test creates, the way the gateway sets it.
@@ -115,7 +115,7 @@ def test_lifecycle_endpoints_reject_another_tenants_project(client, monkeypatch)
 
 
 def test_project_named_readiness_still_requires_approval_to_delete(client, monkeypatch):
-    from evalhub.platform import authz
+    from proofgrove.platform import authz
     from tests.platform.test_server_owned_governance import enable_auth
 
     tenant = "tenant-readiness"

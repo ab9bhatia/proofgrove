@@ -12,7 +12,7 @@
 import { sessionAwareFetch } from "@evalai/shared/session";
 import { ApiError, apiErrorFromResponse } from "@/lib/api-errors";
 
-const BASE = "/api/eval-hub";
+const BASE = "/api/proofgrove";
 
 /** Server-side bound on a comment body (mirrors `FINDING_COMMENT_MAX_LENGTH`). */
 export const COMMENT_MAX_LENGTH = 4000;

@@ -1,6 +1,6 @@
 """Direct row ingestion cannot claim an attestation it did not witness."""
 
-from evalhub.evaluation.models import EvaluationRow, ProvenanceStatus
+from proofgrove.evaluation.models import EvaluationRow, ProvenanceStatus
 from tests.conftest import act_as
 
 
@@ -67,7 +67,7 @@ def test_posted_rows_cannot_assert_execution_attestation(client):
 
 def test_defaults_cover_every_attested_field():
     """If a new attestation field appears, this catches it not being covered."""
-    from evalhub.api.v1.evaluation import _EXECUTION_ATTESTED_FIELDS
+    from proofgrove.api.v1.evaluation import _EXECUTION_ATTESTED_FIELDS
 
     for field in _EXECUTION_ATTESTED_FIELDS:
         assert field in EvaluationRow.model_fields

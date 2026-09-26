@@ -284,7 +284,7 @@ export function apiErrorFromResponse(status: number, body: string): ApiError {
  * a single "not provisioned" panel gives the wrong recovery guidance, so each is
  * detected from a real signal (connectivity, HTTP status, or the health flag).
  */
-export type EvalHubGateState =
+export type ProofgroveGateState =
   | "offline"
   | "session-expired"
   | "permission-denied"
@@ -298,7 +298,7 @@ export type EvalHubGateState =
  * - `status`: HTTP status when the probe responded but was not `ok`.
  * - `available`: the parsed `{ available }` health flag when the probe responded `ok`.
  */
-export interface EvalHubHealthSignal {
+export interface ProofgroveHealthSignal {
   online?: boolean;
   networkError?: boolean;
   status?: number;
@@ -306,7 +306,7 @@ export interface EvalHubHealthSignal {
 }
 
 /** Map a health probe signal to the specific gate state (never a catch-all). */
-export function classifyEvalHubGate(signal: EvalHubHealthSignal): EvalHubGateState {
+export function classifyProofgroveGate(signal: ProofgroveHealthSignal): ProofgroveGateState {
   // Connectivity failures come first: there is no trustworthy HTTP signal to read.
   if (signal.online === false || signal.networkError) return "offline";
 
@@ -323,14 +323,14 @@ export function classifyEvalHubGate(signal: EvalHubHealthSignal): EvalHubGateSta
   return "unprovisioned";
 }
 
-export interface EvalHubGateCopy {
+export interface ProofgroveGateCopy {
   title: string;
   description: string;
   /** Whether background polling can recover this state on its own. */
   autoRecovers: boolean;
 }
 
-const EVAL_HUB_GATE_COPY: Record<EvalHubGateState, EvalHubGateCopy> = {
+const PROOFGROVE_GATE_COPY: Record<ProofgroveGateState, ProofgroveGateCopy> = {
   offline: {
     title: "You appear to be offline",
     description:
@@ -363,8 +363,8 @@ const EVAL_HUB_GATE_COPY: Record<EvalHubGateState, EvalHubGateCopy> = {
 };
 
 /** Distinct user-facing copy and recovery guidance for each gate state. */
-export function evalHubGateCopy(state: EvalHubGateState): EvalHubGateCopy {
-  return EVAL_HUB_GATE_COPY[state];
+export function proofgroveGateCopy(state: ProofgroveGateState): ProofgroveGateCopy {
+  return PROOFGROVE_GATE_COPY[state];
 }
 
 /** Render known public errors and replace every technical exception with safe copy. */

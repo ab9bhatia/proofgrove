@@ -1,4 +1,4 @@
-"""Alembic environment for Eval Hub's tenant-local persistence schema."""
+"""Alembic environment for Proofgrove's tenant-local persistence schema."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from evalhub.db import models  # noqa: F401 - registers every ORM model
-from evalhub.db.session import Base, get_async_database_url
+from proofgrove.db import models  # noqa: F401 - registers every ORM model
+from proofgrove.db.session import Base, get_async_database_url
 
 config = context.config
 config.set_main_option("sqlalchemy.url", get_async_database_url().replace("%", "%%"))

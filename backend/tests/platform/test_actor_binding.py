@@ -13,8 +13,8 @@ With auth off (local dev), the body value must still be used unchanged.
 import pytest
 from pydantic import SecretStr
 
-from evalhub.platform import authz
-from evalhub.settings import settings
+from proofgrove.platform import authz
+from proofgrove.settings import settings
 from tests.platform.test_action_authorization import _AuthzClient
 
 TENANT = "tenant-actor-binding-qc"

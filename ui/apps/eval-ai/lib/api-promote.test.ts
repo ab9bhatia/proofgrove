@@ -34,11 +34,11 @@ describe("promoteRunItem client", () => {
       example_id: "ex-1",
       expected_source: "output",
       create_version_if_immutable: false,
-      created_by: "eval-hub-ui",
+      created_by: "proofgrove-ui",
     });
 
     expect(calls).toHaveLength(1);
-    expect(calls[0].url).toBe("/api/eval-hub/datasets/golden%20ds/promotions");
+    expect(calls[0].url).toBe("/api/proofgrove/datasets/golden%20ds/promotions");
     expect(calls[0].init?.method).toBe("POST");
     // No tenant in the body: the dataset's own tenant scopes the run lookup
     // server-side, so a caller cannot name the tenant the read runs under.
@@ -47,7 +47,7 @@ describe("promoteRunItem client", () => {
       example_id: "ex-1",
       expected_source: "output",
       create_version_if_immutable: false,
-      created_by: "eval-hub-ui",
+      created_by: "proofgrove-ui",
     });
     expect(returned.record_id).toBe("rid-1");
   });

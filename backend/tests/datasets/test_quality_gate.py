@@ -1,7 +1,7 @@
 """Tests for the quality gate / DQS validation framework."""
 
-from evalhub.datasets.enums import DatasetStatus
-from evalhub.datasets.quality_gate import (
+from proofgrove.datasets.enums import DatasetStatus
+from proofgrove.datasets.quality_gate import (
     DQS_REJECTED_THRESHOLD,
     DQS_VALIDATED_THRESHOLD,
     run_quality_gate,

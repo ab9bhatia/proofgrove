@@ -15,16 +15,16 @@ pin the settled contract:
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base
-from evalhub.db.store import EvaluationStore
-from evalhub.platform.contracts import (
+from proofgrove.db.models import Base
+from proofgrove.db.store import EvaluationStore
+from proofgrove.platform.contracts import (
     EvaluationProject,
     ProjectPurpose,
     ProjectStatus,
     TargetType,
     TargetVersion,
 )
-from evalhub.platform.target_binding import TargetProjectBinding
+from proofgrove.platform.target_binding import TargetProjectBinding
 
 TENANT = "tenant-evalai"
 OTHER_TENANT = "tenant-other"
@@ -61,7 +61,7 @@ async def _catalog_project(store: EvaluationStore, tenant: str, project_id: str)
             tenant_id=tenant,
             name="Agent Catalog",
             system_type="agent",
-            owner="eval-hub",
+            owner="proofgrove",
             purpose=ProjectPurpose.CATALOG_REGISTRY,
         )
     )
@@ -257,7 +257,7 @@ async def test_resolve_returns_none_when_bound_project_is_archived(store: Evalua
 async def test_catalog_bindings_are_batched_and_preserve_scope(store):
     from sqlalchemy import event
 
-    from evalhub.db.models import TargetProjectBindingORM
+    from proofgrove.db.models import TargetProjectBindingORM
 
     await _system_project(store, TENANT, "active")
     await _system_project(store, TENANT, "archived")

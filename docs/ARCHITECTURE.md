@@ -6,7 +6,7 @@ The [standalone engineering guide](EVALUATION-ENGINEERING-GUIDE.md) explains eva
 
 Only two server processes are required: **Next.js on localhost:3010** and **FastAPI on 127.0.0.1:8010**. The API also runs the local evaluation worker. **SQLite** stores datasets, jobs, contracts, runs, scores and review state in `backend/data/eval-ai.db`.
 
-The browser calls the UI's `/api/eval-hub/*` routes. The server-side proxy resolves the classroom tenant and forwards requests to FastAPI. The API validates the request, accesses the dataset/contract services and executes or queues scoring. Results and evidence are persisted before the UI reads them. Numbered Excalidraw diagram 05 shows request → load → score → save → readback through this local runtime.
+The browser calls the UI's `/api/proofgrove/*` routes. The server-side proxy resolves the classroom tenant and forwards requests to FastAPI. The API validates the request, accesses the dataset/contract services and executes or queues scoring. Results and evidence are persisted before the UI reads them. Numbered Excalidraw diagram 05 shows request → load → score → save → readback through this local runtime.
 
 The launcher explicitly selects the local classroom profile: mock judge, local evaluation runtime, disabled trace archive/index, disabled external telemetry and one trusted local identity. Existing package IDs and API headers remain stable. This identity shortcut is appropriate for the local lab; it is not production authentication or tenant isolation.
 
@@ -49,12 +49,12 @@ For Nova, the policy registry and clock are fixed. The legacy adapter's default 
 | Expectation/rubric exercise | `ui/apps/eval-ai/components/learning/expectation-lab.tsx` |
 | Authored Nova comparison | `ui/apps/eval-ai/components/learning/run-comparison.tsx` |
 | Nova fixture source and checks | `samples/nova/`, `scripts/seed_nova.py` |
-| Dataset lifecycle and quality checks | `backend/src/evalhub/datasets/` |
-| HTTP routes | `backend/src/evalhub/api/v1/` |
-| Persistence | `backend/src/evalhub/db/` |
-| Contract resolution and review | `backend/src/evalhub/platform/` |
-| Engine, target adapters and metrics | `backend/src/evalhub/evaluation/` |
-| Local job worker | `backend/src/evalhub/runs_worker.py` |
+| Dataset lifecycle and quality checks | `backend/src/proofgrove/datasets/` |
+| HTTP routes | `backend/src/proofgrove/api/v1/` |
+| Persistence | `backend/src/proofgrove/db/` |
+| Contract resolution and review | `backend/src/proofgrove/platform/` |
+| Engine, target adapters and metrics | `backend/src/proofgrove/evaluation/` |
+| Local job worker | `backend/src/proofgrove/runs_worker.py` |
 | UI and API proxy | `ui/apps/eval-ai/` |
 
 ## Production boundary

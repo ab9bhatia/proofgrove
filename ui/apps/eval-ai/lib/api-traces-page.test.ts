@@ -38,7 +38,7 @@ describe("api.listProjectTracesPage", () => {
 
     const url = sessionAwareFetch.mock.calls[0][0] as string;
     const parsed = new URL(url, "http://x");
-    expect(parsed.pathname).toBe("/api/eval-hub/tracing/projects/proj-1/traces/page");
+    expect(parsed.pathname).toBe("/api/proofgrove/tracing/projects/proj-1/traces/page");
     expect(parsed.searchParams.get("tenant_id")).toBe("tenant-a");
     expect(parsed.searchParams.get("limit")).toBe("25");
     expect(parsed.searchParams.has("cursor")).toBe(false);

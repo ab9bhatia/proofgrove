@@ -4,22 +4,22 @@ import math
 
 import pytest
 
-from evalhub.evaluation.adapters.deterministic_adapter import (
+from proofgrove.evaluation.adapters.deterministic_adapter import (
     DeterministicJudge,
     _bleu,
     _gleu,
     _meteor,
 )
-from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-from evalhub.evaluation.engine import _metric_not_applicable, _recorded_judge_model
-from evalhub.evaluation.enums import Scenario
-from evalhub.evaluation.metrics import METRIC_CATALOG
-from evalhub.evaluation.models import (
+from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+from proofgrove.evaluation.engine import _metric_not_applicable, _recorded_judge_model
+from proofgrove.evaluation.enums import Scenario
+from proofgrove.evaluation.metrics import METRIC_CATALOG
+from proofgrove.evaluation.models import (
     EvaluationRow,
     EvaluatorConfig,
     ExperimentDefinition,
 )
-from evalhub.settings import Settings
+from proofgrove.settings import Settings
 
 
 def _config(metric_id: str) -> EvaluatorConfig:
@@ -265,8 +265,8 @@ def test_rouge_l_beyond_the_token_limit_is_unscored_not_distorted():
     and the round-1 cap scored identical 2,000-token texts as 0.5. Beyond the
     DoS bound the metric now returns score=None with an explicit rationale —
     an unscored metric, never a distorted number."""
-    from evalhub.evaluation.adapters.deterministic_adapter import _rouge_l
-    from evalhub.evaluation.models import EvaluationRow
+    from proofgrove.evaluation.adapters.deterministic_adapter import _rouge_l
+    from proofgrove.evaluation.models import EvaluationRow
 
     matching = [f"token{i}" for i in range(1000)]
     text = " ".join(matching + [f"other{i}" for i in range(1000)])

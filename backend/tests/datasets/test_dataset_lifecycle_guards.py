@@ -7,12 +7,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evalhub.datasets.exceptions import DatasetError, DatasetImmutableError
-from evalhub.datasets.models import CreateDatasetRequest, DatasetMetadata
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.datasets.versioning import DatasetStatus
-from evalhub.settings import settings
+from proofgrove.datasets.exceptions import DatasetError, DatasetImmutableError
+from proofgrove.datasets.models import CreateDatasetRequest, DatasetMetadata
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.datasets.versioning import DatasetStatus
+from proofgrove.settings import settings
 
 TENANT = "tenant-guards"
 
@@ -28,10 +28,10 @@ def test_reject_and_reopen_never_log_review_notes(caplog, monkeypatch, redaction
     name = "review-note-guard"
     registry.create_dataset(CreateDatasetRequest(dataset_name=name, tenant_id=TENANT, product_id="p", created_by="t"))
     sentinel = "private-evaluation-note-sentinel"
-    with caplog.at_level(logging.INFO, logger="evalhub.datasets.registry"):
+    with caplog.at_level(logging.INFO, logger="proofgrove.datasets.registry"):
         assert registry.reject_dataset(name, "reviewer", TENANT, sentinel).status == DatasetStatus.REJECTED
         assert registry.reopen_dataset(name, "reviewer", TENANT, sentinel).status == DatasetStatus.DRAFT
-    records = [record for record in caplog.records if record.name == "evalhub.datasets.registry"]
+    records = [record for record in caplog.records if record.name == "proofgrove.datasets.registry"]
     assert len(records) == 2
     assert "rejected" in records[0].getMessage()
     assert "returned to draft" in records[1].getMessage()
@@ -158,7 +158,7 @@ def test_delete_rechecks_status_when_metadata_became_stale(monkeypatch):
 def test_lifecycle_actor_comes_from_authenticated_subject(client, monkeypatch, caplog, action, initial, mode):
     from pydantic import SecretStr
 
-    from evalhub.platform import authz
+    from proofgrove.platform import authz
     from tests.platform.test_action_authorization import _AuthzClient
 
     registry = _registry()
@@ -177,7 +177,7 @@ def test_lifecycle_actor_comes_from_authenticated_subject(client, monkeypatch, c
     with caplog.at_level(logging.INFO):
         response = client.post(f"/datasets/actor-guard/{action}", headers=headers, json={field: "forged-reviewer"})
     assert response.status_code == {"missing-sub": 401, "denied": 403}.get(mode, 200), response.text
-    records = [r for r in caplog.records if r.name in {"evalhub.events", "evalhub.datasets.registry"}]
+    records = [r for r in caplog.records if r.name in {"proofgrove.events", "proofgrove.datasets.registry"}]
     if mode in {"missing-sub", "denied"}:
         assert registry.get_dataset("actor-guard", TENANT).status == initial
         assert not records

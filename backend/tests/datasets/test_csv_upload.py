@@ -5,16 +5,16 @@ from unittest.mock import MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.datasets.csv_parser import parse_csv
-from evalhub.datasets.exceptions import DatasetValidationError
-from evalhub.datasets.models import DatasetRecord
-from evalhub.evaluation.dataset_bridge import (
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.datasets.csv_parser import parse_csv
+from proofgrove.datasets.exceptions import DatasetValidationError
+from proofgrove.datasets.models import DatasetRecord
+from proofgrove.evaluation.dataset_bridge import (
     _provided_response,
     missing_provided_response,
     record_to_row,
 )
-from evalhub.main import app
+from proofgrove.main import app
 
 # ------------------------------------------------------------------
 # Unit tests: parse_csv
@@ -48,7 +48,7 @@ class TestParseCsvCanonical:
         is the ";"-separated ``tool(args)`` encoding the bridge already parses
         (``expectations``, under the first key it probes).
         """
-        from evalhub.evaluation.dataset_bridge import record_to_row
+        from proofgrove.evaluation.dataset_bridge import record_to_row
 
         csv_text = (
             "Serial No,Question,Expected Output,Risk,Context,Expected Actions\n"
@@ -69,7 +69,7 @@ class TestParseCsvCanonical:
 
     def test_metadata_column_lands_where_the_scorers_read(self) -> None:
         """One JSON blob, routed into the dicts storage already uses."""
-        from evalhub.evaluation.dataset_bridge import record_to_row
+        from proofgrove.evaluation.dataset_bridge import record_to_row
 
         csv_text = (
             "Serial No,Question,Expected Output,Metadata\n"
@@ -91,7 +91,7 @@ class TestParseCsvCanonical:
         ``record_metadata`` is the exact inverse of the import routing, so a
         record rebuilt from its own exported blob is the record it started as.
         """
-        from evalhub.datasets.csv_parser import metadata_to_record, record_metadata
+        from proofgrove.datasets.csv_parser import metadata_to_record, record_metadata
 
         original = {
             "inputs": {"question": "q", "query": "q", "context": "ctx", "reviewer": "ana"},
@@ -412,7 +412,7 @@ class TestUploadCsvEndpoint:
     async def test_upload_csv_rejects_file_over_the_configured_limit(
         self, client: AsyncClient, mock_svc: MagicMock,
     ) -> None:
-        from evalhub.settings import settings
+        from proofgrove.settings import settings
 
         prior_limit = settings.max_request_body_bytes
         settings.max_request_body_bytes = 16

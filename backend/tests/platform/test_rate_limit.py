@@ -1,10 +1,10 @@
-"""Rate limiting at the Eval Hub application boundary."""
+"""Rate limiting at the Proofgrove application boundary."""
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from evalhub.platform.rate_limit import RateLimitMiddleware, ServerRateLimiter
-from evalhub.settings import Settings
+from proofgrove.platform.rate_limit import RateLimitMiddleware, ServerRateLimiter
+from proofgrove.settings import Settings
 
 
 class _Clock:

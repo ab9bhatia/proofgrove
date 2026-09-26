@@ -8,9 +8,9 @@ jobs, visible only to unscoped queries.
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base
-from evalhub.db.store import EvaluationStore
-from evalhub.settings import settings
+from proofgrove.db.models import Base
+from proofgrove.db.store import EvaluationStore
+from proofgrove.settings import settings
 
 
 @pytest.fixture

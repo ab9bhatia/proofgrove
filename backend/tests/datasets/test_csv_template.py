@@ -12,9 +12,9 @@ from unittest.mock import AsyncMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.main import app
-from evalhub.platform import authz
-from evalhub.settings import settings
+from proofgrove.main import app
+from proofgrove.platform import authz
+from proofgrove.settings import settings
 
 
 @pytest.mark.parametrize("auth_required", [True, False])

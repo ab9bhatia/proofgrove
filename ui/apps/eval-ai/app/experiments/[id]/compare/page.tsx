@@ -24,7 +24,7 @@ import {
   Wrench,
   X,
 } from "lucide-react";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { CopyableId } from "@/components/copyable-id";
 import { Dialog } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
@@ -69,11 +69,11 @@ function comparisonTargetLabel(run: RunResult): string {
 // Shared implementation, rendered at the canonical `/evaluations/:id/compare` route.
 export function ExperimentComparePage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<PageLoader />}>
         <CompareView />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

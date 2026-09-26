@@ -78,7 +78,7 @@ All StudyMate policies are invented for teaching. A small classroom benchmark is
 | Payload governance | Request/response limits, sensitive-value redaction, target URL validation and rate controls | Retained in code; not a production security certification |
 | OpenTelemetry/OpenInference | Target/evaluator spans, portable evaluation metadata and trace correlation | Instrumentation retained; archive infrastructure is not bundled into the lite runtime |
 
-Relevant local implementation roots: `backend/src/evalhub/datasets`, `backend/src/evalhub/evaluation`, `backend/src/evalhub/platform`, `backend/src/evalhub/tracing`, `backend/src/evalhub/api/v1`, and `ui/apps/eval-ai/{app,components,lib}`.
+Relevant local implementation roots: `backend/src/proofgrove/datasets`, `backend/src/proofgrove/evaluation`, `backend/src/proofgrove/platform`, `backend/src/proofgrove/tracing`, `backend/src/proofgrove/api/v1`, and `ui/apps/eval-ai/{app,components,lib}`.
 
 ## Metric families
 

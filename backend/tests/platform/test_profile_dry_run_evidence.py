@@ -5,8 +5,8 @@ from types import SimpleNamespace
 import pytest
 from fastapi import HTTPException
 
-from evalhub.api.v1.platform import _dry_run_evidence
-from evalhub.evaluation.enums import MetricStatus, RunStatus
+from proofgrove.api.v1.platform import _dry_run_evidence
+from proofgrove.evaluation.enums import MetricStatus, RunStatus
 
 TENANT = "tenant-a"
 

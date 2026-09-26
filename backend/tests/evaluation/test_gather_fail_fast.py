@@ -13,7 +13,7 @@ import gc
 
 import pytest
 
-from evalhub.evaluation.run_service import _gather_fail_fast
+from proofgrove.evaluation.run_service import _gather_fail_fast
 
 
 async def test_outer_cancellation_cancels_row_tasks():

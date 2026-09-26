@@ -9,9 +9,9 @@ import logging
 
 import pytest
 
-import evalhub.api.v1.evaluation as evaluation_module
-import evalhub.api.v1.tracing as tracing_module
-from evalhub.evaluation.models import RunItemTraceEvidence
+import proofgrove.api.v1.evaluation as evaluation_module
+import proofgrove.api.v1.tracing as tracing_module
+from proofgrove.evaluation.models import RunItemTraceEvidence
 from tests.conftest import act_as
 from tests.tracing._helpers import create_project as _create_project_base
 from tests.tracing._helpers import run_with_captured_row as _run_with_captured_row_base
@@ -61,7 +61,7 @@ def test_summary_endpoint_survives_archive_failure(client, monkeypatch):
 
 def test_spans_endpoint_503s_alone_on_archive_failure(client, monkeypatch, caplog):
     monkeypatch.setattr(tracing_module, "TraceArchiveReader", _BoomArchiveReader)
-    caplog.set_level(logging.ERROR, logger="evalhub")
+    caplog.set_level(logging.ERROR, logger="proofgrove")
     project_id = _create_project(client)
     _run_with_captured_row(client, project_id=project_id, trace_id="trace-boom")
 
@@ -84,7 +84,7 @@ def test_spans_endpoint_503s_alone_on_archive_failure(client, monkeypatch, caplo
     }
     # The failure is logged by type only: a traceback would carry the
     # object-store error text (endpoint, bucket) into shared logs.
-    failures = [record for record in caplog.records if record.name == "evalhub.api.v1.tracing"]
+    failures = [record for record in caplog.records if record.name == "proofgrove.api.v1.tracing"]
     assert failures, "the archive failure must still be logged"
     for record in failures:
         assert record.exc_info is None

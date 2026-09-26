@@ -9,7 +9,7 @@ after a persisted round-trip. An ungoverned run exposes ``None`` for all four.
 
 from uuid import uuid4
 
-from evalhub.evaluation.judge import set_row_overrides
+from proofgrove.evaluation.judge import set_row_overrides
 from tests.conftest import act_as
 
 _GOVERNANCE_FIELDS = (

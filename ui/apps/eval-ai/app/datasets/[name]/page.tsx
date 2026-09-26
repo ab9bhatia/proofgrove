@@ -24,7 +24,7 @@ import {
 } from "@/components/dataset-detail-header";
 import { DatasetValidationEmptyState } from "@/components/dataset-validation-empty-state";
 import { DatasetRecordMetadata, MetadataJsonDialog, metadataLabel, metadataValueText } from "@/components/dataset-record-metadata";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { ErrorState, LoadingState } from "@/components/page-state";
 import { recordMetadata } from "@/lib/dataset-csv";
 import { DatasetEvidenceGuide, SuppliedResponse, datasetPreviewRow } from "@/components/evaluation/dataset-preview-table";
@@ -76,11 +76,11 @@ export function datasetLoadAlert(
 
 export default function DatasetDetailPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<LoadingState label="Loading dataset…" className="min-h-48" />}>
         <DatasetDetail />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 
@@ -324,7 +324,7 @@ function DatasetDetail() {
           />
           <span className="text-sm text-foreground/80">
             Drop or click to upload a <span className="font-mono">.csv</span> with columns{" "}
-            <span className="font-mono">Serial No, Question, Expected Output, Risk</span>
+            <span className="font-mono">Serial No, Question, Expected Output, Metadata</span>
           </span>
         </label>
       )}

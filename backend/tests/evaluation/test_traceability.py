@@ -2,16 +2,16 @@
 
 import logging
 
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import EvaluationScope, GateResult, TriggerReason
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.lineage import compute_experiment_version_id
-from evalhub.evaluation.report import build_ci_callback, build_report
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.evaluation.scenario_router import build_evaluator_configs
-from evalhub.events import EvalEvent, emit
-from evalhub.platform.resolver import resolve_scoring_configuration
-from evalhub.version import PROMPT_VERSION
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import EvaluationScope, GateResult, TriggerReason
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.lineage import compute_experiment_version_id
+from proofgrove.evaluation.report import build_ci_callback, build_report
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.evaluation.scenario_router import build_evaluator_configs
+from proofgrove.events import EvalEvent, emit
+from proofgrove.platform.resolver import resolve_scoring_configuration
+from proofgrove.version import PROMPT_VERSION
 
 
 def _run(trigger=TriggerReason.MANUAL, correlation_id=None):
@@ -130,7 +130,7 @@ def test_ci_callback_review_required_follows_resolved_review_gates():
 
 
 def test_emit_returns_payload_and_logs(caplog):
-    with caplog.at_level(logging.INFO, logger="evalhub.events"):
+    with caplog.at_level(logging.INFO, logger="proofgrove.events"):
         payload = emit(EvalEvent.RUN_CREATED, correlation_id="c1", run_id="r1", dropped=None)
 
     assert payload == {"event": "RUN_CREATED", "run_id": "r1", "correlation_id": "c1"}
@@ -140,7 +140,7 @@ def test_emit_returns_payload_and_logs(caplog):
 
 
 def test_run_emits_lifecycle_events(caplog):
-    with caplog.at_level(logging.INFO, logger="evalhub.events"):
+    with caplog.at_level(logging.INFO, logger="proofgrove.events"):
         _run()
     events = {getattr(r, "eval_event", None) for r in caplog.records}
     assert {

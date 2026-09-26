@@ -2,8 +2,8 @@
 
 from unittest.mock import MagicMock
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.main import app
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.main import app
 from tests.platform.test_assignments import TENANT, _create_assignment, _ids
 from tests.platform.test_quality_contracts import (
     _approve_profile_and_gate,
@@ -50,7 +50,7 @@ def _prepare_launchable(client, ids, *, with_gate=False):
                 "tenant_id": TENANT,
                 "name": "Claims release",
                 "required_evidence": ["input", "final_output"],
-                "required_approver_roles": ["eval-hub-approver"],
+                "required_approver_roles": ["proofgrove-approver"],
             },
         )
         assert response.status_code == 201, response.text

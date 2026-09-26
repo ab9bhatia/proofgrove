@@ -4,13 +4,13 @@ import pytest
 from fastapi import HTTPException
 from pydantic import SecretStr
 
-from evalhub.evaluation.evidence_requirements import (
+from proofgrove.evaluation.evidence_requirements import (
     CAPTURE_EVIDENCE_CATEGORIES,
     canonicalize_capture_requirements,
 )
-from evalhub.platform import authz
-from evalhub.platform.authz import GOVERNANCE_ROLES
-from evalhub.settings import settings
+from proofgrove.platform import authz
+from proofgrove.platform.authz import GOVERNANCE_ROLES
+from proofgrove.settings import settings
 from tests.conftest import act_as
 from tests.platform.test_action_authorization import _AuthzClient, _request
 
@@ -61,7 +61,7 @@ def test_profile_and_policy_create_as_draft_and_reject_self_approval(client):
             "name": "Draft controls",
             "metric_ids": ["llm.relevance"],
             "evidence_requirements": ["actual_output"],
-            "approver_roles": ["eval-hub-approver"],
+            "approver_roles": ["proofgrove-approver"],
         },
     )
     assert created.status_code == 201, created.text
@@ -107,7 +107,7 @@ def test_unknown_evidence_and_roles_are_rejected_on_write(client):
         },
     )
     assert roles.status_code == 422, roles.text
-    assert "eval-hub-approver" in roles.json()["detail"]["message"]
+    assert "proofgrove-approver" in roles.json()["detail"]["message"]
 
 
 def test_two_tenants_can_own_the_same_profile_and_policy_identity(client):
@@ -184,7 +184,7 @@ async def test_release_decision_enforces_configured_platform_roles(auth_required
     monkeypatch.setattr(authz.httpx, "AsyncClient", _client)
     request = _request()
     await authz.require_configured_approver_roles(
-        request, ["eval-hub-approver", "eval-hub-reviewer"]
+        request, ["proofgrove-approver", "proofgrove-reviewer"]
     )
     assert [call["json"]["permission"] for call in calls] == [
         "governance.approve",
@@ -202,4 +202,4 @@ async def test_release_decision_fails_closed_for_unknown_configured_roles(auth_r
 
 
 def test_governance_roles_are_the_real_platform_roles():
-    assert GOVERNANCE_ROLES == {"eval-hub-approver", "eval-hub-reviewer"}
+    assert GOVERNANCE_ROLES == {"proofgrove-approver", "proofgrove-reviewer"}

@@ -108,9 +108,9 @@ def test_the_tenant_comes_from_the_run_not_from_the_caller(client):
     import asyncio
     import inspect
 
-    from evalhub.api.v1.platform import _run_tenant, open_case_for_review
-    from evalhub.db.session import async_session_factory
-    from evalhub.db.store import EvaluationStore
+    from proofgrove.api.v1.platform import _run_tenant, open_case_for_review
+    from proofgrove.db.session import async_session_factory
+    from proofgrove.db.store import EvaluationStore
 
     suffix = uuid4().hex[:8]
     _finding_with_task(client, suffix)

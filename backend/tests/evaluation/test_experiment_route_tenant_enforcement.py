@@ -120,7 +120,7 @@ def test_experiment_scoped_routes_reject_a_caller_from_another_tenant(client):
 
 
 def test_direct_run_rejects_a_foreign_tenant_before_execution(client, monkeypatch):
-    from evalhub.evaluation.engine import EvaluationEngine
+    from proofgrove.evaluation.engine import EvaluationEngine
 
     def unexpected_execution(*args, **kwargs):
         raise AssertionError("a foreign tenant must not execute a run")
@@ -157,7 +157,7 @@ def test_experiments_stored_under_the_slug_spelling_are_listed_for_the_namespace
     """The store widens a tenant lookup to both spellings the deployment accepts
     (``acme`` and ``tenant-acme``); the route used to re-narrow the result with
     an exact comparison and silently drop the caller's own rows."""
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-acme")
     act_as(client, "acme")
@@ -175,7 +175,7 @@ def test_experiments_stored_under_the_slug_spelling_are_listed_for_the_namespace
 
 
 def test_workspaces_stored_under_the_slug_spelling_are_listed_for_the_namespace(client, monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-acme")
     act_as(client, "acme")
@@ -197,8 +197,8 @@ async def test_attaching_a_run_matches_tenants_by_alias(monkeypatch):
     from types import SimpleNamespace
     from unittest.mock import AsyncMock
 
-    from evalhub.api.v1.evaluation import _collect_attach_run_failures
-    from evalhub.settings import settings
+    from proofgrove.api.v1.evaluation import _collect_attach_run_failures
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-acme")
     run = SimpleNamespace(run_id="run-1", status="completed", lineage=SimpleNamespace(comparison_basis_hash="basis", comparison_basis_version="v3"), experiment=SimpleNamespace(tenant_id="acme", experiment_id="exp-1"))

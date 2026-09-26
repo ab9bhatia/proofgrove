@@ -2,16 +2,16 @@
 
 import pytest
 
-from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-from evalhub.evaluation.adapters.scale import binary_label, unit_to_raw
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import Adapter, MetricStatus, ScoringType
-from evalhub.evaluation.llm_judge import JudgeResult
-from evalhub.evaluation.metrics import METRIC_CATALOG, get_metric
-from evalhub.evaluation.models import EvaluationRow, EvaluatorConfig
-from evalhub.evaluation.normalization import normalise_score
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.settings import Settings
+from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+from proofgrove.evaluation.adapters.scale import binary_label, unit_to_raw
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import Adapter, MetricStatus, ScoringType
+from proofgrove.evaluation.llm_judge import JudgeResult
+from proofgrove.evaluation.metrics import METRIC_CATALOG, get_metric
+from proofgrove.evaluation.models import EvaluationRow, EvaluatorConfig
+from proofgrove.evaluation.normalization import normalise_score
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.settings import Settings
 
 
 def _config(metric_id: str, adapter: Adapter) -> EvaluatorConfig:
@@ -244,16 +244,16 @@ def test_metric_catalog_adapter_bindings():
 
 
 def test_every_inline_specialized_metric_has_an_executable_adapter():
-    from evalhub.evaluation.adapters.deepeval_adapter import (
+    from proofgrove.evaluation.adapters.deepeval_adapter import (
         supported_metrics as deepeval_metrics,
     )
-    from evalhub.evaluation.adapters.deterministic_adapter import (
+    from proofgrove.evaluation.adapters.deterministic_adapter import (
         supported_metrics as deterministic_metrics,
     )
-    from evalhub.evaluation.adapters.ragas_adapter import (
+    from proofgrove.evaluation.adapters.ragas_adapter import (
         supported_metrics as ragas_metrics,
     )
-    from evalhub.evaluation.adapters.trace_adapter import (
+    from proofgrove.evaluation.adapters.trace_adapter import (
         supported_metrics as trace_metrics,
     )
 
@@ -316,7 +316,7 @@ def test_no_rubric_demands_a_reference_it_never_judges_against():
     compare against a reference.
     """
 
-    from evalhub.platform.quality_contract_templates import QUALITY_CONTRACT_TEMPLATES
+    from proofgrove.platform.quality_contract_templates import QUALITY_CONTRACT_TEMPLATES
 
     demanding = [template.metric_id for template in QUALITY_CONTRACT_TEMPLATES if "expected_output" in template.evaluation_params]
     assert demanding == []
@@ -335,8 +335,8 @@ def test_a_metric_that_judges_tool_choice_receives_the_calls():
     that from output alone, so the calls themselves are passed through.
     """
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _tool_call_descriptions
-    from evalhub.evaluation.models import ToolCall
+    from proofgrove.evaluation.adapters.deepeval_adapter import _tool_call_descriptions
+    from proofgrove.evaluation.models import ToolCall
 
     rendered = _tool_call_descriptions(
         [
@@ -360,11 +360,11 @@ def test_chunk_relevance_is_scored_by_the_query_only_scorer():
     while ``ContextRelevance`` returned 5.0 and 5.0.
     """
 
-    from evalhub.evaluation.adapters.ragas_adapter import (
+    from proofgrove.evaluation.adapters.ragas_adapter import (
         _COLLECTIONS_API,
         _RAGAS_METRIC_NAMES,
     )
-    from evalhub.evaluation.metrics import METRIC_CATALOG
+    from proofgrove.evaluation.metrics import METRIC_CATALOG
 
     # RAGAS owns the RAG metrics.
     assert METRIC_CATALOG["rag.chunk_relevance"].default_adapter == Adapter.RAGAS
@@ -384,7 +384,7 @@ def test_efficiency_requires_the_calls_it_judges_but_not_every_result():
     uncaptured result while the redundancy it grades was fully observable.
     """
 
-    from evalhub.evaluation.metrics import METRIC_CATALOG
+    from proofgrove.evaluation.metrics import METRIC_CATALOG
 
     assert METRIC_CATALOG["quality.action_efficiency"].required_evidence_categories == ["tool_calls"]
     assert METRIC_CATALOG["quality.tool_correctness"].required_evidence_categories == [
@@ -403,8 +403,8 @@ def test_ground_truth_requirement_has_one_source_of_truth():
     failed into a substitute scorer instead of being excluded.
     """
 
-    from evalhub.evaluation.metrics import METRIC_CATALOG
-    from evalhub.evaluation.scenario_router import GROUND_TRUTH_METRICS
+    from proofgrove.evaluation.metrics import METRIC_CATALOG
+    from proofgrove.evaluation.scenario_router import GROUND_TRUTH_METRICS
 
     declared = {metric_id for metric_id, definition in METRIC_CATALOG.items() if definition.requires_ground_truth}
     assert GROUND_TRUTH_METRICS == declared
@@ -424,7 +424,7 @@ def test_a_supplied_rubric_reaches_the_built_in_deepeval_metrics():
 
     from deepeval.models import DeepEvalBaseLLM
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _build_metric
+    from proofgrove.evaluation.adapters.deepeval_adapter import _build_metric
 
     class _StubModel(DeepEvalBaseLLM):
         """Stands in for the judge so construction needs no API key."""
@@ -475,7 +475,7 @@ def test_declared_score_anchors_become_a_deepeval_rubric():
 
     from deepeval.models import DeepEvalBaseLLM
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _build_metric
+    from proofgrove.evaluation.adapters.deepeval_adapter import _build_metric
 
     class _StubModel(DeepEvalBaseLLM):
         def load_model(self):
@@ -490,7 +490,7 @@ def test_declared_score_anchors_become_a_deepeval_rubric():
         def get_model_name(self):
             return "stub"
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _score_anchors
+    from proofgrove.evaluation.adapters.deepeval_adapter import _score_anchors
 
     model = _StubModel()
     anchors = {1: "no discernible structure", 3: "disconnected blocks", 5: "one connected whole"}
@@ -525,8 +525,8 @@ def test_coherence_grades_structure_on_its_declared_scale():
 
     from deepeval.models import DeepEvalBaseLLM
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _build_metric
-    from evalhub.evaluation.metrics import get_metric
+    from proofgrove.evaluation.adapters.deepeval_adapter import _build_metric
+    from proofgrove.evaluation.metrics import get_metric
 
     class _StubModel(DeepEvalBaseLLM):
         def load_model(self):
@@ -589,7 +589,7 @@ def test_declared_anchors_survive_the_fallback_to_the_native_judge():
     ``adapter_config`` for every metric; only the native side ignored it.
     """
 
-    from evalhub.evaluation.prompts import build_judge_messages
+    from proofgrove.evaluation.prompts import build_judge_messages
 
     definition = get_metric("llm.coherence")
     assert definition.score_anchors, "fixture depends on coherence staying anchored"
@@ -619,8 +619,8 @@ def test_every_judged_metric_is_claimed_by_an_adapter():
     rubric applies and no reviewer can overrule it.
     """
 
-    from evalhub.evaluation.adapters.deepeval_adapter import supported_metrics as deepeval_claims
-    from evalhub.evaluation.adapters.ragas_adapter import supported_metrics as ragas_claims
+    from proofgrove.evaluation.adapters.deepeval_adapter import supported_metrics as deepeval_claims
+    from proofgrove.evaluation.adapters.ragas_adapter import supported_metrics as ragas_claims
 
     native = sorted(
         metric_id
@@ -653,7 +653,7 @@ def test_the_reclaimed_metrics_keep_a_real_fallback_rubric():
     the one-line default it was.
     """
 
-    from evalhub.evaluation.prompts import METRIC_RUBRICS, build_judge_messages
+    from proofgrove.evaluation.prompts import METRIC_RUBRICS, build_judge_messages
 
     reclaimed = [
         "agent.intent_resolution",
@@ -696,8 +696,8 @@ def test_captured_calls_reach_deepeval_as_tool_calls():
     are its own annotations and we have nothing truthful to put in them.
     """
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _deepeval_tool_calls
-    from evalhub.evaluation.models import ToolCall
+    from proofgrove.evaluation.adapters.deepeval_adapter import _deepeval_tool_calls
+    from proofgrove.evaluation.models import ToolCall
 
     assert _deepeval_tool_calls([]) is None
 
@@ -724,8 +724,8 @@ def test_goal_accuracy_receives_the_trajectory_not_a_bare_exchange():
     a confident wrong answer score as a resolved intent.
     """
 
-    from evalhub.evaluation.adapters.ragas_adapter import _goal_accuracy_messages
-    from evalhub.evaluation.models import ToolCall
+    from proofgrove.evaluation.adapters.ragas_adapter import _goal_accuracy_messages
+    from proofgrove.evaluation.models import ToolCall
 
     row = EvaluationRow(
         row_id="r1",
@@ -773,7 +773,7 @@ def test_response_completeness_scores_on_its_declared_range_under_geval():
 
     from deepeval.models import DeepEvalBaseLLM
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _build_metric
+    from proofgrove.evaluation.adapters.deepeval_adapter import _build_metric
 
     class _StubModel(DeepEvalBaseLLM):
         def load_model(self):
@@ -811,8 +811,8 @@ def test_every_anchored_metric_routes_to_a_scorer_that_reads_its_anchors():
     measuring goal achievement while its own criteria described understanding —
     found by a reviewer, not by us. This is the check that would have caught it.
     """
-    from evalhub.evaluation.enums import Adapter
-    from evalhub.evaluation.metrics import METRIC_CATALOG
+    from proofgrove.evaluation.enums import Adapter
+    from proofgrove.evaluation.metrics import METRIC_CATALOG
 
     reads_anchors = {Adapter.DEEPEVAL, Adapter.NATIVE}
     ignored = {
@@ -839,8 +839,8 @@ def test_no_operational_metric_carries_a_pass_or_fail():
     They stay comparable between runs on their own values; that is a different
     question from grading them.
     """
-    from evalhub.evaluation.enums import ScoringType
-    from evalhub.evaluation.metrics import METRIC_CATALOG
+    from proofgrove.evaluation.enums import ScoringType
+    from proofgrove.evaluation.metrics import METRIC_CATALOG
 
     judged = {
         metric_id: metric.scoring_type.value
@@ -856,7 +856,7 @@ def test_deepeval_parameter_enum_names_remain_compatible(monkeypatch, enum_name)
     import sys
     from types import SimpleNamespace
 
-    from evalhub.evaluation.adapters.deepeval_adapter import _build_metric
+    from proofgrove.evaluation.adapters.deepeval_adapter import _build_metric
 
     params = SimpleNamespace(ACTUAL_OUTPUT="actual_output")
     monkeypatch.setitem(sys.modules, "deepeval.test_case", SimpleNamespace(**{enum_name: params}))

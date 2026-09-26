@@ -12,7 +12,7 @@ const profile: QualityProfileVersion = {
   description: "Checks whether the requested task was completed.", status: "approved",
   scenario: "agentic", metric_ids: ["quality.task_completion", "agent.tool_correctness"],
   evidence_requirements: ["final_output"], hard_blocker_metric_ids: ["quality.task_completion"],
-  approver_roles: ["eval-hub-approver"], test_status: "tested",
+  approver_roles: ["proofgrove-approver"], test_status: "tested",
   tested_at: "2026-09-03T10:00:00Z", tested_by: "quality@example.com", test_note: "Dry-run passed.",
 };
 const policy: ReleaseGatePolicyVersion = {

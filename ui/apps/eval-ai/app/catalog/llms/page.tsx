@@ -8,7 +8,7 @@ import { FormEvent, Suspense, useCallback, useEffect, useMemo, useState } from "
 import { useSearchParams } from "next/navigation";
 import { Plus, RefreshCw } from "lucide-react";
 import { Button } from "@evalai/shared/ui/button";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { LlmCatalogList } from "@/components/catalog/llm-catalog-list";
 import { LlmFormDialog } from "@/components/catalog/llm-form-dialog";
 import { LlmCatalogToolbar } from "@/components/catalog/llm-catalog-toolbar";
@@ -20,7 +20,7 @@ import { scrollIntoPane } from "@/lib/scroll-into-pane";
 
 export default function LlmCatalogPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense
         fallback={
           <div className="flex justify-center py-24">
@@ -30,7 +30,7 @@ export default function LlmCatalogPage() {
       >
         <LlmCatalog />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

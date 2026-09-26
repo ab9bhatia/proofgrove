@@ -11,7 +11,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
-from evalhub.evaluation.target.invocation_span import (
+from proofgrove.evaluation.target.invocation_span import (
     EVAL_TRACESTATE_MEMBER,
     EXECUTION_COMPLETE_ATTRIBUTE,
     _eval_resource,
@@ -33,7 +33,7 @@ def recorded_spans() -> InMemorySpanExporter:
 def test_invocation_setup_attempts_instrumentation_only_once(monkeypatch, fails):
     from openinference.instrumentation.openai import OpenAIInstrumentor
 
-    from evalhub.evaluation.target import invocation_span
+    from proofgrove.evaluation.target import invocation_span
 
     attempts = []
 
@@ -52,7 +52,7 @@ def test_invocation_setup_attempts_instrumentation_only_once(monkeypatch, fails)
 
 def test_evaluation_root_span_injects_own_context_and_completion(recorded_spans: InMemorySpanExporter):
     with evaluation_root_span(
-        name="eval_hub.invoke_agent",
+        name="proofgrove.invoke_agent",
         attributes={"gen_ai.agent.name": "geo"},
     ) as (headers, trace_id):
         assert headers["traceparent"].startswith(f"00-{trace_id}-")
@@ -64,7 +64,7 @@ def test_evaluation_root_span_injects_own_context_and_completion(recorded_spans:
     spans = recorded_spans.get_finished_spans()
     assert len(spans) == 1
     span = spans[0]
-    assert span.name == "eval_hub.invoke_agent"
+    assert span.name == "proofgrove.invoke_agent"
     assert span.parent is None
     assert format(span.context.trace_id, "032x") == trace_id
     assert format(span.context.span_id, "016x") == parent_span_id
@@ -76,7 +76,7 @@ def test_evaluation_root_span_injects_own_context_and_completion(recorded_spans:
 
 def test_evaluation_root_span_stamps_completion_on_failure(recorded_spans: InMemorySpanExporter):
     with pytest.raises(RuntimeError, match="boom"):
-        with evaluation_root_span(name="eval_hub.invoke_agent"):
+        with evaluation_root_span(name="proofgrove.invoke_agent"):
             raise RuntimeError("boom")
 
     spans = recorded_spans.get_finished_spans()
@@ -86,7 +86,7 @@ def test_evaluation_root_span_stamps_completion_on_failure(recorded_spans: InMem
 
 
 def test_evaluation_root_span_records_redacted_output_and_exposes_span_id(recorded_spans: InMemorySpanExporter):
-    with evaluation_root_span(name="eval_hub.invoke_agent") as invocation:
+    with evaluation_root_span(name="proofgrove.invoke_agent") as invocation:
         invocation.set_output("Bearer abc123secret", mime_type="text/plain")
         assert len(invocation.span_id) == 16
 
@@ -97,7 +97,7 @@ def test_evaluation_root_span_records_redacted_output_and_exposes_span_id(record
 
 def test_eval_resource_stamps_tenant_namespace_for_archive_partition(monkeypatch):
     monkeypatch.setenv("POD_NAMESPACE", "tenant-evalai")
-    monkeypatch.setenv("OTEL_SERVICE_NAME", "eval-hub")
+    monkeypatch.setenv("OTEL_SERVICE_NAME", "proofgrove")
     attrs = dict(_eval_resource().attributes)
     assert attrs["k8s.namespace.name"] == "tenant-evalai"
     assert attrs["ctx.tenant"] == "evalai"
@@ -110,7 +110,7 @@ def test_root_span_output_privacy_and_safe_failure(recorded_spans, monkeypatch, 
     private_output = "private customer response"
     private_error = "provider rejected private customer prompt"
     with pytest.raises(RuntimeError, match=private_error):
-        with evaluation_root_span(name="eval_hub.invoke_agent") as invocation:
+        with evaluation_root_span(name="proofgrove.invoke_agent") as invocation:
             invocation.set_output(private_output, mime_type="text/plain")
             raise RuntimeError(private_error)
 
@@ -129,7 +129,7 @@ def test_root_span_output_privacy_and_safe_failure(recorded_spans, monkeypatch, 
 
 
 def test_disabled_otel_sdk_does_not_report_zero_trace_ids(monkeypatch):
-    from evalhub.evaluation.target import invocation_span
+    from proofgrove.evaluation.target import invocation_span
 
     monkeypatch.setenv("OTEL_SDK_DISABLED", "true")
     provider = TracerProvider()
@@ -146,7 +146,7 @@ def test_disabled_otel_sdk_does_not_report_zero_trace_ids(monkeypatch):
 
 @pytest.mark.parametrize("valid_context", [False, True])
 def test_unrecorded_or_invalid_context_never_claims_recorded_identity(monkeypatch, valid_context):
-    from evalhub.evaluation.target import invocation_span
+    from proofgrove.evaluation.target import invocation_span
 
     # Both ways a context fails to establish a recorded root are covered:
     # a dropped span can have valid ids; a broken provider can record invalid ids.

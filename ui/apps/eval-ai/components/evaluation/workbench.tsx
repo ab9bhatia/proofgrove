@@ -2,6 +2,7 @@
 
 import { preparedArtifacts, preparedDataset, preparedEvaluationKind, preparedExperimentName, readLabAvailability, type LabAvailability } from "./prepared-evaluation";
 import { PAGE_FRAME } from "@/lib/page-frame";
+import { NOVA_AGENT_EVALUATION_HREF, agentBaselineName, nameAfterAgentChange, runnableAgentMetricIds } from "@/lib/local-agents";
 import { assignmentFromSearchParams } from "@/lib/assignment-links";
 import Link from "next/link";
 import { LONG_LIST_PER_PAGE } from "@/lib/pagination";
@@ -277,7 +278,7 @@ function SelectedDatasetCard({
   return (
     <div className="-mx-5 grid gap-4 border-y bg-muted/25 px-5 py-4 sm:-mx-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
       <div className="min-w-0">
-        <p className="eval-hub-eyebrow text-[0.6875rem] text-evalai-purple">Selected dataset</p>
+        <p className="proofgrove-eyebrow text-[0.6875rem] text-evalai-purple">Selected dataset</p>
         <p className="truncate text-sm font-semibold" title={fullName(dataset)}>
           {fullName(dataset)}
         </p>
@@ -462,6 +463,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
   const router = useRouter();
   const searchParams = useSearchParams();
   const preparedKind = preparedEvaluationKind(searchParams, kind);
+  const entryAgentRef = kind === "agent" ? searchParams.get("agent") : null;
   const entryDatasetName = searchParams.get("dataset") || (preparedKind ? preparedDataset(preparedKind) : null);
   const rerunRequested = searchParams.get("rerun") === "1";
   const rerunSourceRunId = searchParams.get("fromRun") || searchParams.get("run") || "";
@@ -477,6 +479,9 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
   const [assignmentId, setAssignmentId] = useState("");
   const [assignmentVersion, setAssignmentVersion] = useState("");
   const [agentId, setAgentId] = useState("");
+  const [agentDatasetLoading, setAgentDatasetLoading] = useState(false);
+  const [agentDatasetError, setAgentDatasetError] = useState<string | null>(null);
+  const agentDatasetLoadToken = useRef(0);
   const [llmCatalog, setLlmCatalog] = useState<LlmCatalogEntry[]>([]);
   const [labAvailability, setLabAvailability] = useState<LabAvailability | null>(null);
   // Extra models to run the same evaluation against. Empty = ordinary single
@@ -860,7 +865,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
     setPreviewRecords([]);
     setPreviewError(null);
     void load();
-  }, [kind, load]);
+  }, [kind, load, entryAgentRef]);
 
   useEffect(() => {
     if (
@@ -870,8 +875,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
     ) return;
     const rerun = rerunRequested;
     const requestedDataset = entryDatasetName;
-    if (!rerun && !requestedDataset) return;
-    formPrefillApplied.current = true;
+    if (!rerun && !requestedDataset && !entryAgentRef) return;
 
     const fromRun = rerunSourceRunId;
     const memory = fromRun ? recallRunForm(fromRun) : null;
@@ -883,7 +887,38 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (dataset) setDatasetName(dataset);
 
+    // Discovery can fail independently of datasets. Keep the entry eligible so
+    // Retry setup can apply its requested agent after the catalog recovers.
+    if (!rerun && entryAgentRef && !formDirty && !agents.some((agent) => agent.id === entryAgentRef)) {
+      setTargetError("This agent is not ready. Open What to test, check its model connection, then refresh.");
+      return;
+    }
+    formPrefillApplied.current = true;
+
     if (!rerun) {
+      if (entryAgentRef && !formDirty) {
+        const agent = agents.find((item) => item.id === entryAgentRef);
+        if (!agent) {
+          setTargetError("This agent is not ready. Open What to test, check its model connection, then refresh.");
+          return;
+        }
+        setAgentId(agent.id);
+        setTargetError(null);
+        setEvaluationName(agentBaselineName(agent));
+        const recommendedMetrics = runnableAgentMetricIds(agent, metrics);
+        if (recommendedMetrics.length) setSelectedMetrics(recommendedMetrics);
+        if (agent.execution_mode === "guided_local_workflow") {
+          setEvaluationScope("tool_interactions");
+          setParallelRequests(1);
+          setHumanReview(false);
+          setJudgeModel("");
+        }
+        const boundProject = projects.find((project) => project.project_id === agent.system_project_id && project.purpose === "system");
+        setProjectId(boundProject?.project_id ?? "");
+        if (!requestedDataset && agent.recommended_dataset_id && datasets.some((item) => fullName(item) === agent.recommended_dataset_id)) setDatasetName(agent.recommended_dataset_id);
+        setStatus(`Selected ${agent.display_name || agent.name} and its available workflow checks. Review the setup, then run a fresh evaluation.`);
+        return;
+      }
       if (!preparedKind || formDirty) return;
       const selected = datasets.find((item) => fullName(item) === requestedDataset) ?? null;
       const prepared = preparedArtifacts({
@@ -1052,6 +1087,8 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
     loading,
     searchParams,
     entryDatasetName,
+    entryAgentRef,
+    agents,
     preparedKind,
     formDirty,
     datasets,
@@ -1156,7 +1193,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
   useEffect(() => {
     if (loading || draftPrefillApplied.current) return;
     draftPrefillApplied.current = true;
-    if (searchParams.get("rerun") === "1" || preparedKind) return;
+    if (searchParams.get("rerun") === "1" || preparedKind || entryAgentRef) return;
     const draft = recallRunDraft(kind);
     if (!draft) return;
     if (entryDatasetName && draft.datasetName !== entryDatasetName) return;
@@ -1195,7 +1232,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
       setStatus(`Restored your unfinished setup from ${new Date(draft.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`);
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [entryDatasetName, kind, loading, projects, searchParams, preparedKind]);
+  }, [entryDatasetName, entryAgentRef, kind, loading, projects, searchParams, preparedKind]);
 
   useEffect(() => {
     if (loading || !draftPrefillApplied.current || !formDirty || activeRunId || preparedKind) return;
@@ -1348,6 +1385,31 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
     () => agents.find((agent) => agent.id === agentId) ?? null,
     [agents, agentId],
   );
+  const recommendedAgentDataset = selectedAgent?.execution_mode === "guided_local_workflow" ? selectedAgent.recommended_dataset_id : null;
+  const agentDatasetMismatch = Boolean(recommendedAgentDataset && datasetName !== recommendedAgentDataset);
+
+  async function useAgentGoldenDataset() {
+    if (!recommendedAgentDataset || !selectedAgent) return;
+    const token = ++agentDatasetLoadToken.current;
+    setAgentDatasetLoading(true);
+    setAgentDatasetError(null);
+    const requested = await ensureRequestedDataset(datasets, recommendedAgentDataset);
+    if (token !== agentDatasetLoadToken.current) return;
+    setAgentDatasetLoading(false);
+    if (requested.unreadable) {
+      setAgentDatasetError(requestedDatasetUnavailableNotice(recommendedAgentDataset));
+      return;
+    }
+    setDatasets((current) => [...current, ...requested.items].filter((item, index, all) => all.findIndex((candidate) => fullName(candidate) === fullName(item)) === index));
+    setDatasetName(recommendedAgentDataset);
+    setDatasetError(null);
+    setPreviewOpen(false);
+    setPreviewRecords([]);
+    setPreviewError(null);
+    setFormDirty(true);
+    setStatus(`Selected the prepared golden dataset for ${selectedAgent.display_name || selectedAgent.name}. Review its cases before running.`);
+  }
+
   // Declared tool inventory of the selected agent (null until one is chosen).
   const agentTools = useMemo(
     () => (kind === "agent" && selectedAgent ? selectedAgent.tools : null),
@@ -1449,7 +1511,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
       ) {
         return;
       }
-      await api.approve(target, "eval-hub-ui");
+      await api.approve(target, "proofgrove-ui");
       record("Approve", true);
       await api.publish(target);
       record("Publish", true);
@@ -2243,7 +2305,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="eval-hub-eyebrow text-[0.6875rem] text-evalai-purple">Evaluation</p>
+          <p className="proofgrove-eyebrow text-[0.6875rem] text-evalai-purple">Evaluation</p>
           <h1 className="mt-1 text-2xl font-semibold">New {evaluationTypeLabel} evaluation</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {copy.description}{" "}
@@ -2264,6 +2326,13 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
           <RefreshCw className={cn("mr-2 size-4", loading && "animate-spin")} aria-hidden="true" /> Refresh
         </Button>
       </div>
+
+      {preparedKind === "llm" ? (
+        <Notice>
+          <p>This setup evaluates answers from an LLM using eight refund cases. To run Nova’s tools and evaluate the complete agent workflow, open the prepared four-case agent evaluation.</p>
+          <Link href={NOVA_AGENT_EVALUATION_HREF} onClick={guardInAppNavigation} className="mt-2 inline-flex items-center font-medium text-primary underline">Open Nova agent evaluation</Link>
+        </Notice>
+      ) : null}
 
       {setupLoadFailed ? (
         <Notice tone="error">
@@ -2307,6 +2376,17 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
           </div>
         </Notice>
       )}
+
+      {agentDatasetMismatch ? (
+        <Notice>
+          <p>The selected dataset differs from {selectedAgent?.display_name || selectedAgent?.name}’s prepared cases.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Current: {datasetName || "none"} · Prepared: {recommendedAgentDataset}</p>
+          <Button className="mt-3" size="sm" variant="outline" disabled={agentDatasetLoading} onClick={() => void useAgentGoldenDataset()}>
+            {agentDatasetLoading ? "Loading golden dataset…" : "Use this agent’s golden dataset"}
+          </Button>
+          {agentDatasetError ? <p role="alert" className="mt-2 text-sm text-destructive">{agentDatasetError}</p> : null}
+        </Notice>
+      ) : null}
 
       <SetupProgress
         label="Evaluation setup progress"
@@ -2420,6 +2500,9 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
             loadingMore={datasetsLoadingMore}
             onLoadMore={() => void loadMoreDatasets()}
             onSelect={(dataset) => {
+              agentDatasetLoadToken.current += 1;
+              setAgentDatasetLoading(false);
+              setAgentDatasetError(null);
               setDatasetName(fullName(dataset));
               setDatasetError(null);
               setPreviewOpen(false);
@@ -2556,7 +2639,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
             <Empty>
               No ready agents are available in this tenant.{" "}
               <Link href="/catalog/agents" onClick={guardInAppNavigation} className="text-primary underline">Connect an agent endpoint</Link>{" "}
-              in the Agent catalog, or change the evaluation type to a model or existing responses.
+              in What to test, or change the evaluation type to a model or existing responses.
             </Empty>
           ) : (
             <div className="space-y-3">
@@ -2565,7 +2648,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
                   the trigger explicitly to keep the label association intact. */}
               <Field
                 label="Agent"
-                hint="Select a ready agent from your catalog."
+                hint="Select the agent whose answers and tool workflow you want to evaluate."
                 id="evaluation-agent"
                 hintId="evaluation-agent-hint"
                 error={targetError}
@@ -2579,7 +2662,18 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
                     // A different agent declares different tools; a stale
                     // named-tool selection must never carry across silently.
                     setSelectedToolIds(null);
-                    const boundProjectId = agents.find((agent) => agent.id === value)?.system_project_id;
+                    const nextAgent = agents.find((agent) => agent.id === value);
+                    agentDatasetLoadToken.current += 1;
+                    setAgentDatasetLoading(false);
+                    setAgentDatasetError(null);
+                    setEvaluationName((current) => nameAfterAgentChange(current, selectedAgent, nextAgent ?? null));
+                    if (nextAgent?.execution_mode === "guided_local_workflow") {
+                      const recommendedMetrics = runnableAgentMetricIds(nextAgent, metrics);
+                      if (recommendedMetrics.length) setSelectedMetrics(recommendedMetrics);
+                      setEvaluationScope("tool_interactions");
+                      setParallelRequests(1);
+                    }
+                    const boundProjectId = nextAgent?.system_project_id;
                     if (boundProjectId) {
                       const boundProject = projects.find(
                         (project) => project.project_id === boundProjectId && project.purpose === "system",
@@ -2641,6 +2735,15 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
                     <SelectedDetail label="Namespace" value={selectedAgent.namespace || "—"} />
                     <SelectedDetail label="Tools" value={String(selectedAgent.tools.length)} />
                   </dl>
+                </div>
+              ) : null}
+              {selectedAgent?.execution_mode === "guided_local_workflow" ? (
+                <div className="rounded-xl border bg-muted/20 p-4 text-sm leading-6">
+                  <p>This agent runs fresh tools on synthetic data and uses the default model to write its response. The run records the tools called, their arguments and their results for the selected checks.</p>
+                  <p className="mt-2">These checks cover tool choice and arguments. Compare the final response with the expected answer separately.</p>
+                  <p className="mt-2 text-xs text-muted-foreground">Tools: {selectedAgent.tools.join(" · ")}</p>
+                  {selectedAgent.recommended_dataset_id ? <p className="mt-2 text-xs text-muted-foreground">Prepared golden dataset: <Link href={`/datasets/${encodeURIComponent(selectedAgent.recommended_dataset_id)}`} className="font-medium text-primary underline">{selectedAgent.recommended_dataset_id}</Link></p> : null}
+                  <p className="mt-2 text-xs text-muted-foreground">Change the default response model in <Link href="/catalog/llms" className="font-medium text-primary underline">Models</Link>, then refresh this setup.</p>
                 </div>
               ) : null}
             </div>
@@ -2815,7 +2918,7 @@ export function EvaluationWorkbench({ kind: initialKind }: { kind: EvaluationKin
         id="evaluation-step-4"
         number="4"
         title="Choose checks"
-        description="Add checks from the catalog. The right side shows exactly what this run will score."
+        description={selectedAgent?.execution_mode === "guided_local_workflow" ? "Prepared checks assess tool use; review answer quality separately." : "Add checks from the catalog. The right side shows exactly what this run will score."}
         state={stateForStep(4)}
         summary={`${selectedCheckCount} check${selectedCheckCount === 1 ? "" : "s"}`}
         onEdit={() => scrollToStep(4)}

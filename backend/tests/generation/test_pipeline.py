@@ -6,11 +6,11 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import update
 
-from evalhub import runs_worker
-from evalhub.db.models import RunJobORM
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.generation import pipeline
+from proofgrove import runs_worker
+from proofgrove.db.models import RunJobORM
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.generation import pipeline
 
 
 class _FakeSource:
@@ -45,7 +45,7 @@ async def test_generate_and_register_creates_draft_agent_dataset(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model: _complete)  # noqa: ARG005
+    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model, *args, **kwargs: _complete)  # noqa: ARG005
 
     registry = MagicMock()
     registry.create_dataset.return_value = MagicMock(name="gen_ds")
@@ -79,7 +79,7 @@ async def test_llms_generation_writes_no_expected_actions(monkeypatch):
     async def _complete(messages):  # noqa: ARG001
         return json.dumps({"records": [{"question": "Q1", "expected_output": "A1"}]})
 
-    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model: _complete)  # noqa: ARG005
+    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model, *args, **kwargs: _complete)  # noqa: ARG005
 
     registry = MagicMock()
     info = MagicMock()
@@ -137,7 +137,7 @@ async def test_generate_and_register_llms_from_single_prompt(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model: _complete)  # noqa: ARG005
+    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model, *args, **kwargs: _complete)  # noqa: ARG005
 
     registry = MagicMock()
     info = MagicMock()
@@ -195,7 +195,7 @@ async def test_generate_and_register_tools_expands_single_prompt(monkeypatch):
             }
         )
 
-    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model: _complete)  # noqa: ARG005
+    monkeypatch.setattr(pipeline, "_build_gateway_complete", lambda model, *args, **kwargs: _complete)  # noqa: ARG005
 
     registry = MagicMock()
     info = MagicMock()

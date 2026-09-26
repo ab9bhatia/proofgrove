@@ -9,12 +9,12 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base, ExperimentRunLinkORM
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import RunRole
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.db.models import Base, ExperimentRunLinkORM
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import RunRole
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
 
 
 @pytest.fixture

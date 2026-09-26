@@ -1,7 +1,7 @@
 """Collector-confirmed trace catalog: captured_trace_index + captured_span_index.
 
 Langfuse-style worker→index projection. Raw OTLP spans stay in the S3 trace
-archive; eval-hub keeps an index row per observed trace with honest lifecycle
+archive; proofgrove keeps an index row per observed trace with honest lifecycle
 states (requested / pending_export / archive_confirmed / archive_unavailable)
 plus bounded span summary rows for confirmed traces. ``project_id`` is NULL for
 production traces whose resource attributes did not resolve to a Project

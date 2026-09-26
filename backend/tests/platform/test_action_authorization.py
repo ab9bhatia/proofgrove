@@ -5,9 +5,9 @@ import pytest
 from fastapi import HTTPException, Request
 from pydantic import SecretStr
 
-from evalhub.logging_config import JsonLogFormatter
-from evalhub.platform import authz
-from evalhub.settings import Settings, settings
+from proofgrove.logging_config import JsonLogFormatter
+from proofgrove.platform import authz
+from proofgrove.settings import Settings, settings
 
 
 def _request(*, tenant: str = "acme", subject: str = "alice@example.com") -> Request:
@@ -70,7 +70,7 @@ async def test_permission_check_injects_trusted_tenant_subject_and_token(auth_re
     assert await authz.check_permission(_request(), authz.PERMISSION_EVALUATION_RUN) is True
     assert calls == [
         {
-            "url": "http://authz.test:8080/v1/apps/eval-hub/permissions/check",
+            "url": "http://authz.test:8080/v1/apps/proofgrove/permissions/check",
             "headers": {
                 "Authorization": "Bearer check-token",
                 "x-evalai-tenant": "acme",
@@ -143,7 +143,7 @@ async def test_authorization_decision_logs_hashed_subject_not_raw(auth_required,
     with caplog.at_level("INFO"):
         await authz.check_permission(_request(subject="alice@example.com"), authz.PERMISSION_EVALUATION_RUN)
 
-    decisions = [r for r in caplog.records if r.getMessage() == "Eval Hub authorization decision"]
+    decisions = [r for r in caplog.records if r.getMessage() == "Proofgrove authorization decision"]
     assert decisions
     logged_subject = decisions[0].subject
     assert logged_subject == authz._subject_fingerprint("user:alice@example.com")

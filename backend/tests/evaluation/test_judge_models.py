@@ -6,13 +6,13 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from evalhub.evaluation.judge_models import (
+from proofgrove.evaluation.judge_models import (
     filter_judge_model_ids,
     is_judge_model,
     order_judge_models,
 )
-from evalhub.main import app
-from evalhub.settings import settings
+from proofgrove.main import app
+from proofgrove.settings import settings
 
 
 def test_is_judge_model_filters_non_chat_modalities():
@@ -69,8 +69,8 @@ def test_judge_models_endpoint_filters_embeddings(client: TestClient):
         patch.object(settings, "openai_api_key", SecretStr("test-key")),
         patch.object(settings, "judge_model", "gpt-4.1-mini"),
         patch.object(settings, "openai_base_url", "http://ai-gateway.example/v1"),
-        patch("evalhub.api.v1.llms.OpenAI") as openai_cls,
-        patch("evalhub.api.v1.evaluation.run_in_threadpool", side_effect=immediate),
+        patch("proofgrove.api.v1.llms.OpenAI") as openai_cls,
+        patch("proofgrove.api.v1.evaluation.run_in_threadpool", side_effect=immediate),
     ):
         openai_cls.return_value.models.list.return_value = listing
         response = client.get("/evaluation/judge-models")

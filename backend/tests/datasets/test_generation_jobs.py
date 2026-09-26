@@ -16,17 +16,17 @@ import asyncio
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.datasets.generation_jobs import (
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.datasets.generation_jobs import (
     _INTERRUPTED_STALE_AFTER_SECONDS,
     ACTIVE_PHASES,
     GenerationJobPhase,
     GenerationJobStore,
 )
-from evalhub.datasets.models import DatasetRecord
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.main import app
+from proofgrove.datasets.models import DatasetRecord
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.main import app
 
 
 @pytest.fixture
@@ -266,7 +266,7 @@ def _generate_body(name: str = "genjob_ds") -> dict:
 
 @pytest.mark.asyncio
 async def test_generate_returns_job_and_completes(monkeypatch, real_registry):
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     async def fake_synthesize(params):
         return _records(2)
@@ -301,10 +301,10 @@ async def test_generate_returns_job_and_completes(monkeypatch, real_registry):
 
 @pytest.mark.asyncio
 async def test_generate_failure_is_recorded_honestly(monkeypatch):
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     async def fake_synthesize(params):
-        from evalhub.generation.generator import GenerationError
+        from proofgrove.generation.generator import GenerationError
         raise GenerationError("no grounding material")
 
     monkeypatch.setattr(generation_service, "_synthesize_records", fake_synthesize)
@@ -329,7 +329,7 @@ async def test_generation_concurrency_is_bounded_by_the_semaphore(monkeypatch, r
     asyncio task — a burst of requests could hammer the generation
     LLM/gateway with no limit at all.
     """
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     monkeypatch.setattr(generation_service, "_GENERATION_SEMAPHORE", asyncio.Semaphore(1))
 
@@ -374,7 +374,7 @@ async def test_generation_concurrency_is_bounded_by_the_semaphore(monkeypatch, r
 
 @pytest.mark.asyncio
 async def test_cancel_endpoint_is_idempotent(monkeypatch):
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     release = asyncio.Event()
 
@@ -410,7 +410,7 @@ async def test_cancel_endpoint_is_idempotent(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_cancel_completed_job_is_409(monkeypatch, real_registry):
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     async def fake_synthesize(params):
         return _records(1)
@@ -452,7 +452,7 @@ async def test_job_endpoints_enforce_tenant(monkeypatch, real_registry):
     mismatched tenant can't distinguish "doesn't exist" from "exists but
     isn't yours".
     """
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     async def fake_synthesize(params):
         return _records(1)
@@ -524,15 +524,15 @@ def test_new_generation_returns_job_with_platform_authorization(monkeypatch):
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from evalhub.api.v1 import datasets
-    from evalhub.datasets.exceptions import DatasetNotFoundError
-    from evalhub.platform import authz
-    from evalhub.settings import settings
+    from proofgrove.api.v1 import datasets
+    from proofgrove.datasets.exceptions import DatasetNotFoundError
+    from proofgrove.platform import authz
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "platform_auth_required", True)
 
     async def allow(request, permission):
-        request.state.eval_hub_permissions = {permission}
+        request.state.proofgrove_permissions = {permission}
 
     monkeypatch.setattr(authz, "require_permission", allow)
     test_app = FastAPI()
@@ -556,7 +556,7 @@ def test_new_generation_returns_job_with_platform_authorization(monkeypatch):
 async def test_cancel_route_uses_atomic_result_when_registration_wins(monkeypatch, phase):
     from unittest.mock import AsyncMock
 
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     cancel = AsyncMock(return_value={"job_id": "racing", "phase": phase})
     monkeypatch.setattr(generation_service, "cancel_generation", cancel)
@@ -568,7 +568,7 @@ async def test_cancel_route_uses_atomic_result_when_registration_wins(monkeypatc
 
 
 def test_historical_generation_error_never_leaves_response_boundary():
-    from evalhub.api.v1.datasets import _job_response
+    from proofgrove.api.v1.datasets import _job_response
     payload = _job_response({"phase": "failed", "error": "OPAQUE_PRIVATE_VALUE", "params": {"secret": "OPAQUE_PRIVATE_VALUE"}})
     assert payload["phase"] == "failed"
     assert "OPAQUE_PRIVATE_VALUE" not in str(payload)

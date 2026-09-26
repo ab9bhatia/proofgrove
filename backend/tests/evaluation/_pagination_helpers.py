@@ -4,7 +4,7 @@ import contextlib
 
 from sqlalchemy import event
 
-from evalhub.db.session import async_engine
+from proofgrove.db.session import async_engine
 
 
 @contextlib.contextmanager

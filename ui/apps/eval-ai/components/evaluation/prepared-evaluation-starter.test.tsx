@@ -2,9 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { PreparedEvaluationStarter } from "./prepared-evaluation-starter";
 import { NOVA_PREPARED } from "./prepared-evaluation";
-import { api, evaluationApi, platformApi } from "@/lib/api";
+import { agentsApi, api, evaluationApi, platformApi } from "@/lib/api";
 
 vi.mock("@/lib/api", () => ({
+  agentsApi: { list: vi.fn() },
   api: { getDataset: vi.fn(), tenant: vi.fn(), listTraceProjects: vi.fn() },
   evaluationApi: { listMetrics: vi.fn(), listLlmCatalog: vi.fn(), createRunFromDataset: vi.fn() },
   platformApi: { listPrompts: vi.fn() },
@@ -12,6 +13,7 @@ vi.mock("@/lib/api", () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(agentsApi.list).mockResolvedValue([]);
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ live: false, model: null }) }));
   vi.mocked(api.getDataset).mockResolvedValue({ status: "PUBLISHED", record_count: 8, missing_row_fields: [], missing_provided_response: false } as never);
   vi.mocked(api.tenant).mockResolvedValue({ tenant_id: "tenant-classroom" } as never);
@@ -24,13 +26,14 @@ beforeEach(() => {
 describe("prepared evaluation starter", () => {
   it("keeps rehearsal collapsed and secondary without invoking anything", async () => {
     render(<PreparedEvaluationStarter />);
+    fireEvent.click(screen.getByText("Model-only refund evaluation and offline rehearsal"));
     const summary = await screen.findByText("Offline rehearsal with supplied responses");
     expect(summary.closest("details")?.open).toBe(false);
     expect(screen.getByRole("link", { name: "Open offline rehearsal" }).closest("details")?.open).toBe(false);
     fireEvent.click(summary);
     const start = screen.getByRole("link", { name: "Open offline rehearsal" });
     expect(start.getAttribute("href")).toContain("type=provided&prepared=nova-refunds&dataset=nova_refunds_rehearsal_v1");
-    expect(screen.queryByRole("link", { name: "Start evaluation" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Start model-only evaluation" })).toBeNull();
     expect(screen.getByText(/Versions 1 and 2/)).toBeTruthy();
     expect(screen.getByText(/Not configured · connect a model/)).toBeTruthy();
     expect(evaluationApi.createRunFromDataset).not.toHaveBeenCalled();
@@ -39,7 +42,8 @@ describe("prepared evaluation starter", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ live: true, model: "actual-model" }) }));
     vi.mocked(evaluationApi.listLlmCatalog).mockResolvedValue([{ model_id: "actual-model", name: "Live", source: "custom" }]);
     render(<PreparedEvaluationStarter />);
-    const start = await screen.findByRole("link", { name: "Start evaluation" });
+    fireEvent.click(screen.getByText("Model-only refund evaluation and offline rehearsal"));
+    const start = await screen.findByRole("link", { name: "Start model-only evaluation" });
     expect(start.getAttribute("href")).toContain("type=llm&prepared=nova-refunds&dataset=nova_refunds_golden_v1");
     expect(screen.getByText(/actual-model · configured; connection and access not yet verified/)).toBeTruthy();
     expect(evaluationApi.createRunFromDataset).not.toHaveBeenCalled();
@@ -48,7 +52,8 @@ describe("prepared evaluation starter", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ live: true, model: "llama3.2:latest", provider: "ollama", mode: "local" }) }));
     vi.mocked(evaluationApi.listLlmCatalog).mockResolvedValue([{ model_id: "llama3.2:latest", name: "Local Llama", source: "custom" }]);
     render(<PreparedEvaluationStarter />);
-    expect(await screen.findByRole("link", { name: "Start evaluation" })).toBeTruthy();
+    fireEvent.click(screen.getByText("Model-only refund evaluation and offline rehearsal"));
+    expect(await screen.findByRole("link", { name: "Start model-only evaluation" })).toBeTruthy();
     expect(screen.getByText("Local model")).toBeTruthy();
     expect(screen.getByText(/configured through Ollama on this Mac; generates fresh answers/)).toBeTruthy();
     expect(screen.getByRole("link", { name: "Open offline rehearsal" }).closest("details")?.open).toBe(false);
@@ -57,6 +62,7 @@ describe("prepared evaluation starter", () => {
   it("reports a failed artifact check and prevents a misleading ready-to-run link", async () => {
     vi.mocked(evaluationApi.listMetrics).mockRejectedValue(new Error("Unavailable"));
     render(<PreparedEvaluationStarter />);
+    fireEvent.click(screen.getByText("Model-only refund evaluation and offline rehearsal"));
     expect(await screen.findByText(/Some artifacts could not be checked/)).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Open offline rehearsal", hidden: true })).toBeNull();
     expect(screen.getByText("0 of 3 text metrics available")).toBeTruthy();

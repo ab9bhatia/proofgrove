@@ -49,7 +49,7 @@ def worker(kind, support):
         from seed_refund_demo import seed as seed_golden
         from seed_ready_evaluation import seed as seed_rehearsal, METRICS, PROJECT
         from migrate_refund_fixture_text import migrate
-        from evalhub.datasets.csv_parser import parse_csv
+        from proofgrove.datasets.csv_parser import parse_csv
         assert parse_csv(csv_path.read_text()) == golden_records(root), 'Shared fixture shape differs from real CSV parser'
 
         def publish(client, name, rows, creator):

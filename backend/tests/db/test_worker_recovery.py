@@ -2,9 +2,9 @@
 
 import asyncio
 
-from evalhub import runs_worker
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
+from proofgrove import runs_worker
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
 
 
 async def test_owned_worker_fails_fresh_interrupted_job_without_reinvocation(monkeypatch):
@@ -35,8 +35,8 @@ def test_poll_fails_job_that_becomes_stale_after_startup(monkeypatch):
 
     from sqlalchemy import update
 
-    from evalhub.datasets import generation_service
-    from evalhub.datasets.generation_jobs import DatasetGenerationJobORM, GenerationJobStore
+    from proofgrove.datasets import generation_service
+    from proofgrove.datasets.generation_jobs import DatasetGenerationJobORM, GenerationJobStore
 
     store = GenerationJobStore()
     monkeypatch.setattr(generation_service, "get_generation_job_store", lambda: store)
@@ -54,7 +54,7 @@ async def test_generation_has_one_heartbeat_while_waiting_for_capacity(monkeypat
     from contextlib import suppress
     from unittest.mock import MagicMock
 
-    from evalhub.datasets import generation_service
+    from proofgrove.datasets import generation_service
 
     touched = asyncio.Event()
     store = MagicMock()
@@ -80,7 +80,7 @@ async def test_generation_has_one_heartbeat_while_waiting_for_capacity(monkeypat
 
 
 def test_generation_heartbeat_preserves_active_and_terminal_phases():
-    from evalhub.datasets.generation_jobs import GenerationJobPhase, GenerationJobStore
+    from proofgrove.datasets.generation_jobs import GenerationJobPhase, GenerationJobStore
 
     store = GenerationJobStore()
     job_id = store.create_job(tenant_id="test", dataset_name="heartbeat")["job_id"]
@@ -100,7 +100,7 @@ async def test_generation_heartbeat_retries_transient_store_failure():
     from contextlib import suppress
     from unittest.mock import MagicMock
 
-    from evalhub.datasets.generation_service import _heartbeat_generation_progress
+    from proofgrove.datasets.generation_service import _heartbeat_generation_progress
 
     store = MagicMock()
     store.touch.side_effect = [RuntimeError("temporary database failure"), None]
@@ -160,9 +160,9 @@ async def test_temporal_interruption_resumes_persisted_telemetry_without_invokin
 async def test_late_partial_publish_cannot_revive_failed_job():
     import pytest
 
-    from evalhub.db.store import RunCancelledError
-    from evalhub.evaluation.enums import RunStatus, Scenario
-    from evalhub.evaluation.models import EvaluationRow, ExperimentDefinition, RunResult
+    from proofgrove.db.store import RunCancelledError
+    from proofgrove.evaluation.enums import RunStatus, Scenario
+    from proofgrove.evaluation.models import EvaluationRow, ExperimentDefinition, RunResult
 
     async with async_session() as session:
         store = EvaluationStore(session)
@@ -181,8 +181,8 @@ async def test_late_partial_publish_cannot_revive_failed_job():
 
 
 async def test_completed_telemetry_refresh_keeps_completed_job():
-    from evalhub.evaluation.enums import RunStatus, Scenario
-    from evalhub.evaluation.models import EvaluationRow, ExperimentDefinition, RunResult
+    from proofgrove.evaluation.enums import RunStatus, Scenario
+    from proofgrove.evaluation.models import EvaluationRow, ExperimentDefinition, RunResult
 
     async with async_session() as session:
         store = EvaluationStore(session)

@@ -6,13 +6,13 @@ import pytest
 from pydantic import SecretStr
 from starlette.requests import Request
 
-from evalhub.api.v1 import llms
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation import model_providers
-from evalhub.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
-from evalhub.evaluation.readiness import assess_evidence_readiness
-from evalhub.platform.contracts import TargetVersion
-from evalhub.settings import Settings, settings
+from proofgrove.api.v1 import llms
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation import model_providers
+from proofgrove.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
+from proofgrove.evaluation.readiness import assess_evidence_readiness
+from proofgrove.platform.contracts import TargetVersion
+from proofgrove.settings import Settings, settings
 
 TENANT = "local-classroom"
 

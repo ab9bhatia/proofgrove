@@ -21,10 +21,10 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 
-from evalhub.api import dependencies
-from evalhub.db import session as db_session
-from evalhub.main import app, lifespan
-from evalhub.settings import settings
+from proofgrove.api import dependencies
+from proofgrove.db import session as db_session
+from proofgrove.main import app, lifespan
+from proofgrove.settings import settings
 
 # Caches that hold an engine / sessionmaker / client bound to one database URL.
 # All of them have to be dropped when the URL changes, or a test would keep
@@ -87,7 +87,7 @@ async def isolated_database(tmp_path, _schema_template):
     (and never starts the app) still finds its tables, exactly as it did when an
     earlier test had already populated the shared database.
     """
-    database = tmp_path / "eval-hub.db"
+    database = tmp_path / "proofgrove.db"
     shutil.copyfile(_schema_template, database)
     previous = settings.database_url
     settings.database_url = f"sqlite+aiosqlite:///{database}"
@@ -114,7 +114,7 @@ def act_as(client, tenant: str) -> None:
 def client(request):
     """A client that acts as a tenant, the way every real caller does.
 
-    In production the gateway injects ``x-evalai-tenant`` (and Eval Hub is
+    In production the gateway injects ``x-evalai-tenant`` (and Proofgrove is
     deployed per tenant, so ``POD_NAMESPACE`` stands in for it in-cluster) —
     an identity-less request never reaches a route. A test module declares
     which tenant it runs as with a module-level ``TENANT``; the fixture sends

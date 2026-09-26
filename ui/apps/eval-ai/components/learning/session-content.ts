@@ -5,11 +5,11 @@ export const FAILURE_PARAGRAPH =
   "An LLM can sound fluent while being wrong. A RAG application can retrieve an irrelevant document. An agent can reach the right answer with the wrong tool arguments. Evaluation separates these failure modes so that an average score does not hide a release-blocking defect.";
 
 export const STEPS = [
-  { id: "why", title: "Why evaluate?", minutes: 5 },
-  { id: "what", title: "What is evaluation?", minutes: 7 },
-  { id: "where", title: "Where can it fail?", minutes: 8 },
-  { id: "how", title: "How do we test?", minutes: 17 },
-  { id: "trust", title: "What earns trust?", minutes: 8 },
+  { id: "overview", title: "Overview", timing: "Minutes 0–2 · the session" },
+  { id: "why", title: "Why evaluate?", timing: "Minutes 2–5 · why evaluate" },
+  { id: "what", title: "What is evaluation?", timing: "Minutes 5–8 · the definition" },
+  { id: "how", title: "Evaluation Lego Blocks", timing: "Minutes 8–12 · the building blocks" },
+  { id: "types", title: "Types of evaluation", timing: "Minutes 12–15 · two independent choices" },
 ] as const;
 
 export const EDGE_CASES = [

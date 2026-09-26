@@ -13,13 +13,13 @@ still be used unchanged.
 import pytest
 from pydantic import SecretStr
 
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.platform import authz
-from evalhub.settings import settings
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.platform import authz
+from proofgrove.settings import settings
 from tests.platform.test_action_authorization import _AuthzClient
 
 TENANT = "tenant-eval-actor-binding"

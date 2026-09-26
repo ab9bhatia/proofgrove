@@ -3,8 +3,8 @@
 import pytest
 from sqlalchemy import Column, Integer, MetaData, Table, create_engine
 
-from evalhub.db.migrate import legacy_schema_revision
-from evalhub.db.models import Base
+from proofgrove.db.migrate import legacy_schema_revision
+from proofgrove.db.models import Base
 
 
 def test_empty_database_is_classified_as_fresh() -> None:
@@ -70,7 +70,7 @@ def test_subject_migration_preserves_historical_rows_and_classifier(tmp_path, mo
     from alembic.script import ScriptDirectory
     from sqlalchemy import inspect
 
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     database = tmp_path / "subject-migration.db"
     engine = create_engine(f"sqlite:///{database}")
@@ -152,7 +152,7 @@ def test_database_stamped_at_previous_head_upgrades_with_tenant_backfill(tmp_pat
     from alembic.config import Config
     from sqlalchemy import inspect
 
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     database = tmp_path / "stamped-legacy.db"
     engine = create_engine(f"sqlite:///{database}")
@@ -200,8 +200,8 @@ def test_alembic_preserves_percent_encoded_database_url(monkeypatch, password):
     from alembic import command
     from alembic.config import Config
 
-    from evalhub.db.session import get_async_database_url
-    from evalhub.settings import settings
+    from proofgrove.db.session import get_async_database_url
+    from proofgrove.settings import settings
 
     service = Path(__file__).parents[2]
     output = StringIO()
@@ -219,8 +219,8 @@ def test_entrypoint_uses_one_transaction_for_schema_and_stamp(tmp_path, monkeypa
 
     from sqlalchemy import inspect
 
-    from evalhub.db import migrate
-    from evalhub.settings import settings
+    from proofgrove.db import migrate
+    from proofgrove.settings import settings
 
     engine = create_engine(f"sqlite:///{tmp_path / 'entrypoint.db'}")
     monkeypatch.setattr(migrate, "sync_engine", lambda: engine)
@@ -267,8 +267,8 @@ def test_dataset_event_actor_column_is_added_without_touching_existing_rows(tmp_
     from alembic.config import Config
     from sqlalchemy import inspect
 
-    from evalhub.db.migrate import legacy_schema_revision
-    from evalhub.settings import settings
+    from proofgrove.db.migrate import legacy_schema_revision
+    from proofgrove.settings import settings
 
     database = tmp_path / "event-actor.db"
     engine = create_engine(f"sqlite:///{database}")

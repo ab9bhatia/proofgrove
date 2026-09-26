@@ -108,7 +108,7 @@ export const COLUMN_DEFS: { id: ColumnId; header: string }[] = [
   { id: "started", header: "Start" },
   { id: "ended", header: "End" },
 ];
-const COLUMN_WIDTHS_STORAGE_KEY = "eval-hub.evaluation-runs.column-widths.v9";
+const COLUMN_WIDTHS_STORAGE_KEY = "proofgrove.evaluation-runs.column-widths.v9";
 const SELECT_COLUMN_WIDTH = 44;
 const GROUPS_PER_PAGE = 8;
 
@@ -957,14 +957,14 @@ export function ExperimentsLibrary({
         <div className="min-w-0">
           {embedded ? (
             <>
-              <p className="eval-hub-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Run history</p>
+              <p className="proofgrove-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Run history</p>
               <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 Expand an evaluation, select a baseline, then add up to three compatible candidates.
               </p>
             </>
           ) : (
             <>
-              <p className="eval-hub-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Run history</p>
+              <p className="proofgrove-eyebrow mb-1 text-[0.6875rem] text-evalai-purple">Run history</p>
               <h2 className="font-display text-lg font-semibold tracking-tight">Evaluation runs</h2>
               <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 Expand an evaluation, select a baseline, then add up to three compatible candidates.

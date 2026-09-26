@@ -27,6 +27,6 @@ describe("the shell fills the visible viewport", () => {
     // The document cannot scroll (see above), so scroll-padding on `html` never
     // did anything; the browser honours it on the scrolling container.
     const rule = css.slice(css.indexOf("scroll-padding-bottom") - 400, css.indexOf("scroll-padding-bottom"));
-    expect(rule).toContain(".eval-hub-workspace-scroll");
+    expect(rule).toContain(".proofgrove-workspace-scroll");
   });
 });

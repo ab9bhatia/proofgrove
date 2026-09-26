@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture
 def _restore_settings():
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     previous = (settings.app_env, settings.database_auto_create)
     yield settings
@@ -15,7 +15,7 @@ def _restore_settings():
 def test_init_creates_schema_in_dev_and_test(_restore_settings, monkeypatch):
     """Dev/test still get idempotent create_all -- standalone/script usage
     that never goes through the app's async ``init_db`` needs the tables."""
-    from evalhub.datasets import postgres_store
+    from proofgrove.datasets import postgres_store
 
     _restore_settings.app_env = "test"
     _restore_settings.database_auto_create = False
@@ -32,7 +32,7 @@ def test_init_creates_schema_in_dev_and_test(_restore_settings, monkeypatch):
 def test_init_skips_schema_creation_in_production_without_opt_in(_restore_settings, monkeypatch):
     """Production schema changes are owned by Alembic -- a prod pod must not
     race another replica with implicit DDL, same gate as ``init_db``."""
-    from evalhub.datasets import postgres_store
+    from proofgrove.datasets import postgres_store
 
     _restore_settings.app_env = "production"
     _restore_settings.database_auto_create = False
@@ -48,7 +48,7 @@ def test_init_skips_schema_creation_in_production_without_opt_in(_restore_settin
 
 def test_init_creates_schema_in_production_with_auto_create_opt_in(_restore_settings, monkeypatch):
     """DATABASE_AUTO_CREATE=1 still allows create_all outside dev/test."""
-    from evalhub.datasets import postgres_store
+    from proofgrove.datasets import postgres_store
 
     _restore_settings.app_env = "production"
     _restore_settings.database_auto_create = True
@@ -68,7 +68,7 @@ def test_records_come_back_in_the_author_s_serial_order(tmp_path):
     That left the record-id tie-breaker deciding the order, so the Serial No
     column rendered the author's own numbering shuffled: 1, 4, 3, 2, 5.
     """
-    from evalhub.datasets.postgres_store import _record_sort_key
+    from proofgrove.datasets.postgres_store import _record_sort_key
 
     class Row:
         def __init__(self, tags, record_id):
@@ -102,9 +102,9 @@ def test_same_dataset_name_in_two_tenants_stays_isolated(tmp_path, monkeypatch):
     """Batch-1 review regression: composite identity permits the same name in
     two tenants; every scoped lookup must resolve the caller's row instead of
     raising MultipleResultsFound or 404."""
-    from evalhub.datasets.models import DatasetMetadata
-    from evalhub.datasets.postgres_store import SqlDatasetStore
-    from evalhub.settings import settings
+    from proofgrove.datasets.models import DatasetMetadata
+    from proofgrove.datasets.postgres_store import SqlDatasetStore
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{tmp_path/'dup.db'}")
     store = SqlDatasetStore()
@@ -121,9 +121,9 @@ def test_same_dataset_name_in_two_tenants_stays_isolated(tmp_path, monkeypatch):
 def test_dataset_lookup_accepts_equivalent_tenant_spellings(tmp_path, monkeypatch):
     """Batch-1 review regression: authorization accepts alias spellings
     (``a`` vs ``tenant-a``); the store filter must accept the same set."""
-    from evalhub.datasets.models import DatasetMetadata
-    from evalhub.datasets.postgres_store import SqlDatasetStore
-    from evalhub.settings import settings
+    from proofgrove.datasets.models import DatasetMetadata
+    from proofgrove.datasets.postgres_store import SqlDatasetStore
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-a")
     monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{tmp_path/'alias.db'}")
@@ -138,9 +138,9 @@ def test_dataset_lookup_accepts_equivalent_tenant_spellings(tmp_path, monkeypatc
 
 def _store_with_two_owners(tmp_path, monkeypatch, db_name: str, dataset_name: str = "shared-name"):
     """Two tenants own the same dataset name, each with one record."""
-    from evalhub.datasets.models import DatasetMetadata
-    from evalhub.datasets.postgres_store import SqlDatasetStore
-    from evalhub.settings import settings
+    from proofgrove.datasets.models import DatasetMetadata
+    from proofgrove.datasets.postgres_store import SqlDatasetStore
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{tmp_path/db_name}")
     store = SqlDatasetStore()
@@ -163,7 +163,7 @@ def test_unscoped_get_dataset_raises_on_ambiguous_name(tmp_path, monkeypatch):
     ``MultipleResultsFound``."""
     from sqlalchemy.exc import MultipleResultsFound
 
-    from evalhub.datasets.exceptions import DatasetError
+    from proofgrove.datasets.exceptions import DatasetError
 
     store = _store_with_two_owners(tmp_path, monkeypatch, "ambiguous-dataset.db")
 
@@ -175,7 +175,7 @@ def test_unscoped_get_dataset_raises_on_ambiguous_name(tmp_path, monkeypatch):
 def test_unscoped_get_records_raises_instead_of_merging_tenants(tmp_path, monkeypatch):
     """R2 regression: an unscoped read of an ambiguous name must fail, never
     silently merge both tenants' rows into one list."""
-    from evalhub.datasets.exceptions import DatasetError
+    from proofgrove.datasets.exceptions import DatasetError
 
     store = _store_with_two_owners(tmp_path, monkeypatch, "ambiguous-records.db")
 
@@ -185,7 +185,7 @@ def test_unscoped_get_records_raises_instead_of_merging_tenants(tmp_path, monkey
 
 def test_unscoped_get_version_history_raises_on_ambiguous_name(tmp_path, monkeypatch):
     """R2 regression: same ambiguity guard for version history."""
-    from evalhub.datasets.exceptions import DatasetError
+    from proofgrove.datasets.exceptions import DatasetError
 
     store = _store_with_two_owners(tmp_path, monkeypatch, "ambiguous-history.db")
 
@@ -196,9 +196,9 @@ def test_unscoped_get_version_history_raises_on_ambiguous_name(tmp_path, monkeyp
 def test_unscoped_access_still_works_for_a_single_owner(tmp_path, monkeypatch):
     """Legacy contract: an unscoped caller against a name owned by exactly
     one tenant must keep working unchanged."""
-    from evalhub.datasets.models import DatasetMetadata
-    from evalhub.datasets.postgres_store import SqlDatasetStore
-    from evalhub.settings import settings
+    from proofgrove.datasets.models import DatasetMetadata
+    from proofgrove.datasets.postgres_store import SqlDatasetStore
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{tmp_path/'single-owner.db'}")
     store = SqlDatasetStore()
@@ -240,9 +240,9 @@ def test_version_history_records_who_changed_status(tmp_path, monkeypatch):
     column existed stay unknown instead of gaining an invented identity."""
     from sqlalchemy import create_engine, text
 
-    from evalhub.datasets.models import DatasetMetadata
-    from evalhub.datasets.postgres_store import SqlDatasetStore
-    from evalhub.settings import settings
+    from proofgrove.datasets.models import DatasetMetadata
+    from proofgrove.datasets.postgres_store import SqlDatasetStore
+    from proofgrove.settings import settings
 
     database = tmp_path / "history-actor.db"
     monkeypatch.setattr(settings, "database_url", f"sqlite+aiosqlite:///{database}")

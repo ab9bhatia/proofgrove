@@ -2,7 +2,7 @@
 
 import pytest
 
-from evalhub.db.backend import (
+from proofgrove.db.backend import (
     UnsupportedDatabaseBackendError,
     ensure_async_url,
     get_backend,
@@ -14,7 +14,7 @@ from evalhub.db.backend import (
 
 def test_resolve_backend_from_postgres_url():
     backend = resolve_backend(
-        database_url="postgresql+asyncpg://u:p@localhost:5432/eval-hub",
+        database_url="postgresql+asyncpg://u:p@localhost:5432/proofgrove",
     )
     assert backend.name == "postgresql"
 
@@ -49,8 +49,8 @@ def test_unsupported_backend_mentions_databricks_exclusion():
 
 def test_redact_database_url_hides_password():
     assert (
-        redact_database_url("postgresql+asyncpg://eval:secret@localhost:5432/eval-hub")
-        == "postgresql+asyncpg://eval:***@localhost:5432/eval-hub"
+        redact_database_url("postgresql+asyncpg://eval:secret@localhost:5432/proofgrove")
+        == "postgresql+asyncpg://eval:***@localhost:5432/proofgrove"
     )
 
 
@@ -73,12 +73,12 @@ def test_init_db_bootstraps_fresh_database_without_prior_model_import(tmp_path, 
         [sys.executable, "-c", """
 import asyncio
 from sqlalchemy import inspect, select
-from evalhub.db.session import async_engine, init_db
+from proofgrove.db.session import async_engine, init_db
 
 async def check():
     await init_db()
     await init_db()  # Restarting against the same database is safe.
-    from evalhub.db.models import Base
+    from proofgrove.db.models import Base
     engine = async_engine()
     async with engine.connect() as conn:
         tables = await conn.run_sync(lambda sync: inspect(sync).get_table_names())

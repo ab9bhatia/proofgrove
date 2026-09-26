@@ -12,12 +12,12 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.models import EvaluationRow, ExperimentDefinition
-from evalhub.platform.authz import tenants_match
+from proofgrove.db.models import Base
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.models import EvaluationRow, ExperimentDefinition
+from proofgrove.platform.authz import tenants_match
 
 
 def _act_as(client, tenant: str) -> None:
@@ -306,7 +306,7 @@ def test_compare_accepts_the_gateway_slug_for_a_namespace_scoped_experiment(clie
     slug = f"slugtest-{token}"
     namespace = f"tenant-{slug}"
     experiment_id = f"exp-slug-{token}"
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", namespace)
     _act_as(client, slug)
@@ -484,7 +484,7 @@ async def test_compare_runs_accepts_equivalent_tenant_spellings(
     and both runs 404 — this asserts the two spellings stay interchangeable in
     both directions, without letting an unrelated tenant in.
     """
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-spelled")
     engine = EvaluationEngine(judge=MockJudge())
@@ -586,7 +586,7 @@ async def test_experiment_crud_is_tenant_scoped(store):
 async def test_job_status_without_completed_result_is_tenant_scoped(store, status, monkeypatch):
     from fastapi import HTTPException, Request
 
-    from evalhub.api.v1.evaluation import get_run
+    from proofgrove.api.v1.evaluation import get_run
 
     run_id = await store.create_run_job(
         dataset_name="private-dataset", tenant_id="tenant-owner", response_source="baseline",
@@ -600,7 +600,7 @@ async def test_job_status_without_completed_result_is_tenant_scoped(store, statu
     with pytest.raises(HTTPException) as denied:
         await get_run(run_id, foreign, "tenant-foreign", store)
     assert denied.value.status_code == 404
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-owner")
     for spelling in ("owner", "tenant-owner"):
@@ -615,8 +615,8 @@ async def test_job_status_without_completed_result_is_tenant_scoped(store, statu
 async def test_run_listing_scopes_unfinished_jobs_to_caller(store, status, monkeypatch):
     from fastapi import Request
 
-    from evalhub.api.v1.evaluation import list_runs
-    from evalhub.settings import settings
+    from proofgrove.api.v1.evaluation import list_runs
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-owner")
     expected_ids = set()
@@ -648,9 +648,9 @@ async def test_rescore_checks_source_owner_before_enqueue_and_preserves_tenant(s
     from fastapi import HTTPException, Request
     from sqlalchemy import func, select
 
-    from evalhub.api.v1.evaluation import ExperimentRunRequest, create_experiment_rescore, get_run
-    from evalhub.db.models import RunJobORM
-    from evalhub.evaluation.run_service import execute_rescore
+    from proofgrove.api.v1.evaluation import ExperimentRunRequest, create_experiment_rescore, get_run
+    from proofgrove.db.models import RunJobORM
+    from proofgrove.evaluation.run_service import execute_rescore
 
     tenant = "tenant-rescore-owner"
     engine = EvaluationEngine(judge=MockJudge())

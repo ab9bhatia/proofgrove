@@ -5,10 +5,10 @@ from unittest.mock import AsyncMock
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base
-from evalhub.db.store import EvaluationStore
-from evalhub.platform import authz
-from evalhub.platform.prompts import parse_prompt_ref
+from proofgrove.db.models import Base
+from proofgrove.db.store import EvaluationStore
+from proofgrove.platform import authz
+from proofgrove.platform.prompts import parse_prompt_ref
 from tests.conftest import act_as
 
 TENANT = "tenant-a"
@@ -158,7 +158,7 @@ def test_a_reference_without_a_version_or_label_is_invalid(reference):
 
 @pytest.fixture
 def auth_required(monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     prior = settings.platform_auth_required
     settings.platform_auth_required = True
@@ -167,7 +167,7 @@ def auth_required(monkeypatch):
         == "approver@example.com"
     )
     monkeypatch.setattr(authz, "check_permission", check)
-    monkeypatch.setattr("evalhub.api.v1.platform.check_permission", check)
+    monkeypatch.setattr("proofgrove.api.v1.platform.check_permission", check)
     yield
     settings.platform_auth_required = prior
 
@@ -178,7 +178,7 @@ def test_saving_needs_the_approver_role(client, auth_required):
         headers={
             "x-evalai-tenant": "a",
             "x-evalai-sub": "viewer@example.com",
-            "x-evalai-roles": "eval-hub-viewer",
+            "x-evalai-roles": "proofgrove-viewer",
         },
         json={"tenant_id": TENANT, "prompt_id": "support", "name": "x", "content": "Be terse."},
     )
@@ -191,7 +191,7 @@ def test_moving_a_label_needs_the_approver_role(client, auth_required):
         headers={
             "x-evalai-tenant": "a",
             "x-evalai-sub": "viewer@example.com",
-            "x-evalai-roles": "eval-hub-viewer",
+            "x-evalai-roles": "proofgrove-viewer",
         },
         json={"tenant_id": TENANT, "version": 1},
     )
@@ -205,7 +205,7 @@ def test_the_catalog_is_told_whether_it_may_manage_prompts(client, auth_required
         headers={
             "x-evalai-tenant": "evalai",
             "x-evalai-sub": "approver@example.com",
-            "x-evalai-roles": "eval-hub-approver",
+            "x-evalai-roles": "proofgrove-approver",
         },
     )
     denied = client.get(
@@ -213,7 +213,7 @@ def test_the_catalog_is_told_whether_it_may_manage_prompts(client, auth_required
         headers={
             "x-evalai-tenant": "evalai",
             "x-evalai-sub": "viewer@example.com",
-            "x-evalai-roles": "eval-hub-viewer",
+            "x-evalai-roles": "proofgrove-viewer",
         },
     )
     assert granted.json()["actions"]["manage_prompts"] is True
@@ -265,7 +265,7 @@ def test_archiving_needs_the_approver_role(client, auth_required):
         headers={
             "x-evalai-tenant": "a",
             "x-evalai-sub": "viewer@example.com",
-            "x-evalai-roles": "eval-hub-viewer",
+            "x-evalai-roles": "proofgrove-viewer",
         },
     )
     assert refused.status_code == 403, refused.text

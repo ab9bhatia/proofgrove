@@ -11,9 +11,9 @@ import ipaddress
 
 import pytest
 
-from evalhub.evaluation.target import catalog
-from evalhub.evaluation.target.catalog import AgentCatalogError
-from evalhub.generation import sources
+from proofgrove.evaluation.target import catalog
+from proofgrove.evaluation.target.catalog import AgentCatalogError
+from proofgrove.generation import sources
 
 
 class _OpenedError(Exception):
@@ -69,7 +69,7 @@ async def test_the_connection_is_pinned_to_the_validated_address(monkeypatch):
 async def test_a_platform_memory_tool_is_refused_before_any_connection(monkeypatch):
     """``excluded_tool_names`` keeps memory-mcp tools out of discovery and the
     captured trace; grounding must not call them as the service identity."""
-    from evalhub.errors import EvaluationInputError
+    from proofgrove.errors import EvaluationInputError
 
     _record_open(monkeypatch)
     source = sources.McpToolGroundingSource(url="https://grounding.example.com/mcp", tool="memory_search")
@@ -91,7 +91,7 @@ async def test_blocked_literals_and_foreign_tenant_services_are_refused_before_a
     for any cluster name; the literal/tenant validator has to run first. A
     job row is the only input the worker trusts, so this holds without the
     enqueue route."""
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     _record_open(monkeypatch)
     monkeypatch.setattr(settings, "pod_namespace", "tenant-own")
@@ -106,7 +106,7 @@ async def test_blocked_literals_and_foreign_tenant_services_are_refused_before_a
 
 
 async def test_the_tenants_own_service_is_still_allowed_and_pinned(monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     _record_open(monkeypatch)
     monkeypatch.setattr(settings, "pod_namespace", "tenant-own")
@@ -130,8 +130,8 @@ _CATALOG_URL = "http://kensho-mcp.tenant-own.svc.cluster.local:8000/mcp"
 
 def _catalog(monkeypatch, servers):
     """Stub discovery with a fixed tenant catalog (no kagent call)."""
-    from evalhub.evaluation.target import discovery
-    from evalhub.evaluation.target.discovery import ToolServerSummary
+    from proofgrove.evaluation.target import discovery
+    from proofgrove.evaluation.target.discovery import ToolServerSummary
 
     async def listed(**kwargs):  # noqa: ARG001
         if isinstance(servers, Exception):
@@ -142,7 +142,7 @@ def _catalog(monkeypatch, servers):
 
 
 def _own_tenant(monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", "tenant-own")
 
@@ -208,7 +208,7 @@ async def test_agent_control_tools_never_ground_generation_even_when_advertised(
     """A catalogued tenant server may advertise agent tools; grounding runs as the
     service identity, so those specific tools are refused before any connection.
     ``excluded_tool_names`` is untouched: it also shapes evidence and readiness."""
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     _record_open(monkeypatch)
     _own_tenant(monkeypatch)

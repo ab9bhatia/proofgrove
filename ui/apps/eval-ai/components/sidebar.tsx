@@ -32,7 +32,7 @@ function EvalAILogo({ className }: { className?: string }) {
 function Brand() {
   return (
     <Link
-      href="/learn"
+      href="/"
       aria-label="Proofgrove home"
       className="flex min-w-0 items-center gap-3 text-foreground"
     >
@@ -41,7 +41,7 @@ function Brand() {
         <span className="block truncate font-display text-sm font-semibold tracking-tight">
           Proofgrove
         </span>
-        <span className="eval-hub-eyebrow block truncate text-[0.625rem] text-muted-foreground">
+        <span className="proofgrove-eyebrow block truncate text-[0.625rem] text-muted-foreground">
           Learning lab
         </span>
       </span>
@@ -147,7 +147,7 @@ function Navigation({
           {!collapsed && (
             <p
               id={`sidebar-group-${group.id}`}
-              className="eval-hub-eyebrow px-3 pb-1 pt-1 text-[0.6875rem] text-muted-foreground"
+              className="proofgrove-eyebrow px-3 pb-1 pt-1 text-[0.6875rem] text-muted-foreground"
             >
               {group.label}
             </p>
@@ -170,10 +170,10 @@ function ShellFooter({ collapsed }: { collapsed: boolean }) {
   const { fullName, initials } = useUIState();
   return (
     <div className="flex shrink-0 flex-col gap-3 border-t border-border pt-4">
-      <Link href="/learn" title={collapsed ? "Learning lab" : undefined} aria-label={collapsed ? "Learning lab" : undefined}
+      <Link href="/" title={collapsed ? "Start here" : undefined} aria-label={collapsed ? "Start here" : undefined}
         className={cn("flex items-center gap-2 rounded-lg text-xs text-muted-foreground hover:text-foreground", collapsed ? "justify-center" : "px-3")}>
         <GraduationCap className="size-5 shrink-0" aria-hidden="true" />
-        {!collapsed && <span>Open the learning story</span>}
+        {!collapsed && <span>Back to Start here</span>}
       </Link>
       <ThemeControl collapsed={collapsed} />
       <div className={cn("flex min-h-11 items-center gap-2", collapsed ? "justify-center" : "px-3")} title={fullName}>

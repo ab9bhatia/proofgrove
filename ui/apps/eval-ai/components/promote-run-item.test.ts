@@ -45,7 +45,7 @@ function dataset(overrides: Partial<DatasetInfo> = {}): DatasetInfo {
     dataset_id: "id-1",
     dataset_name: "golden-ds",
     tenant_id: "tenant-1",
-    product_id: "eval-hub",
+    product_id: "proofgrove",
     status: "DRAFT",
     version_number: 1,
     parent_dataset_name: null,

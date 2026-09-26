@@ -9,7 +9,7 @@ import logging
 
 import pytest
 
-from evalhub.platform.resolver import ContractResolutionError
+from proofgrove.platform.resolver import ContractResolutionError
 
 TENANT = "tenant-structured-errors"
 
@@ -41,7 +41,7 @@ def test_contract_resolution_error_is_a_structured_422(client, monkeypatch):
         )
 
     monkeypatch.setattr(
-        "evalhub.api.v1.evaluation.resolve_scoring_configuration", _boom
+        "proofgrove.api.v1.evaluation.resolve_scoring_configuration", _boom
     )
     # A non-agent source at a tool-requiring depth resolves scoring before any
     # dataset access, so the mapped error surfaces without a registry fixture.
@@ -66,11 +66,11 @@ def test_infrastructure_exception_details_stay_out_of_http_responses(monkeypatch
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from evalhub.api.dependencies import get_evaluation_store, get_registry_service
-    from evalhub.api.v1 import evaluation
-    from evalhub.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
-    from evalhub.evaluation.models import EvidenceReadinessResult
-    from evalhub.settings import settings
+    from proofgrove.api.dependencies import get_evaluation_store, get_registry_service
+    from proofgrove.api.v1 import evaluation
+    from proofgrove.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
+    from proofgrove.evaluation.models import EvidenceReadinessResult
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "platform_auth_required", False)
     monkeypatch.setattr(settings, "evaluation_runtime", "temporal" if failure == "submit" else "local")
@@ -85,7 +85,7 @@ def test_infrastructure_exception_details_stay_out_of_http_responses(monkeypatch
         SimpleNamespace(version_number=1), [], Scenario.LLM_CORE, readiness, scoring,
     )))
     if failure == "submit":
-        from evalhub.orchestrator import temporal
+        from proofgrove.orchestrator import temporal
         monkeypatch.setattr(temporal, "submit_dataset_run", AsyncMock(side_effect=private_error))
     test_app = FastAPI()
     test_app.include_router(evaluation.router)
@@ -101,7 +101,7 @@ def test_infrastructure_exception_details_stay_out_of_http_responses(monkeypatch
     assert "private-prompt-and-driver-credentials" not in response.text
     # A traceback would carry the exception message -- a driver error's
     # statement and bound parameters, a run's prompt -- into shared logs.
-    failures = [record for record in caplog.records if record.name == "evalhub.api.v1.evaluation" and record.levelno >= logging.ERROR]
+    failures = [record for record in caplog.records if record.name == "proofgrove.api.v1.evaluation" and record.levelno >= logging.ERROR]
     assert failures, "the failure must still be logged"
     for record in failures:
         assert record.exc_info is None
@@ -114,9 +114,9 @@ async def test_rescore_submits_the_committed_job_to_temporal(monkeypatch):
 
     from starlette.requests import Request
 
-    from evalhub.api.v1 import evaluation
-    from evalhub.orchestrator import temporal
-    from evalhub.settings import settings
+    from proofgrove.api.v1 import evaluation
+    from proofgrove.orchestrator import temporal
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "evaluation_runtime", "temporal")
     submit = AsyncMock()
@@ -132,14 +132,14 @@ async def test_rescore_submits_the_committed_job_to_temporal(monkeypatch):
 
 
 def test_historical_error_text_is_not_treated_as_safe():
-    from evalhub.api.v1.evaluation import _client_error_message
+    from proofgrove.api.v1.evaluation import _client_error_message
     assert "OPAQUE_PRIVATE_TEXT" not in _client_error_message("OPAQUE_PRIVATE_TEXT")
     assert _client_error_message(None) is None
 
 
 def test_synchronous_run_checks_row_cap_before_engine_execution(client, monkeypatch):
-    from evalhub.api.v1 import evaluation
-    from evalhub.evaluation.engine import EvaluationEngine
+    from proofgrove.api.v1 import evaluation
+    from proofgrove.evaluation.engine import EvaluationEngine
     monkeypatch.setattr(evaluation, "MAX_ROWS_PER_DATASET", 1)
     def unexpected(*args, **kwargs):
         raise AssertionError("oversized synchronous run reached the engine")

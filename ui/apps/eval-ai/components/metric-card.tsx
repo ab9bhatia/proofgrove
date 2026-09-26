@@ -64,7 +64,7 @@ export function MetricCard({
     return (
       <div className={cn("relative flex min-w-0 flex-col justify-center px-4 py-4", className)}>
         {href ? <Link href={href} aria-label={`Open ${label.toLowerCase()}`} className="absolute inset-0 rounded-lg hover:bg-brand/5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring" /> : null}
-        <p className="eval-hub-eyebrow text-[0.6875rem] text-muted-foreground">{label}</p>
+        <p className="proofgrove-eyebrow text-[0.6875rem] text-muted-foreground">{label}</p>
         <p className="mt-1 font-display text-2xl font-medium tracking-tight whitespace-nowrap tabular-nums">{value}</p>
         {delta ? <DeltaChip delta={delta} /> : null}
         {hint ? <p className="mt-1 text-xs leading-normal text-muted-foreground">{hint}</p> : null}
@@ -74,7 +74,7 @@ export function MetricCard({
 
   return (
     <div className={cn("panel px-4 py-4", className)}>
-      <p className="eval-hub-eyebrow text-[0.6875rem] text-muted-foreground">{label}</p>
+      <p className="proofgrove-eyebrow text-[0.6875rem] text-muted-foreground">{label}</p>
       <p className="mt-2 font-display text-2xl font-medium tracking-tight tabular-nums">{value}</p>
       {delta ? <DeltaChip delta={delta} /> : null}
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}

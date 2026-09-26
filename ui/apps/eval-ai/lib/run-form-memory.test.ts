@@ -12,8 +12,8 @@ import {
   type RunFormSnapshot,
 } from "./run-form-memory";
 
-const DRAFT_STORAGE_KEY = "evalhub:run-form-drafts";
-const RUN_STORAGE_KEY = "evalhub:run-form-memory";
+const DRAFT_STORAGE_KEY = "proofgrove:run-form-drafts";
+const RUN_STORAGE_KEY = "proofgrove:run-form-memory";
 
 // The module reads window.sessionStorage; the vitest node environment has no DOM, so provide a
 // minimal in-memory Storage shim for these tests.

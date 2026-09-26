@@ -11,16 +11,16 @@ import contextlib
 import pytest
 from sqlalchemy import event
 
-from evalhub.datasets.enums import DatasetStatus
-from evalhub.datasets.models import DatasetFilterParams, DatasetMetadata
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.db.session import sync_engine
+from proofgrove.datasets.enums import DatasetStatus
+from proofgrove.datasets.models import DatasetFilterParams, DatasetMetadata
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.db.session import sync_engine
 
 
 @pytest.fixture
 def svc(tmp_path, monkeypatch) -> DatasetRegistryService:
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "database_url", f"sqlite:///{tmp_path}/datasets.db")
     return DatasetRegistryService(storage=SqlDatasetStore())
@@ -146,7 +146,7 @@ def test_listing_marks_rows_the_way_the_single_read_does(svc) -> None:
 
 def test_datasets_past_the_scan_cap_are_null_not_unusable(svc, monkeypatch) -> None:
     """Beyond the cap the field means "not computed" — never "missing something"."""
-    monkeypatch.setattr("evalhub.datasets.registry.ROW_SCAN_DATASETS", 2)
+    monkeypatch.setattr("proofgrove.datasets.registry.ROW_SCAN_DATASETS", 2)
     for i in range(3):
         _seed(svc, f"ds_{i}", [_agent_record(0)])
 
@@ -159,7 +159,7 @@ def test_datasets_past_the_scan_cap_are_null_not_unusable(svc, monkeypatch) -> N
 
 
 def test_clean_partial_response_sample_is_not_reported_ready(svc, monkeypatch) -> None:
-    monkeypatch.setattr("evalhub.datasets.registry.ROW_SCAN_RECORDS", 2)
+    monkeypatch.setattr("proofgrove.datasets.registry.ROW_SCAN_RECORDS", 2)
     _seed(svc, "large_ds", [_chat_record(i) for i in range(3)])
 
     listed = svc.list_datasets(DatasetFilterParams(tenant_id="t1"))[0]
@@ -171,7 +171,7 @@ def test_clean_partial_response_sample_is_not_reported_ready(svc, monkeypatch) -
 
 @pytest.mark.parametrize("tenant_id", ["t1", "tenant-t1", "t2", "tenant-t2", None])
 def test_same_name_dataset_counts_and_coverage_stay_with_the_owner(svc, tenant_id, monkeypatch):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     namespace = f"tenant-{tenant_id.removeprefix('tenant-')}" if tenant_id else ""
     monkeypatch.setattr(settings, "pod_namespace", namespace)

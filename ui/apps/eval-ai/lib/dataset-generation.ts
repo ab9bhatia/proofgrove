@@ -16,7 +16,7 @@ import { sessionAwareFetch } from "@evalai/shared/session";
 import { ApiError, apiErrorFromResponse } from "@/lib/api-errors";
 import type { GenerateRequest } from "@/lib/api";
 
-const BASE = "/api/eval-hub";
+const BASE = "/api/proofgrove";
 
 export type GenerationJobPhase =
   | "queued"

@@ -8,13 +8,13 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from evalhub.datasets.enums import ChangeReason, DatasetStatus
-from evalhub.datasets.exceptions import (
+from proofgrove.datasets.enums import ChangeReason, DatasetStatus
+from proofgrove.datasets.exceptions import (
     DatasetImmutableError,
     DatasetNotFoundError,
     InvalidTransitionError,
 )
-from evalhub.datasets.models import (
+from proofgrove.datasets.models import (
     CreateDatasetRequest,
     CreateVersionRequest,
     DatasetFilterParams,
@@ -22,7 +22,7 @@ from evalhub.datasets.models import (
     DatasetRecord,
     WriteExpectedToolsRequest,
 )
-from evalhub.datasets.registry import DatasetRegistryService
+from proofgrove.datasets.registry import DatasetRegistryService
 
 
 @pytest.fixture
@@ -64,7 +64,7 @@ class TestCreateDataset:
     """Tests for create_dataset."""
 
     def test_creates_dataset(self, svc: DatasetRegistryService, mock_storage: MagicMock) -> None:
-        from evalhub.datasets.exceptions import DatasetNotFoundError
+        from proofgrove.datasets.exceptions import DatasetNotFoundError
 
         mock_storage.get_dataset.side_effect = DatasetNotFoundError("missing")
         mock_storage.create_dataset.return_value = {
@@ -108,7 +108,7 @@ class TestCreateDataset:
     def test_creates_child_version_when_published_exists(
         self, svc: DatasetRegistryService, mock_storage: MagicMock
     ) -> None:
-        from evalhub.datasets.exceptions import DatasetNotFoundError
+        from proofgrove.datasets.exceptions import DatasetNotFoundError
 
         mock_storage.get_dataset.side_effect = [
             MagicMock(dataset_id="ds-1", name="eval_ds"),  # exists check
@@ -183,7 +183,7 @@ class TestRestoreAsDraft:
     def test_copies_retired_dataset_into_next_draft(
         self, svc: DatasetRegistryService, mock_storage: MagicMock
     ) -> None:
-        from evalhub.datasets.exceptions import DatasetNotFoundError
+        from proofgrove.datasets.exceptions import DatasetNotFoundError
 
         mock_storage.get_metadata.return_value = _draft_metadata(
             status=DatasetStatus.RETIRED,
@@ -233,7 +233,7 @@ class TestPostgresStoreClone:
     def test_clone_preserves_records_and_source(self) -> None:
         from uuid import uuid4
 
-        from evalhub.datasets.postgres_store import PostgresDatasetStore
+        from proofgrove.datasets.postgres_store import PostgresDatasetStore
 
         store = PostgresDatasetStore()
         suffix = uuid4().hex[:8]
@@ -278,8 +278,8 @@ class TestRestoreEndpoint:
     """Verify the public restore route delegates to the registry contract."""
 
     def test_restores_retired_dataset(self, client) -> None:
-        from evalhub.api.dependencies import get_registry_service
-        from evalhub.main import app
+        from proofgrove.api.dependencies import get_registry_service
+        from proofgrove.main import app
 
         registry = MagicMock()
         registry.get_dataset_tenant.return_value = "tenant-1"
@@ -309,8 +309,8 @@ class TestRestoreEndpoint:
         registry.restore_as_draft.assert_called_once_with("support_quality", "reviewer", "tenant-1")
 
     def test_returns_conflict_when_source_is_not_retired(self, client) -> None:
-        from evalhub.api.dependencies import get_registry_service
-        from evalhub.main import app
+        from proofgrove.api.dependencies import get_registry_service
+        from proofgrove.main import app
 
         registry = MagicMock()
         registry.get_dataset_tenant.return_value = "tenant-1"
@@ -766,12 +766,12 @@ class TestSingleDatasetReadCountsItsRows:
     """
 
     def _store(self):
-        from evalhub.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
 
         return SqlDatasetStore()
 
     def test_get_dataset_reports_the_same_count_as_the_listing(self) -> None:
-        from evalhub.datasets.registry import DatasetRegistryService
+        from proofgrove.datasets.registry import DatasetRegistryService
 
         store = self._store()
         svc = DatasetRegistryService(storage=store)
@@ -791,7 +791,7 @@ class TestSingleDatasetReadCountsItsRows:
         assert info.record_count == store.count_records("counted_ds", "tenant-1")
 
     def test_a_genuinely_empty_dataset_still_reports_zero(self) -> None:
-        from evalhub.datasets.registry import DatasetRegistryService
+        from proofgrove.datasets.registry import DatasetRegistryService
 
         store = self._store()
         svc = DatasetRegistryService(storage=store)
@@ -804,7 +804,7 @@ class TestExpectedToolsStorePaths:
     """Against the real store: the actual SQL mutation, not the registry call."""
 
     def _store(self):
-        from evalhub.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
 
         return SqlDatasetStore()
 
@@ -888,8 +888,8 @@ class TestWrittenExpectedToolsAreReadable:
         # End-to-end on the value itself, not on a mock call: what the store
         # writes must parse back out as expected tools, and must survive the
         # metadata mapping that the CSV download/upload path uses.
-        from evalhub.datasets.csv_parser import metadata_to_record, record_metadata
-        from evalhub.evaluation.dataset_bridge import record_to_row
+        from proofgrove.datasets.csv_parser import metadata_to_record, record_metadata
+        from proofgrove.evaluation.dataset_bridge import record_to_row
 
         # The exact shape SqlDatasetStore.annotate_expected_tools persists.
         record = {
@@ -919,10 +919,10 @@ class TestWrittenExpectedToolsAreReadable:
     def test_written_tools_make_tool_metrics_gradeable_again(self) -> None:
         # The point of #3032 read against #3029: before the write-back the row
         # is unscored for want of a declared expectation; after it, it grades.
-        from evalhub.evaluation.adapters.trace_adapter import TraceJudge
-        from evalhub.evaluation.dataset_bridge import record_to_row
-        from evalhub.evaluation.metrics import METRIC_CATALOG
-        from evalhub.evaluation.models import EvaluatorConfig, ToolCall
+        from proofgrove.evaluation.adapters.trace_adapter import TraceJudge
+        from proofgrove.evaluation.dataset_bridge import record_to_row
+        from proofgrove.evaluation.metrics import METRIC_CATALOG
+        from proofgrove.evaluation.models import EvaluatorConfig, ToolCall
 
         def config(metric_id: str) -> EvaluatorConfig:
             metric = METRIC_CATALOG[metric_id]
@@ -957,7 +957,7 @@ class TestExpectedToolAliasHandling:
     """The scorer probes three action keys; a write must own all of them."""
 
     def test_write_clears_stale_aliases_so_none_can_contradict_it(self) -> None:
-        from evalhub.datasets.postgres_store import _with_expected_tools
+        from proofgrove.datasets.postgres_store import _with_expected_tools
 
         # A row already carrying a non-canonical alias.
         result = _with_expected_tools({"expected_tool_calls": "old_tool"}, ["search"])
@@ -966,8 +966,8 @@ class TestExpectedToolAliasHandling:
     def test_clear_removes_every_alias_not_just_the_canonical_one(self) -> None:
         # Clearing only `expected_actions` would leave the row gradeable through
         # `actions`, so a reported clear would not be one.
-        from evalhub.datasets.postgres_store import _with_expected_tools
-        from evalhub.evaluation.dataset_bridge import record_to_row
+        from proofgrove.datasets.postgres_store import _with_expected_tools
+        from proofgrove.evaluation.dataset_bridge import record_to_row
 
         cleared = _with_expected_tools(
             {"expected_response": "a", "actions": "search(q=1)", "expected_actions": "search"},
@@ -979,15 +979,15 @@ class TestExpectedToolAliasHandling:
 
     def test_every_key_the_bridge_probes_is_covered(self) -> None:
         # If the bridge learns a new alias, this write path must learn it too.
-        from evalhub.datasets.postgres_store import _ACTION_KEYS
-        from evalhub.evaluation.dataset_bridge import _EXPECTED_ACTION_KEYS
+        from proofgrove.datasets.postgres_store import _ACTION_KEYS
+        from proofgrove.evaluation.dataset_bridge import _EXPECTED_ACTION_KEYS
 
         assert set(_ACTION_KEYS) == set(_EXPECTED_ACTION_KEYS)
 
 
 class TestAtomicCsvImport:
     def test_import_starts_at_version_one_with_all_records(self):
-        from evalhub.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
 
         store = SqlDatasetStore()
         registry = DatasetRegistryService(store)
@@ -1006,8 +1006,8 @@ class TestAtomicCsvImport:
 
     @pytest.mark.parametrize("content", ["unknown,unused\na,b\n", "Question,Expected Output\n"])
     def test_invalid_import_leaves_no_dataset(self, content):
-        from evalhub.datasets.exceptions import DatasetValidationError
-        from evalhub.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.datasets.exceptions import DatasetValidationError
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
 
         store = SqlDatasetStore()
         with pytest.raises(DatasetValidationError):
@@ -1025,8 +1025,8 @@ class TestAtomicCsvImport:
     def test_record_write_failure_rolls_back_the_dataset(self):
         from sqlalchemy import event
 
-        from evalhub.datasets.postgres_store import SqlDatasetStore
-        from evalhub.db.models import GoldenDatasetRecordORM
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.db.models import GoldenDatasetRecordORM
 
         store = SqlDatasetStore()
 

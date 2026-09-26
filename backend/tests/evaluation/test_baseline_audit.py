@@ -10,8 +10,8 @@ provisions its own experiment id to keep its baseline history isolated.
 
 import pytest
 
-from evalhub.platform import authz
-from evalhub.settings import settings
+from proofgrove.platform import authz
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 #: Most tests seed from the sample experiment, which belongs to the sample
@@ -198,7 +198,7 @@ def test_baseline_mutations_require_approval_despite_experiment_name(client, mon
     async def check_permission(request, permission):
         if permission not in allowed:
             return False
-        request.state.eval_hub_permissions = {*getattr(request.state, "eval_hub_permissions", set()), permission}
+        request.state.proofgrove_permissions = {*getattr(request.state, "proofgrove_permissions", set()), permission}
         return True
 
     monkeypatch.setattr(settings, "platform_auth_required", True)

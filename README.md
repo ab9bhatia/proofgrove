@@ -30,11 +30,10 @@ Changes to a prompt, model, retrieval pipeline or tool can improve one behavior 
 
 | Step | Question | What you will learn |
 | --- | --- | --- |
-| 1. Why | Why is a successful demo insufficient? | Reliability, regressions and the difference between a convincing answer and a correct outcome. |
-| 2. What | What does an evaluation compare? | Inputs, expectations, observed behavior, evidence and evaluators. |
-| 3. Where | Where can an AI workflow fail? | Retrieval, reasoning, tool selection, arguments, state changes and recovery. |
-| 4. How | How do engineers run evaluations? | Datasets, endpoints, runners, metrics, traces and experiment tracking. |
-| 5. Trust | What evidence supports a production decision? | Coverage, critical failures, human review, release criteria and ongoing evaluation. |
+| 1. Overview | What will I be able to do? | Understand the scope, building blocks and practical evaluation flow. |
+| 2. Why evaluate? | Why is a successful demo insufficient? | Reliability, regressions and the difference between a convincing answer and a correct outcome. |
+| 3. What is evaluation? | What does an evaluation compare? | One response can pass a format check and fail a factual check; compare each written expectation with the observed result. |
+| 4. Evaluation Lego Blocks | How do engineers run evaluations? | Datasets, endpoints, runners, metrics, traces and experiment tracking; offline/online and black-box/white-box combinations. |
 
 The examples follow **Nova**, a fictional retail-support agent. A refund request makes the distinction concrete: saying “Refunded AED 250” does not establish that the correct amount was refunded, in the correct currency, to the correct destination, exactly once.
 
@@ -85,6 +84,7 @@ Text-overlap metrics such as F1, ROUGE-L and BLEU are useful diagnostics, but th
 
 The application connects the concepts to practical tasks:
 
+- Choose a runnable agent in **What to test**, inspect its tools and start an evaluation with its matching golden dataset.
 - Create, validate, version and publish datasets.
 - Manage prompts and select OpenAI, installed Ollama models or configured targets.
 - Configure compatible checks and run evaluations.
@@ -92,7 +92,7 @@ The application connects the concepts to practical tasks:
 - Compare experiments and investigate regressions.
 - Explore quality contracts, review findings and trace evidence.
 
-The included examples use authored scenarios and supplied responses for repeatable learning. Deterministic text checks compute real results; connected model targets can generate fresh responses. Semantic judging remains simulated and unscored in the teaching configuration. Tool execution, captured production traces, continuous online evaluation and live traffic routing require additional integrations. See the [feature map](docs/FEATURE-MAP.md) for implementation details.
+The workspace includes six guided agents: refund support, order tracking, course advice, study planning, IT helpdesk and expense review. In the model-enabled profile, they execute local tools over synthetic fixtures and use the selected model to generate fresh answers. Each has a published golden dataset; deterministic checks compare the observed tool names and arguments with its expectations. These bounded workflows perform no external business actions. Semantic judging remains simulated and unscored in the teaching configuration. Captured production traces, continuous online evaluation and live traffic routing require additional integrations. See the [feature map](docs/FEATURE-MAP.md) for implementation details.
 
 ## Explore the application
 
@@ -105,10 +105,17 @@ Prerequisites: Python with `uv`, Node.js 22 or newer, and `pnpm` 11.4.0.
 
 The default configuration uses prepared examples without model credentials. Follow the [model setup guide](docs/MODEL-SETUP.md) and [runtime configuration guide](docs/LIVE-DEMO.md) to enable fresh responses with OpenAI or Ollama, then use the [evaluation walkthrough](docs/NEW-EVALUATION.md).
 
+## Keep learning after the demo
+
+Share the [Proofgrove repository](https://github.com/ab9bhatia/proofgrove) as the starting point. The [learner resources](docs/LEARNING-RESOURCES.md) provide a short reading order through official agent-evaluation, tracing, online-monitoring and policy-engine references.
+
+For your first exercise, choose one agent, write five cases with explicit expectations, run a baseline, inspect a failure, change one thing and rerun the same cases. Explain the evidence for the change before looking at the average score.
+
 ## Reading guide
 
 | Resource | Focus |
 | --- | --- |
+| [Learner resources](docs/LEARNING-RESOURCES.md) | A curated reading path and a practical exercise to continue after the demo. |
 | [Complete engineering guide](docs/EVALUATION-ENGINEERING-GUIDE.md) | Definitions, architecture, lifecycle, dataset examples, evaluation strategies and referenced industry approaches. |
 | [Architecture and moving parts](docs/ARCHITECTURE.md) | How the application, evaluation engine, storage and integration points connect. |
 | [Numbered architecture diagrams](docs/session-redesign/diagrams/README.md) | Editable Excalidraw sources covering the evaluation flow, harness, telemetry and production feedback loop. |

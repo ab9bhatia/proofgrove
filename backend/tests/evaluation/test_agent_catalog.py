@@ -9,13 +9,13 @@ import pytest
 import respx
 from pydantic import SecretStr
 
-from evalhub.api.v1 import agents as agent_routes
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.target import catalog
-from evalhub.evaluation.target.discovery import AgentSummary
-from evalhub.platform import authz
-from evalhub.settings import settings
+from proofgrove.api.v1 import agents as agent_routes
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.target import catalog
+from proofgrove.evaluation.target.discovery import AgentSummary
+from proofgrove.platform import authz
+from proofgrove.settings import settings
 
 # Hosts are pinned to the address they resolve to, so the mocked card URLs below are
 # addresses rather than names. Public documentation range (RFC 5737 is loopback-free).
@@ -470,7 +470,7 @@ def test_catalog_reader_cannot_sync_but_can_read_saved_targets(client, monkeypat
     granted = {authz.PERMISSION_EVALUATION_READ}
 
     async def check(request, permission):
-        request.state.eval_hub_permissions = set(granted)
+        request.state.proofgrove_permissions = set(granted)
         return permission in granted
 
     monkeypatch.setattr(authz, "check_permission", check)
@@ -546,11 +546,11 @@ def test_catalog_rejects_tenant_header_outside_deployed_namespace(client):
         settings.pod_namespace = prior
 
     assert response.status_code == 403
-    assert "Eval Hub namespace" in response.json()["detail"]
+    assert "Proofgrove namespace" in response.json()["detail"]
 
 
 def test_catalog_accepts_gateway_slug_matching_deployed_namespace(client, monkeypatch):
-    """Gateway injects x-evalai-tenant=<slug>; Eval Hub runs in tenant-<slug>."""
+    """Gateway injects x-evalai-tenant=<slug>; Proofgrove runs in tenant-<slug>."""
 
     async def _empty(**kwargs):  # noqa: ARG001
         return []
@@ -586,10 +586,10 @@ def test_discovery_failures_are_logged_by_type_only(client, monkeypatch, caplog,
         raise httpx.ConnectError("http://kagent.internal/api/agents?token=sentinel-token")
 
     monkeypatch.setattr(agent_routes, seam, boom)
-    with caplog.at_level(logging.WARNING, logger="evalhub"):
+    with caplog.at_level(logging.WARNING, logger="proofgrove"):
         response = client.get(path, headers={"x-evalai-tenant": "tenant-agent-catalog-logs"})
     assert response.status_code == 502, response.text
-    warnings = [record for record in caplog.records if record.name == "evalhub.api.v1.agents"]
+    warnings = [record for record in caplog.records if record.name == "proofgrove.api.v1.agents"]
     assert warnings and warnings[0].error_type == "ConnectError"
     for record in warnings:
         assert "sentinel-token" not in str(vars(record))

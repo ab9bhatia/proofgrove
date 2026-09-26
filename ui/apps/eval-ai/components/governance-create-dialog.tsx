@@ -44,8 +44,8 @@ const INITIAL_VERSION = "1.0.0";
 // (`validate_governance_roles`, `GOVERNANCE_ROLES`). Two fixed values, so a
 // pair of checkboxes rather than a free-text box that can only be typed wrong.
 const APPROVER_ROLES = [
-  { id: "eval-hub-approver", label: "Approver", hint: "the platform default" },
-  { id: "eval-hub-reviewer", label: "Reviewer", hint: "also require a reviewer" },
+  { id: "proofgrove-approver", label: "Approver", hint: "the platform default" },
+  { id: "proofgrove-reviewer", label: "Reviewer", hint: "also require a reviewer" },
 ] as const;
 
 function randomSuffix(): string {

@@ -66,9 +66,9 @@ def validate(template):
         check(r[key]["properties"]["kty"] == "RSA" and r[key]["properties"]["keySize"] == 4096, "RSA-4096 CMKs required")
     check("vaults/keys" in r["encryptionGrants"]["scope"] and "vaults/keys" in r["backupGrant"]["scope"], "CMK grants must be key-scoped")
     workload_accounts = inner["variables"]["serviceAccounts"]
-    check(workload_accounts == ["[parameters('serviceAccountName')]", "trace-archive-sink", "eval-hub-admin-secrets"], "workload subjects changed")
+    check(workload_accounts == ["[parameters('serviceAccountName')]", "trace-archive-sink", "proofgrove-admin-secrets"], "workload subjects changed")
     check("tenantNamespace" in r["federation"]["properties"]["subject"], "federation must stay tenant scoped")
-    for grant, secret, principal in [("appSecretReader", "eval-hub-postgres", 0), ("otlpSecretReader", "eval-hub-otlp", 0), ("adminSecretReader", "eval-hub-postgres-admin", 2)]:
+    for grant, secret, principal in [("appSecretReader", "proofgrove-postgres", 0), ("otlpSecretReader", "proofgrove-otlp", 0), ("adminSecretReader", "proofgrove-postgres-admin", 2)]:
         check("vaults/secrets" in r[grant]["scope"] and f"'{secret}'" in r[grant]["scope"], "runtime secret grant broadened")
         check(f"'workloads[{{0}}]', {principal}" in r[grant]["properties"]["principalId"], "admin and runtime identities must remain separate")
     check("namespaces/queues" in r["queueGrants"]["scope"] and "'workloads[{0}]', 1" in r["queueGrants"]["properties"]["principalId"], "queue access belongs to the sink only")

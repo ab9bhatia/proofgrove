@@ -9,7 +9,7 @@ import { Plus, RefreshCw } from "lucide-react";
 import { Button } from "@evalai/shared/ui/button";
 import { cn } from "@evalai/shared/utils";
 
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/page-state";
 import { PromptFormDialog } from "@/components/catalog/prompt-form-dialog";
@@ -30,9 +30,9 @@ const PROMPT_PAGE_SIZE = ROWS_PER_PAGE;
 
 export default function PromptCatalogPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <PromptCatalog />
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

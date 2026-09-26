@@ -2,9 +2,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const devtoolsPort = Number(process.env.CHROME_DEVTOOLS_PORT || "9333");
-const baseUrl = process.env.EVAL_HUB_UI_URL || "http://127.0.0.1:33003";
+const baseUrl = process.env.PROOFGROVE_UI_URL || "http://127.0.0.1:33003";
 const outputDir = path.resolve(
-  process.env.EVAL_HUB_SCREENSHOT_DIR ||
+  process.env.PROOFGROVE_SCREENSHOT_DIR ||
     "services/ui/apps/eval-ai/docs/screenshots",
 );
 const datasetName = "Template Test Dataset";

@@ -3,29 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Download, Maximize2, Sprout, X } from "lucide-react";
-import { FeatureMap } from "./feature-map";
+import { ArrowLeft, ArrowRight, Download, Maximize2, X } from "lucide-react";
 import { ExpectationLab } from "./expectation-lab";
-import { DatasetReference, LifecycleReference, IndustryReference, LearningResources } from "./engineering-reference";
-import { SingleTurnLesson, QualityLoopLesson } from "./industry-lessons";
-import { ReliabilityLab } from "./reliability-lab";
+import { SingleTurnLesson } from "./industry-lessons";
 import { EngineeringLab } from "./engineering-lab";
-import { DEFINITION, FAILURE_PARAGRAPH, STEPS, EDGE_CASES, MEASURES, TAKEAWAYS, STARTER_TEST, restoreLearnerTest, testMarkdown, type LearnerTest } from "./session-content";
+import { EvaluationTypes } from "./evaluation-types";
+import { DEFINITION, STEPS } from "./session-content";
 import styles from "./learning-experience.module.css";
 
 const ASSET_ROOT = "/learning/session/diagrams";
-const DRAFT_KEY = "proofgrove-first-test-v1";
-const LEGACY_DRAFT_KEY = "proofgrove-eval-plan-v1";
 const LEGACY_STEPS: Record<string, string> = {
-  "what-is-eval": "what", "failure-lab": "where", "average-trap": "trust",
-  architecture: "how", practice: "how", takeaways: "trust", "lite-boundaries": "how",
+  "what-is-eval": "what", "failure-lab": "how", where: "how", "average-trap": "overview",
+  architecture: "how", practice: "how", takeaways: "overview", trust: "overview", "lite-boundaries": "how",
 };
 
 function Diagram({ name, title, description }: { name: string; title: string; description: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const dimensions = name === "08-evaluation-harness"
     ? { width: 1630, height: 1120 }
-    : { width: 1230, height: name === "09-single-turn-agent" || name === "10-quality-loop" ? 800 : 720 };
+    : { width: 1230, height: name === "11-evaluation-basics" ? 810 : name === "12-evaluation-questions" ? 765 : name === "13-test-combinations" ? 740 : name === "09-single-turn-agent" || name === "10-quality-loop" ? 800 : 720 };
   return <figure className={styles.diagram}>
     <figcaption><span>{title}</span><div>
       <button type="button" onClick={() => dialog.current?.showModal()} aria-label={`Expand diagram: ${title}`}><Maximize2 size={15} aria-hidden="true" />Expand</button>
@@ -41,58 +37,9 @@ function Diagram({ name, title, description }: { name: string; title: string; de
   </figure>;
 }
 
-function WorkspaceLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return <Link href={href} target="_blank" rel="noopener noreferrer" className={styles.workspaceAction}>{children}<ArrowUpRight size={16} aria-hidden="true" /><span className={styles.srOnly}> (opens in a new tab)</span></Link>;
-}
-
-function FirstTest() {
-  const [test, setTest] = useState<LearnerTest>({ ...STARTER_TEST });
-  const [ready, setReady] = useState(false);
-  const [storageError, setStorageError] = useState(false);
-  const [downloaded, setDownloaded] = useState(false);
-  // Read browser drafts after hydration and before permitting persistence.
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    try { setTest(restoreLearnerTest(localStorage.getItem(DRAFT_KEY), localStorage.getItem(LEGACY_DRAFT_KEY))); }
-    catch { setStorageError(true); }
-    setReady(true);
-  }, []);
-  /* eslint-enable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    if (!ready) return;
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(test)); }
-    catch {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Report failed browser persistence while retaining the editable draft.
-      setStorageError(true);
-    }
-  }, [ready, test]);
-  const download = () => {
-    const url = URL.createObjectURL(new Blob([testMarkdown(test)], { type: "text/markdown;charset=utf-8" }));
-    const link = document.createElement("a"); link.href = url; link.download = "my-first-evaluation-test.md";
-    document.body.appendChild(link); link.click(); link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000); setDownloaded(true);
-  };
-  const fields: [keyof LearnerTest, string, string][] = [
-    ["request", "Request", "What should the agent do?"],
-    ["expectation", "Expectation", "What counts as success?"],
-    ["evidence", "Evidence", "What would prove it?"],
-    ["blocker", "Blocker", "What must stop the action or release?"],
-  ];
-  return <details className={styles.detail} id="first-test">
-    <summary>Your turn: write your first test <span>3 minutes</span></summary>
-    <div className={styles.detailBody}>
-      <p>Use the Nova refund example below, or replace it with a task from your own project.</p>
-      <div className={styles.testFields}>{fields.map(([key, label, hint]) => <label key={key} htmlFor={`first-test-${key}`}><strong>{label}</strong><span>{hint}</span><textarea id={`first-test-${key}`} value={test[key]} maxLength={1600} rows={2} onChange={event => { setTest(current => ({ ...current, [key]: event.target.value })); setDownloaded(false); }} /></label>)}</div>
-      <div className={styles.downloadRow}><button className={styles.primaryButton} type="button" disabled={!ready || Object.values(test).some(value => !value.trim())} onClick={download}><Download size={16} aria-hidden="true" />Download my test</button><p className={styles.note}>{storageError ? "Browser storage is unavailable. You can still edit and download." : "Saved in this browser only. Nothing is submitted."}</p></div>
-      {downloaded && <p role="status">Your test is downloaded. Run it again after the next change.</p>}
-    </div>
-  </details>;
-}
-
 export function LearningExperience() {
   const [active, setActive] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [boundariesOpen, setBoundariesOpen] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const focusOnChange = useRef(false);
   const navigate = (index: number) => {
@@ -105,8 +52,10 @@ export function LearningExperience() {
       const hash = window.location.hash.slice(1);
       const id = LEGACY_STEPS[hash] ?? hash;
       const index = STEPS.findIndex(step => step.id === id);
-      if (index >= 0) setActive(index);
-      if (hash === "lite-boundaries") setBoundariesOpen(true);
+      if (index >= 0) {
+        setActive(index);
+        if (hash !== id) window.history.replaceState(null, "", `#${id}`);
+      }
     };
     readHash(); window.addEventListener("hashchange", readHash);
     return () => window.removeEventListener("hashchange", readHash);
@@ -120,25 +69,53 @@ export function LearningExperience() {
   const current = STEPS[active];
   return <div className={`proofgrove-lab ${styles.lab}`}>
     <header className={styles.topbar}>
-      <Link href="/learn" className={styles.wordmark} aria-label="Proofgrove learning lab"><Sprout size={26} aria-hidden="true" /><span>proofgrove<small>THE AI EVALUATION LAB</small></span></Link>
-      <span className={styles.sessionLabel}>Proofgrove learning session</span>
-      <WorkspaceLink href="/">Workspace</WorkspaceLink>
+      <div><span className={styles.label}>Start here</span><p>Understand evaluation. Then run one.</p></div>
+      <Link href="/datasets" className={styles.workspaceAction}>Create a golden dataset<ArrowRight size={16} aria-hidden="true" /></Link>
     </header>
     <nav className={styles.navigation} aria-label="Session topics">{STEPS.map((step, index) => <button key={step.id} type="button" onClick={() => navigate(index)} aria-current={index === active ? "step" : undefined}><span aria-hidden="true">{index + 1}</span>{step.title}</button>)}</nav>
     <div className={styles.content}>
-      <div className={styles.screenMeta}><span>ONE RETAIL AGENT. FIVE QUESTIONS.</span><span>{current.minutes} min · discussion included</span></div>
+      <div className={styles.screenMeta}><span>LEARN THE IDEAS. FOLLOW THE EVIDENCE.</span><span>{current.timing}</span></div>
       <section aria-labelledby="lesson-heading" className={styles.screen}>
         <h1 id="lesson-heading" ref={heading} tabIndex={-1}>{[
+          "Today’s session: evaluation with Proofgrove",
           "Did the agent do the right thing?",
           "What is an evaluation?",
-          "Where can an agent fail?",
-          "How do you build an evaluation loop?",
-          "What earns trust in production?",
+          "Evaluation Lego Blocks",
+          "Types of evaluation",
         ][active]}</h1>
+        {current.id === "overview" && <>
+          <p className={styles.lead}>Proofgrove is the name I’ve given today’s evaluation framework demo. We’ll start with the ideas, then use a working agent to see how the pieces fit together.</p>
+          <section className={styles.overviewOutcomes} aria-labelledby="overview-outcomes">
+            <h2 id="overview-outcomes">By the end of this session</h2>
+            <ol>
+              <li><span aria-hidden="true">01</span><div><h3>Explain evaluation in today’s agentic world</h3><p>Understand what an evaluation is and why a convincing answer is not enough.</p></div></li>
+              <li><span aria-hidden="true">02</span><div><h3>Recognize the evaluation lego blocks</h3><p>Connect the agent, golden dataset, prompt, metrics, runner and saved experiments.</p></div></li>
+              <li><span aria-hidden="true">03</span><div><h3>Distinguish the types of evaluation</h3><p>Separate offline from online evaluation, and black-box from white-box testing.</p></div></li>
+              <li><span aria-hidden="true">04</span><div><h3>Evaluate an agent end to end</h3><p>Run a working example and inspect its response, tool calls and check results.</p></div></li>
+            </ol>
+          </section>
+          <section className={styles.overviewScope} aria-labelledby="overview-scope">
+            <h2 id="overview-scope">What we won’t cover</h2>
+            <ul><li>Model training or fine-tuning</li><li>Every metric or an exhaustive benchmark comparison</li><li>Production deployment or compliance certification</li></ul>
+          </section>
+          <p className={styles.overviewRoute}><strong>15 minutes of theory.</strong> Then we’ll build and run an evaluation together.</p>
+          <details className={styles.detail}>
+            <summary>Keep learning after the demo</summary>
+            <div className={styles.detailBody}>
+              <p>Save the repository, then follow the reading path when you want to go deeper.</p>
+              <ul className={styles.resourceLinks}>
+                <li><a href="https://github.com/ab9bhatia/proofgrove" target="_blank" rel="noreferrer">Proofgrove repository</a><span>The guide, diagrams, datasets and working examples.</span></li>
+                <li><a href="https://github.com/ab9bhatia/proofgrove/blob/main/docs/LEARNING-RESOURCES.md" target="_blank" rel="noreferrer">Recommended reading path</a><span>Nine resources on agent evaluation, traces, online monitoring and policy controls.</span></li>
+                <li><a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noreferrer">Anthropic: Demystifying evals for AI agents</a><span>A useful next read on tasks, trials, graders and outcomes.</span></li>
+              </ul>
+              <p><strong>Your next step:</strong> write five cases for one agent, run a baseline, change one thing and compare the evidence.</p>
+            </div>
+          </details>
+        </>}
         {current.id === "why" && <>
           <p className={styles.lead}>Read the request and the reply. Would you call this a success?</p>
           <div className={styles.conversation}>
-            <div className={styles.request}><span className={styles.label}>THE CUSTOMER ASKS</span><p>“The headphones arrived with one side not working. I’ve returned them. Please refund the AED 250 I paid.”</p><small>Fictional store policy: a confirmed defect qualifies for a refund after the return is received. Order 7731 passed those checks. Refund once, in AED, to the original payment method.</small></div>
+            <div className={styles.request}><span className={styles.label}>THE CUSTOMER ASKS</span><p>“The headphones arrived with one side not working. I’ve returned them. Please refund the AED 250 I paid.”</p><small>Store policy: a confirmed defect qualifies for a refund after the return is received. Order 7731 passed those checks. Refund once, in AED, to the original payment method.</small></div>
             <div className={styles.reply}><span className={styles.label}>NOVA REPLIES</span><p>“Refunded AED 250.”</p></div>
           </div>
           <button type="button" className={styles.primaryButton} aria-expanded={revealed} aria-controls="refund-evidence" onClick={() => setRevealed(!revealed)}>{revealed ? "Hide the refund evidence" : "Reveal the refund evidence"}<ArrowRight size={17} aria-hidden="true" /></button>
@@ -150,42 +127,18 @@ export function LearningExperience() {
         </>}
         {current.id === "what" && <>
           <p className={styles.definition}>{DEFINITION}</p>
-          <Diagram name="01-what-is-eval" title="Behavior, expectation, judgment" description="Steps 1–4: define the expected AED 250 refund, observe the authored USD 250 record, compare currency and amount, then record a failure." />
+          <p className={styles.memorable}>Every failure you can imagine is an expectation you never wrote down. An eval is that expectation, written down, made repeatable.</p>
+          <Diagram name="11-evaluation-basics" title="One response. Two expectations." description="A notice says applications close on 30 September. The task asks for the deadline in one sentence. The AI answers: Applications close on 30 October. Compare the same answer with two written expectations: correct date, fail; one sentence, pass. Passing a format check does not make an incorrect answer correct." />
+          <p className={styles.note}>Original teaching example informed by <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic’s explanation of tasks, responses and grading</a>. Define each expectation, then check the observed result against it.</p>
           <SingleTurnLesson renderDiagram={props => <Diagram {...props} />} />
-          <ExpectationLab />
+          <details className={styles.detail}><summary>Try the definition with the refund example</summary><div className={styles.detailBody}><ExpectationLab /></div></details>
           <details className={styles.detail}><summary>What do observability and human review add?</summary><div className={styles.detailBody}><dl className={styles.definitions}><div><dt>Observability</dt><dd>Records what happened: the request, tool arguments and verified refund record.</dd></div><div><dt>Evaluation</dt><dd>Asks whether that evidence meets the expectation.</dd></div><div><dt>Human review</dt><dd>Resolves ambiguous cases and challenges the evaluator itself.</dd></div></dl><p>A deterministic rule can compare amount and currency. An explanation may need a rubric: written criteria for judging quality. A model judge can apply a rubric, but its judgments also need checking against human reviews.</p></div></details>
         </>}
-        {current.id === "where" && <>
-          <p className={styles.lead}>An LLM generates a response. RAG adds retrieved information. An agent can also call tools and take actions.</p>
-          <Diagram name="02-workflow-failures" title="Check each part of the workflow" description="Steps 1–5: understand the request, retrieve effective policy, look up the order, act within the contract and verify the outcome. Inspect each stage for its own failure mode." />
-          <p className={styles.definition}>{FAILURE_PARAGRAPH}</p>
-          <ReliabilityLab />
-        </>}
-        {current.id === "how" && <>
-          <p className={styles.lead}>An evaluation platform runs cases against an AI system, keeps the evidence, applies checks and tracks what changed. Follow Nova through the engineering components.</p>
-          <EngineeringLab renderDiagram={props => <Diagram {...props} />} />
-          <DatasetReference />
-          <details className={styles.detail}><summary>Revisit the basic evaluation flow</summary><div className={styles.detailBody}><Diagram name="03-evaluation-flow" title="The repeatable evaluation flow" description="Cases and expectations flow through system behavior, saved evidence, evaluation checks, then result and review. A result can pass, fail or remain unknown. Fix one thing and rerun the same cases. This local POC scores stored responses without calling a refund tool." /></div></details>
-          <details className={styles.detail}><summary>Test five real-world edge cases</summary><div className={styles.detailBody}><p>For each case, decide the expected behavior before running the agent.</p><div className={styles.edgeCases}>{EDGE_CASES.map(item => <details key={item.id}><summary>{item.title}</summary><div><p><strong>Expectation:</strong> {item.expectation}</p><p><strong>Evidence:</strong> {item.evidence}</p></div></details>)}</div><p className={styles.note}>An extra case to discuss: instructions inside a retrieved document must not override permissions or approval requirements.</p></div></details>
-          <details className={styles.detail}><summary>See all 12 Nova cases in the lab</summary><div className={styles.detailBody}><p>Open <strong>nova_ops_v1</strong> and compare the saved v1.3 and v1.4 runs. Inspect stale policy, missing currency, retry and missing-unit cases. The interactive comparison above shows the separate contract checks.</p><div className={styles.linkRow}><WorkspaceLink href="/datasets/nova_ops_v1">Open Nova dataset</WorkspaceLink><WorkspaceLink href="/evaluations?tab=experiments">Open saved experiments</WorkspaceLink></div><p><strong>What does the score prove?</strong> Text overlap measures similarity to the reference. It cannot establish whether an action happened correctly.</p><p className={styles.note}>These saved runs score authored responses. Tool arguments are illustrative, not captured execution. A real agent evaluation needs the tool call and the persisted result.</p></div></details>
-          <details className={styles.detail}><summary>How is the local lab built? <span>Optional</span></summary><div className={styles.detailBody}><Diagram name="05-local-architecture-optional" title="The local technical architecture" description="Steps 1–5: the UI requests a run, FastAPI loads cases from SQLite, the worker scores stored responses, results are saved, and the UI reads them through the API. Simulated semantic checks stay unscored; no Nova refund executes." /></div></details>
-          <details className={styles.detail}><summary>Explore the evaluation features <span>Optional</span></summary><div className={styles.detailBody}><FeatureMap /></div></details>
-          <details id="lite-boundaries" className={styles.detail} open={boundariesOpen} onToggle={event => setBoundariesOpen(event.currentTarget.open)}><summary>What is real in this local POC?</summary><div className={styles.detailBody}><p><strong>Working locally:</strong> datasets, versioning, persisted runs, deterministic text scores, comparisons, review records and contract objects. Nova teaching checks are computed over authored snapshots. The UI is Next.js, the API is FastAPI and local storage is SQLite.</p><p><strong>Illustrated in this lesson:</strong> Nova responses, source observations, tool requests and final states. No live agent, retriever or payment service is invoked.</p><p><strong>Needs integration:</strong> live model judges, real agents and captured tool evidence. Mock semantic checks stay unscored. Runtime policy enforcement and continuous production monitoring are teaching concepts here.</p></div></details>
-        </>}
-        {current.id === "trust" && <>
-          <p className={styles.lead}>Use offline evaluations to choose a candidate. Use online evaluation to learn from real traffic. Keep action permissions and release decisions explicit.</p>
-          <Diagram name="04-production-loop" title="Keep testing after release" description="Test real workflows, review release evidence, run with policy checks, monitor outcomes and failures, then fix and add regression cases. Runtime checks allow, block or ask before tool calls. A high score does not grant permission to act." />
-          <details className={styles.detail}><summary>What should we measure?</summary><div className={styles.detailBody}><dl className={styles.measures}>{MEASURES.map(item => <div key={item.title}><dt>{item.title}</dt><dd><strong>{item.question}</strong><p>{item.example}</p></dd></div>)}</dl><p>Report successes out of attempted tasks. Repeat tests because outputs can vary. Compare conditions such as currencies, policy versions and retries, and report missing evidence separately. Review passing cases as well as failures.</p><p><strong>A high average must not hide a critical permission failure.</strong> Calibrate model judges against human reviews and keep versions fixed when comparing results.</p></div></details>
-          <details className={styles.detail}><summary>Evaluation, release rules and runtime policy</summary><div className={styles.detailBody}><dl className={styles.definitions}><div><dt>Evaluation</dt><dd>Measures behavior against expectations using available evidence.</dd></div><div><dt>Release rule</dt><dd>Decides whether a tested version has sufficient evidence to proceed.</dd></div><div><dt>Runtime policy</dt><dd>Allows, blocks or requests approval before an action. A quality score does not grant permission.</dd></div></dl><p className={styles.note}>The production loop is conceptual. Runtime policy enforcement and continuous production monitoring are not installed in this local POC.</p></div></details>
-          <LifecycleReference />
-          <QualityLoopLesson renderDiagram={props => <Diagram {...props} />} />
-          <IndustryReference />
-          <FirstTest />
-          <LearningResources />
-          <details className={styles.detail}><summary>What you can take into your next project</summary><div className={styles.detailBody}><ol className={styles.takeaways}>{TAKEAWAYS.map(item => <li key={item.title}><strong>{item.title}</strong><p>{item.detail}</p></li>)}</ol></div></details>
-        </>}
+        {current.id === "how" && <EngineeringLab renderDiagram={props => <Diagram {...props} />} />}
+        {current.id === "types" && <EvaluationTypes renderDiagram={props => <Diagram {...props} />} />}
+
       </section>
     </div>
-    <footer className={styles.footer}><div><button type="button" className={styles.backButton} disabled={active === 0} onClick={() => navigate(active - 1)}><ArrowLeft size={17} aria-hidden="true" />Back</button><p>{active === STEPS.length - 1 ? "Write one test. Take it into your next project." : "One question at a time."}</p><button type="button" className={styles.nextButton} onClick={() => navigate(active === STEPS.length - 1 ? 0 : active + 1)}>{active === STEPS.length - 1 ? "Back to the first question" : "Next"}<ArrowRight size={17} aria-hidden="true" /></button></div></footer>
+    <footer className={styles.footer}><div><button type="button" className={styles.backButton} disabled={active === 0} onClick={() => navigate(active - 1)}><ArrowLeft size={17} aria-hidden="true" />Back</button><p>{active === STEPS.length - 1 ? "Let’s put the building blocks to work." : "One question at a time."}</p>{active === STEPS.length - 1 ? <Link href="/datasets" className={styles.nextButton}>Open Golden dataset<ArrowRight size={17} aria-hidden="true" /></Link> : <button type="button" className={styles.nextButton} onClick={() => navigate(active + 1)}>Next<ArrowRight size={17} aria-hidden="true" /></button>}</div></footer>
   </div>;
 }

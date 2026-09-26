@@ -5,10 +5,10 @@ from unittest.mock import AsyncMock
 import httpx
 import pytest
 
-from evalhub.api.v1 import agents
-from evalhub.db.store import EvaluationStore
-from evalhub.platform.contracts import TargetType, TargetVersion
-from evalhub.settings import settings
+from proofgrove.api.v1 import agents
+from proofgrove.db.store import EvaluationStore
+from proofgrove.platform.contracts import TargetType, TargetVersion
+from proofgrove.settings import settings
 
 TENANT = "local-classroom"
 
@@ -27,11 +27,15 @@ def saved_target(source="a2a_agent_card"):
 
 @pytest.mark.parametrize("mode", ["offline", "local", "live"])
 @pytest.mark.parametrize("with_external", [False, True])
-def test_local_catalog_uses_only_saved_external_agents(client, monkeypatch, mode, with_external):
+def test_local_catalog_includes_workflows_and_saved_external_agents(client, monkeypatch, mode, with_external):
     monkeypatch.setenv("PROOFGROVE_MODE", mode)
     monkeypatch.setattr(settings, "app_env", "dev")
     monkeypatch.setattr(settings, "evaluation_runtime", "local")
     monkeypatch.setattr(settings, "pod_namespace", "tenant-local-classroom")
+    from proofgrove.evaluation.target import local_workflows
+    monkeypatch.setattr(local_workflows, "provider_snapshot", AsyncMock(return_value={"default": {
+        "provider": "ollama", "model_id": "test-model", "endpoint": "http://127.0.0.1:11434/v1",
+    }}))
     discovery = AsyncMock(side_effect=AssertionError("Local lab must not contact Kagent"))
     tools = AsyncMock(side_effect=AssertionError("Local lab must not contact Kagent"))
     monkeypatch.setattr(agents, "list_tenant_agents", discovery)
@@ -45,11 +49,12 @@ def test_local_catalog_uses_only_saved_external_agents(client, monkeypatch, mode
     catalog = client.get("/agents/catalog")
     mcp = client.get("/agents/mcp-servers")
     assert listing.status_code == catalog.status_code == mcp.status_code == 200
-    assert len(listing.json()) == len(catalog.json()) == int(with_external)
+    assert len(listing.json()) == (0 if mode == "offline" else 6) + int(with_external)
+    assert len(catalog.json()) == 6 + int(with_external)
     assert mcp.json() == []
     if with_external:
-        assert listing.json()[0]["system_project_id"] == "real-system-project"
-        assert catalog.json()[0]["target_version_id"] == external.target_version_id
+        assert listing.json()[-1]["system_project_id"] == "real-system-project"
+        assert catalog.json()[-1]["target_version_id"] == external.target_version_id
     discovery.assert_not_awaited()
     tools.assert_not_awaited()
 

@@ -222,7 +222,7 @@ export function OverviewDashboard() {
       <details className="panel overflow-hidden">
         <summary className="cursor-pointer px-5 py-3 text-sm font-medium text-brand-text focus-visible:ring-2 focus-visible:ring-ring">Getting started</summary>
         <div className="border-b border-border px-5 py-4 sm:px-6">
-          <p className="eval-hub-eyebrow mb-1.5 text-[0.6875rem] text-evalai-purple">Get started</p>
+          <p className="proofgrove-eyebrow mb-1.5 text-[0.6875rem] text-evalai-purple">Get started</p>
           <h2 id="start-title" className="font-display text-lg font-semibold tracking-tight">
             Evaluation workflow
           </h2>
@@ -248,7 +248,7 @@ export function OverviewDashboard() {
                   className="group flex h-full flex-col px-5 py-5 transition-colors duration-150 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:py-6"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <span className="eval-hub-eyebrow text-[0.6875rem] text-evalai-purple">
+                    <span className="proofgrove-eyebrow text-[0.6875rem] text-evalai-purple">
                       Step {step.number}
                     </span>
                     <Icon

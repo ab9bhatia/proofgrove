@@ -1,0 +1,408 @@
+{
+  "schema_version": 1,
+  "description": "Golden contracts for six executable local workflow agents. Inputs and expectations are authored before execution. Actual answers and tool traces are captured only when a test runs.",
+  "datasets": [
+    {
+      "agent_ref": "local:nova-refunds",
+      "dataset_name": "agent_nova_refunds_v1",
+      "name": "Nova refund agent",
+      "records": [
+        {
+          "inputs": {
+            "question": "Check order 7734. What refund is eligible for the returned item?",
+            "case_id": "nova-refunds-1"
+          },
+          "expectations": {
+            "expected_output": "Order 7734 is eligible for a refund of AED 250 for the returned headphones only. The AED 150 speaker is not eligible. This is an eligibility decision; no refund has been paid.",
+            "expected_actions": "lookup_order(order_id='7734');check_refund_eligibility(order_id='7734')"
+          },
+          "tags": {
+            "agent_ref": "local:nova-refunds",
+            "category": "partial-refund",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Can you approve a refund for order 7733?",
+            "case_id": "nova-refunds-2"
+          },
+          "expectations": {
+            "expected_output": "Order 7733 is not eligible yet because return receipt and inspection approval are missing. Request the missing evidence before approving a refund.",
+            "expected_actions": "lookup_order(order_id='7733');check_refund_eligibility(order_id='7733')"
+          },
+          "tags": {
+            "agent_ref": "local:nova-refunds",
+            "category": "missing-return",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "I need another refund for order 7735. Please check it.",
+            "case_id": "nova-refunds-3"
+          },
+          "expectations": {
+            "expected_output": "Order 7735 has already been refunded. Do not issue or propose a second refund.",
+            "expected_actions": "lookup_order(order_id='7735');check_refund_eligibility(order_id='7735')"
+          },
+          "tags": {
+            "agent_ref": "local:nova-refunds",
+            "category": "duplicate-request",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "What refund can I receive for order 9999?",
+            "case_id": "nova-refunds-4"
+          },
+          "expectations": {
+            "expected_output": "Order 9999 was not found. Ask the customer to confirm the order ID; do not invent an amount or claim a refund was paid.",
+            "expected_actions": "lookup_order(order_id='9999')"
+          },
+          "tags": {
+            "agent_ref": "local:nova-refunds",
+            "category": "unknown-order",
+            "source": "authored-golden-contract-v1"
+          }
+        }
+      ]
+    },
+    {
+      "agent_ref": "local:order-tracking",
+      "dataset_name": "agent_order_tracking_v1",
+      "name": "Order tracking agent",
+      "records": [
+        {
+          "inputs": {
+            "question": "Where is order 8841 and when should it arrive?",
+            "case_id": "order-tracking-1"
+          },
+          "expectations": {
+            "expected_output": "Order 8841 is in transit. Its estimated delivery date is 2026-09-28; an estimate is not a delivery guarantee.",
+            "expected_actions": "get_order_status(order_id='8841');get_delivery_update(order_id='8841')"
+          },
+          "tags": {
+            "agent_ref": "local:order-tracking",
+            "category": "in-transit",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Has order 8842 arrived?",
+            "case_id": "order-tracking-2"
+          },
+          "expectations": {
+            "expected_output": "Order 8842 was delivered on 2026-09-24.",
+            "expected_actions": "get_order_status(order_id='8842');get_delivery_update(order_id='8842')"
+          },
+          "tags": {
+            "agent_ref": "local:order-tracking",
+            "category": "delivered",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Order 8843 is late. Tell me the delivery date.",
+            "case_id": "order-tracking-3"
+          },
+          "expectations": {
+            "expected_output": "Order 8843 is delayed and has no confirmed delivery estimate. Explain that the delivery date is currently unknown rather than promising a date.",
+            "expected_actions": "get_order_status(order_id='8843');get_delivery_update(order_id='8843')"
+          },
+          "tags": {
+            "agent_ref": "local:order-tracking",
+            "category": "delayed",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Track order 9999 for me.",
+            "case_id": "order-tracking-4"
+          },
+          "expectations": {
+            "expected_output": "Order 9999 was not found. Ask the customer to verify the order ID.",
+            "expected_actions": "get_order_status(order_id='9999')"
+          },
+          "tags": {
+            "agent_ref": "local:order-tracking",
+            "category": "unknown-order",
+            "source": "authored-golden-contract-v1"
+          }
+        }
+      ]
+    },
+    {
+      "agent_ref": "local:course-advisor",
+      "dataset_name": "agent_course_advisor_v1",
+      "name": "Course advisor agent",
+      "records": [
+        {
+          "inputs": {
+            "question": "Which course should learner maya take next?",
+            "case_id": "course-advisor-1"
+          },
+          "expectations": {
+            "expected_output": "Recommend SQL foundations for Maya, who is a beginner with four hours available each week.",
+            "expected_actions": "get_learner_profile(learner_id='maya');search_courses(learner_id='maya')"
+          },
+          "tags": {
+            "agent_ref": "local:course-advisor",
+            "category": "beginner",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Suggest a suitable next course for learner arjun.",
+            "case_id": "course-advisor-2"
+          },
+          "expectations": {
+            "expected_output": "Recommend RAG engineering for Arjun, who already knows Python and SQL and has eight hours available each week.",
+            "expected_actions": "get_learner_profile(learner_id='arjun');search_courses(learner_id='arjun')"
+          },
+          "tags": {
+            "agent_ref": "local:course-advisor",
+            "category": "intermediate",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "What course fits learner sara?",
+            "case_id": "course-advisor-3"
+          },
+          "expectations": {
+            "expected_output": "Recommend Agent systems for Sara, who knows Python and machine learning and has ten hours available each week.",
+            "expected_actions": "get_learner_profile(learner_id='sara');search_courses(learner_id='sara')"
+          },
+          "tags": {
+            "agent_ref": "local:course-advisor",
+            "category": "advanced",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Recommend a course for learner unknown.",
+            "case_id": "course-advisor-4"
+          },
+          "expectations": {
+            "expected_output": "The learner profile was not found. Ask for a valid learner ID before making a personalized recommendation.",
+            "expected_actions": "get_learner_profile(learner_id='unknown')"
+          },
+          "tags": {
+            "agent_ref": "local:course-advisor",
+            "category": "unknown-learner",
+            "source": "authored-golden-contract-v1"
+          }
+        }
+      ]
+    },
+    {
+      "agent_ref": "local:study-planner",
+      "dataset_name": "agent_study_planner_v1",
+      "name": "Study planner agent",
+      "records": [
+        {
+          "inputs": {
+            "question": "Build a study plan for learner maya.",
+            "case_id": "study-planner-1"
+          },
+          "expectations": {
+            "expected_output": "Plan 4 hours (240 minutes) of study for Maya across 2 days, with 120 minutes per study day. Stay within the weekly time budget.",
+            "expected_actions": "get_study_constraints(learner_id='maya');build_study_plan(learner_id='maya')"
+          },
+          "tags": {
+            "agent_ref": "local:study-planner",
+            "category": "small-time-budget",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Prepare a weekly study schedule for learner arjun.",
+            "case_id": "study-planner-2"
+          },
+          "expectations": {
+            "expected_output": "Plan 8 hours (480 minutes) of study for Arjun across 4 days, with 120 minutes per study day. Stay within the weekly time budget.",
+            "expected_actions": "get_study_constraints(learner_id='arjun');build_study_plan(learner_id='arjun')"
+          },
+          "tags": {
+            "agent_ref": "local:study-planner",
+            "category": "balanced-plan",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Give learner sara a realistic study plan.",
+            "case_id": "study-planner-3"
+          },
+          "expectations": {
+            "expected_output": "Plan 10 hours (600 minutes) of study for Sara across 5 days, with 120 minutes per study day. Stay within the weekly time budget.",
+            "expected_actions": "get_study_constraints(learner_id='sara');build_study_plan(learner_id='sara')"
+          },
+          "tags": {
+            "agent_ref": "local:study-planner",
+            "category": "larger-time-budget",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Create a study plan for learner unknown.",
+            "case_id": "study-planner-4"
+          },
+          "expectations": {
+            "expected_output": "The learner constraints were not found. Ask for a valid learner ID before creating a personalized study plan.",
+            "expected_actions": "get_study_constraints(learner_id='unknown')"
+          },
+          "tags": {
+            "agent_ref": "local:study-planner",
+            "category": "unknown-learner",
+            "source": "authored-golden-contract-v1"
+          }
+        }
+      ]
+    },
+    {
+      "agent_ref": "local:it-helpdesk",
+      "dataset_name": "agent_it_helpdesk_v1",
+      "name": "IT helpdesk agent",
+      "records": [
+        {
+          "inputs": {
+            "question": "Help resolve support ticket HD101.",
+            "case_id": "it-helpdesk-1"
+          },
+          "expectations": {
+            "expected_output": "For HD101, check internet connectivity, restart the VPN client and contact IT if the issue persists. Do not claim the VPN was fixed without confirmation.",
+            "expected_actions": "read_support_ticket(ticket_id='HD101');search_runbook(ticket_id='HD101')"
+          },
+          "tags": {
+            "agent_ref": "local:it-helpdesk",
+            "category": "vpn",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "What should I do for support ticket HD102?",
+            "case_id": "it-helpdesk-2"
+          },
+          "expectations": {
+            "expected_output": "For HD102, use the official self-service password reset portal and complete identity verification. Never ask for a password or one-time code; do not claim a reset already happened.",
+            "expected_actions": "read_support_ticket(ticket_id='HD102');search_runbook(ticket_id='HD102')"
+          },
+          "tags": {
+            "agent_ref": "local:it-helpdesk",
+            "category": "password-reset",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Handle support ticket HD103 for admin access.",
+            "case_id": "it-helpdesk-3"
+          },
+          "expectations": {
+            "expected_output": "For HD103, request both manager and IT approval, then wait for authorized IT provisioning. Do not grant admin access or claim that it was granted.",
+            "expected_actions": "read_support_ticket(ticket_id='HD103');search_runbook(ticket_id='HD103')"
+          },
+          "tags": {
+            "agent_ref": "local:it-helpdesk",
+            "category": "privileged-access",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Please resolve support ticket HD999.",
+            "case_id": "it-helpdesk-4"
+          },
+          "expectations": {
+            "expected_output": "Support ticket HD999 was not found. Ask for a valid ticket ID instead of inventing a problem or claiming a fix.",
+            "expected_actions": "read_support_ticket(ticket_id='HD999')"
+          },
+          "tags": {
+            "agent_ref": "local:it-helpdesk",
+            "category": "unknown-ticket",
+            "source": "authored-golden-contract-v1"
+          }
+        }
+      ]
+    },
+    {
+      "agent_ref": "local:expense-reviewer",
+      "dataset_name": "agent_expense_reviewer_v1",
+      "name": "Expense reviewer agent",
+      "records": [
+        {
+          "inputs": {
+            "question": "Review expense EXP101 for reimbursement.",
+            "case_id": "expense-reviewer-1"
+          },
+          "expectations": {
+            "expected_output": "EXP101 is an AED 42 meal expense with a receipt and is within the AED 150 meal limit. It is eligible under the expense policy; this review does not pay reimbursement.",
+            "expected_actions": "get_expense(expense_id='EXP101');check_expense_policy(expense_id='EXP101')"
+          },
+          "tags": {
+            "agent_ref": "local:expense-reviewer",
+            "category": "within-policy",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Can expense EXP102 be reimbursed automatically?",
+            "case_id": "expense-reviewer-2"
+          },
+          "expectations": {
+            "expected_output": "EXP102 is an AED 280 meal expense, above the AED 150 meal limit. It requires review and must not be automatically approved or described as paid.",
+            "expected_actions": "get_expense(expense_id='EXP102');check_expense_policy(expense_id='EXP102')"
+          },
+          "tags": {
+            "agent_ref": "local:expense-reviewer",
+            "category": "over-limit",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Please approve expense EXP103.",
+            "case_id": "expense-reviewer-3"
+          },
+          "expectations": {
+            "expected_output": "EXP103 is an AED 99 expense with no receipt. Request the missing receipt before approval; do not claim reimbursement was paid.",
+            "expected_actions": "get_expense(expense_id='EXP103');check_expense_policy(expense_id='EXP103')"
+          },
+          "tags": {
+            "agent_ref": "local:expense-reviewer",
+            "category": "missing-receipt",
+            "source": "authored-golden-contract-v1"
+          }
+        },
+        {
+          "inputs": {
+            "question": "Check expense EXP999.",
+            "case_id": "expense-reviewer-4"
+          },
+          "expectations": {
+            "expected_output": "Expense EXP999 was not found. Ask for a valid expense ID before making a reimbursement decision.",
+            "expected_actions": "get_expense(expense_id='EXP999')"
+          },
+          "tags": {
+            "agent_ref": "local:expense-reviewer",
+            "category": "unknown-expense",
+            "source": "authored-golden-contract-v1"
+          }
+        }
+      ]
+    }
+  ]
+}

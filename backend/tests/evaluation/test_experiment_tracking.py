@@ -6,14 +6,14 @@ from uuid import uuid4
 import pytest
 from sqlalchemy import event, select, update
 
-from evalhub.db.models import AuditEventORM, EvaluationRunORM, ExperimentDecisionORM, ExperimentORM, ExperimentRunLinkORM
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.sample_data import SAMPLE_TENANT_ID
-from evalhub.platform import authz
-from evalhub.platform.contracts import ReleaseGatePolicyVersion
-from evalhub.runs_worker import process_one_job
-from evalhub.settings import settings
+from proofgrove.db.models import AuditEventORM, EvaluationRunORM, ExperimentDecisionORM, ExperimentORM, ExperimentRunLinkORM
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.sample_data import SAMPLE_TENANT_ID
+from proofgrove.platform import authz
+from proofgrove.platform.contracts import ReleaseGatePolicyVersion
+from proofgrove.runs_worker import process_one_job
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 # Tenant used when a test reads a run back through the tenant-scoped endpoints.
@@ -170,7 +170,7 @@ def test_patch_cannot_forge_approval_via_evaluation_run_permission(client, monke
     settings.platform_auth_required = True
     try:
         async def _run_only(request, permission):
-            request.state.eval_hub_permissions = {
+            request.state.proofgrove_permissions = {
                 authz.PERMISSION_EVALUATION_RUN,
                 authz.PERMISSION_EVALUATION_READ,
             }
@@ -214,7 +214,7 @@ def test_patch_cannot_forge_approval_via_evaluation_run_permission(client, monke
         asyncio.run(_mark_complete_capture())
 
         async def _approver(request, permission):
-            request.state.eval_hub_permissions = {
+            request.state.proofgrove_permissions = {
                 authz.PERMISSION_EVALUATION_RUN,
                 authz.PERMISSION_GOVERNANCE_APPROVE,
             }
@@ -248,7 +248,7 @@ def test_create_experiment_cannot_forge_approval_via_evaluation_run_permission(c
     settings.platform_auth_required = True
     try:
         async def _run_only(request, permission):
-            request.state.eval_hub_permissions = {
+            request.state.proofgrove_permissions = {
                 authz.PERMISSION_EVALUATION_RUN,
                 authz.PERMISSION_EVALUATION_READ,
             }
@@ -328,7 +328,7 @@ def test_create_experiment_cannot_forge_approval_via_evaluation_run_permission(c
     settings.platform_auth_required = True
     try:
         async def _approver(request, permission):
-            request.state.eval_hub_permissions = {
+            request.state.proofgrove_permissions = {
                 authz.PERMISSION_EVALUATION_RUN,
                 authz.PERMISSION_GOVERNANCE_APPROVE,
             }
@@ -467,7 +467,7 @@ def test_promote_release_evidence_enforces_the_same_gate_as_decisions(client, mo
     settings.platform_auth_required = True
     try:
         async def _no_approver(request, permission):
-            request.state.eval_hub_permissions = set()
+            request.state.proofgrove_permissions = set()
             return False
 
         monkeypatch.setattr(authz, "check_permission", _no_approver)
@@ -479,7 +479,7 @@ def test_promote_release_evidence_enforces_the_same_gate_as_decisions(client, mo
         assert denied.status_code == 403, denied.text
 
         async def _approver(request, permission):
-            request.state.eval_hub_permissions = {authz.PERMISSION_GOVERNANCE_APPROVE}
+            request.state.proofgrove_permissions = {authz.PERMISSION_GOVERNANCE_APPROVE}
             return permission == authz.PERMISSION_GOVERNANCE_APPROVE
 
         monkeypatch.setattr(authz, "check_permission", _approver)
@@ -509,7 +509,7 @@ def test_promote_release_evidence_requires_the_configured_approver_role(client, 
     revokes every permission can pass through that gate refusing and never
     exercise the handler's own ``require_configured_approver_roles`` call. This
     seeds a gate policy with a role OTHER than the default
-    (``eval-hub-reviewer`` -> ``governance.review``) so a caller holding
+    (``proofgrove-reviewer`` -> ``governance.review``) so a caller holding
     ``governance.approve`` (middleware passes) but not ``governance.review``
     (the run's configured role) is refused specifically by the new check.
     """
@@ -524,7 +524,7 @@ def test_promote_release_evidence_requires_the_configured_approver_role(client, 
                     version="1",
                     tenant_id=TENANT,
                     name="Reviewer-gated release",
-                    required_approver_roles=["eval-hub-reviewer"],
+                    required_approver_roles=["proofgrove-reviewer"],
                 )
             )
 
@@ -546,7 +546,7 @@ def test_promote_release_evidence_requires_the_configured_approver_role(client, 
 
     async def _link_role() -> str | None:
         async with async_session() as session:
-            from evalhub.db.models import ExperimentRunLinkORM
+            from proofgrove.db.models import ExperimentRunLinkORM
 
             link = await session.get(ExperimentRunLinkORM, (exp_id, run["run_id"]))
             return link.role if link else None
@@ -558,7 +558,7 @@ def test_promote_release_evidence_requires_the_configured_approver_role(client, 
         # but not the run's configured role (governance.review) -- proves the
         # 403 comes from require_configured_approver_roles, not the middleware.
         async def _wrong_role(request, permission):
-            request.state.eval_hub_permissions = {authz.PERMISSION_GOVERNANCE_APPROVE}
+            request.state.proofgrove_permissions = {authz.PERMISSION_GOVERNANCE_APPROVE}
             return permission == authz.PERMISSION_GOVERNANCE_APPROVE
 
         monkeypatch.setattr(authz, "check_permission", _wrong_role)
@@ -571,7 +571,7 @@ def test_promote_release_evidence_requires_the_configured_approver_role(client, 
         assert asyncio.run(_link_role()) != "release_evidence"
 
         async def _reviewer(request, permission):
-            request.state.eval_hub_permissions = {
+            request.state.proofgrove_permissions = {
                 authz.PERMISSION_GOVERNANCE_APPROVE,
                 authz.PERMISSION_GOVERNANCE_REVIEW,
             }

@@ -25,7 +25,7 @@ export function BarList({ title, rows, others = 0, emptyText = "No data in this 
   const max = rows.reduce((acc, row) => Math.max(acc, row.value), 0);
   return (
     <section className="panel px-4 py-4" aria-label={title}>
-      <h3 className="eval-hub-eyebrow text-[0.6875rem] text-muted-foreground">{title}</h3>
+      <h3 className="proofgrove-eyebrow text-[0.6875rem] text-muted-foreground">{title}</h3>
       {rows.length === 0 ? (
         <p className="mt-3 text-xs text-muted-foreground">{emptyText}</p>
       ) : (

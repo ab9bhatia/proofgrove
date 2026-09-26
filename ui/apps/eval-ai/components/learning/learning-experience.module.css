@@ -29,12 +29,13 @@
 .lab button, .lab summary, .lab a { -webkit-tap-highlight-color: transparent; }
 .lab button, .lab summary { cursor: pointer; }
 .lab a { color: inherit; }
+.topbar p { font-size: 15px; color: var(--muted); }
 .lab button:focus-visible, .lab a:focus-visible, .lab summary:focus-visible, .lab textarea:focus-visible { outline: 3px solid #1971c2; outline-offset: 4px; }
 .lab button:disabled { cursor: default; opacity: .4; }
 .lab p { margin: 0; }
 .lab h1 { font-size: clamp(30px, 3.25vw, 46px); letter-spacing: -.035em; line-height: 1.15; font-weight: 600; margin: 0 0 20px; max-width: 960px; }
 .lab h1:focus { outline: none; }
-.topbar { display: flex; align-items: center; gap: 22px; padding: 20px max(28px, calc((100vw - 1120px) / 2)); border-bottom: 1px solid var(--line); }
+.topbar { display: flex; align-items: center; gap: 22px; padding: 20px 28px; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .wordmark { display: flex; gap: 9px; align-items: center; text-decoration: none; color: var(--green) !important; font-size: 24px; font-weight: 650; letter-spacing: -.04em; line-height: 1.1; }
 .wordmark small { display: block; font-size: 8px; letter-spacing: .15em; padding-top: 5px; }
 .sessionLabel { color: var(--muted); font-size: 13px; margin-left: auto; }
@@ -59,6 +60,7 @@
 .conversation small { display: block; font-size: 13px; color: var(--muted); padding-top: 10px; }
 .primaryButton, .nextButton, .backButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--green); font-size: 14px; font-weight: 600; border-radius: 7px; padding: 12px 18px; background: var(--green); color: white; min-height: 44px; }
 .primaryButton:hover, .nextButton:hover { background: #194c3f; }
+.lab a.nextButton { color: white; text-decoration: none; }
 .backButton { color: var(--green); background: transparent; border-color: #c3d0c7; }
 .backButton:hover:not(:disabled) { background: #eef4ee; }
 .evidence { max-width: 900px; margin: 24px 0; border: 1px solid #ecc8c4; border-left: 4px solid #be4541; background: #fff3ef; border-radius: 0 8px 8px 0; padding: 22px 26px; }
@@ -170,3 +172,35 @@
 
 .diagramDialog.largeDiagram img { width: 1630px; min-width: 1630px; max-width: none; max-height: none; }
 .largeDiagram .panHint { display: block; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+
+.memorable { border-left: 3px solid var(--green); padding: 12px 20px; margin: 0 0 26px !important; color: var(--green); background: #eef4ee; font-size: 18px; line-height: 1.6; }
+.walkthrough { margin: 30px 0; padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: #f8faf5; }
+.walkthrough h2 { font-size: 25px; font-weight: 600; line-height: 1.3; margin: 0 0 12px; }
+.walkthrough > p { color: var(--muted); font-size: 15px; }
+.flowSteps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; padding: 0; margin: 26px 0 0; list-style: none; }
+.flowSteps li { display: flex; align-items: flex-start; gap: 12px; }
+.flowSteps li > span { flex-shrink: 0; width: 28px; height: 28px; display: grid; place-content: center; background: var(--green); color: white; border-radius: 50%; font-size: 13px; }
+.flowSteps h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+.flowSteps p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.flowSteps a { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 13px; font-weight: 600; text-underline-offset: 3px; }
+@media (max-width: 700px) { .flowSteps { grid-template-columns: 1fr; } .walkthrough { padding: 18px; } .topbar { flex-wrap: wrap; gap: 10px; } }
+
+/* Keep the opening agenda readable from the back of a classroom. */
+.overviewOutcomes { margin: 28px 0; }
+.overviewOutcomes h2, .overviewScope h2 { font-size: 23px; font-weight: 600; line-height: 1.3; margin: 0 0 18px; }
+.overviewOutcomes ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 0; margin: 0; list-style: none; }
+.overviewOutcomes li { display: flex; align-items: flex-start; gap: 14px; padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: #f8faf5; }
+.overviewOutcomes li > span { flex-shrink: 0; width: 32px; height: 32px; display: grid; place-content: center; border-radius: 50%; background: #e8f0e5; color: var(--green); font-size: 12px; font-weight: 600; }
+.overviewOutcomes h3 { font-size: 17px; font-weight: 600; line-height: 1.4; margin: 0 0 7px; }
+.overviewOutcomes p { font-size: 15px; color: var(--muted); line-height: 1.6; }
+.overviewScope { margin: 28px 0 20px; padding-top: 22px; border-top: 1px solid var(--line); }
+.overviewScope h2 { margin-bottom: 10px; }
+.overviewScope ul { margin: 0; padding-left: 21px; color: var(--muted); font-size: 15px; }
+.overviewScope li { padding-bottom: 5px; }
+.overviewRoute { padding: 13px 17px; border-left: 3px solid var(--green); background: #eef4ee; font-size: 15px; }
+@media (max-width: 700px) { .overviewOutcomes ol { grid-template-columns: 1fr; } .overviewOutcomes li { padding: 17px; } }
+
+.resourceLinks { list-style: none; padding: 0; margin: 15px 0 20px; }
+.resourceLinks li { display: grid; gap: 3px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.resourceLinks a { color: var(--green); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.resourceLinks span { color: var(--muted); font-size: 14px; line-height: 1.6; }

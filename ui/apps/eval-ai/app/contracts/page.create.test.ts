@@ -13,8 +13,8 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: navigation.replace }),
   useSearchParams: () => navigation.params,
 }));
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: React.ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: React.ReactNode }) => children,
 }));
 vi.mock("@/lib/api", () => ({
   api: { tenant: vi.fn() },

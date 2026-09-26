@@ -1,7 +1,7 @@
 """Run label normalization tests."""
 
-from evalhub.api.v1.evaluation import DatasetRunRequest
-from evalhub.evaluation.labels import MAX_RUN_LABEL_LENGTH
+from proofgrove.api.v1.evaluation import DatasetRunRequest
+from proofgrove.evaluation.labels import MAX_RUN_LABEL_LENGTH
 
 
 def test_dataset_run_request_normalizes_labels() -> None:

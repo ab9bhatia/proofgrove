@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { EvaluationLauncher } from "@/components/evaluation/launcher";
 import { LoadingState } from "@/components/page-state";
 import { runDetailsHref } from "@/lib/run-recommendation";
@@ -19,10 +19,10 @@ export default async function EvaluatePage({
   if (runId) redirect(runDetailsHref(runId));
 
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense fallback={<LoadingState label="Loading evaluation setup…" className="min-h-[60vh] border-0" />}>
         <EvaluationLauncher />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }

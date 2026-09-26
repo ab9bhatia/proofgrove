@@ -4,14 +4,14 @@ from datetime import UTC, datetime
 
 import pytest
 
-from evalhub.db.session import async_session
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation import run_service
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario, TriggerReason
-from evalhub.evaluation.llm_judge import JudgeResult
-from evalhub.evaluation.models import EvaluationRow, EvidenceReadinessResult, ExperimentDefinition
-from evalhub.evaluation.trace_hydrator import TELEMETRY_EVIDENCE_SOURCE
+from proofgrove.db.session import async_session
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation import run_service
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario, TriggerReason
+from proofgrove.evaluation.llm_judge import JudgeResult
+from proofgrove.evaluation.models import EvaluationRow, EvidenceReadinessResult, ExperimentDefinition
+from proofgrove.evaluation.trace_hydrator import TELEMETRY_EVIDENCE_SOURCE
 
 
 class _EvidenceJudge:

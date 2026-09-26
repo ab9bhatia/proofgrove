@@ -6,10 +6,10 @@ import logging
 
 import pytest
 
-from evalhub.evaluation import readiness as readiness_module
-from evalhub.evaluation import run_service
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import (
+from proofgrove.evaluation import readiness as readiness_module
+from proofgrove.evaluation import run_service
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import (
     EvaluationScope,
     EvidenceCaptureStatus,
     EvidenceCategoryStatus,
@@ -22,14 +22,14 @@ from evalhub.evaluation.enums import (
     UnscoredReason,
     VerdictStatus,
 )
-from evalhub.evaluation.llm_judge import JudgeResult
-from evalhub.evaluation.models import EvaluationRow, EvidenceCategorySummary
-from evalhub.evaluation.readiness import ReadinessBlockedError
-from evalhub.evaluation.report import build_ci_callback
-from evalhub.evaluation.run_service import execute_dataset_run
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.evaluation.target.discovery import AgentSummary
-from evalhub.platform.contracts import (
+from proofgrove.evaluation.llm_judge import JudgeResult
+from proofgrove.evaluation.models import EvaluationRow, EvidenceCategorySummary
+from proofgrove.evaluation.readiness import ReadinessBlockedError
+from proofgrove.evaluation.report import build_ci_callback
+from proofgrove.evaluation.run_service import execute_dataset_run
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.evaluation.target.discovery import AgentSummary
+from proofgrove.platform.contracts import (
     ResolvedMetricRequirement,
     ResolvedScoringConfiguration,
 )
@@ -404,7 +404,7 @@ async def test_partial_required_evidence_cannot_produce_a_conclusive_verdict(mon
     monkeypatch.setattr(run_service, "classify_evidence_capture", _partial)
 
     store = _CaptureStore()
-    caplog.set_level(logging.INFO, logger="evalhub.events")
+    caplog.set_level(logging.INFO, logger="proofgrove.events")
     await execute_dataset_run(
         run_id="run-partial-evidence",
         dataset_name="ds",
@@ -448,7 +448,7 @@ def test_context_metrics_do_not_substitute_a_score_for_retrieval_that_never_happ
     separates that from retrieval we simply failed to capture.
     """
 
-    from evalhub.evaluation.engine import _metric_not_applicable
+    from proofgrove.evaluation.engine import _metric_not_applicable
 
     def row(**kwargs):
         return EvaluationRow(row_id="r1", query="q", response="a", from_agent=True, **kwargs)
@@ -475,8 +475,8 @@ def test_context_metrics_do_not_substitute_a_score_for_retrieval_that_never_happ
 def test_framework_scorers_use_the_run_model_without_changing_other_runs(monkeypatch, metric_id, adapter_module, adapter_class):
     import importlib
 
-    from evalhub.evaluation.adapters.dispatcher import AdapterDispatchJudge
-    from evalhub.settings import Settings
+    from proofgrove.evaluation.adapters.dispatcher import AdapterDispatchJudge
+    from proofgrove.settings import Settings
 
     seen = []
 
@@ -488,7 +488,7 @@ def test_framework_scorers_use_the_run_model_without_changing_other_runs(monkeyp
             seen.append((self.model, config.judge_model))
             return JudgeResult(1.0, None, "test scorer", 0, 0)
 
-    monkeypatch.setattr(importlib.import_module(f"evalhub.evaluation.adapters.{adapter_module}"), adapter_class, CapturingJudge)
+    monkeypatch.setattr(importlib.import_module(f"proofgrove.evaluation.adapters.{adapter_module}"), adapter_class, CapturingJudge)
     settings = Settings(judge_mode="llm", openai_api_key="test-key", judge_model="default-model", judge_use_frameworks=True)
     dispatcher = AdapterDispatchJudge(settings)
     engine = EvaluationEngine(judge=dispatcher, settings=settings)

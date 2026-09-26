@@ -7,8 +7,8 @@ separately, because a service-level test alone is what let it through.
 
 import pytest
 
-from evalhub.evaluation.lineage import hash_system_prompt
-from evalhub.evaluation.target.llm_runner import _build_chat_request
+from proofgrove.evaluation.lineage import hash_system_prompt
+from proofgrove.evaluation.target.llm_runner import _build_chat_request
 
 
 def test_the_prompt_reaches_the_model_as_a_system_message():
@@ -37,7 +37,7 @@ async def test_the_worker_forwards_the_prompt_from_job_params(monkeypatch, entry
     a call site that exists but passes the wrong value still fails.
     """
 
-    from evalhub import runs_worker
+    from proofgrove import runs_worker
 
     forwarded: dict[str, object] = {}
 
@@ -124,9 +124,9 @@ def test_a_prompt_changes_the_fingerprint_but_not_the_comparison_basis():
     look like the same run repeated.
     """
 
-    from evalhub.evaluation.enums import Scenario
-    from evalhub.evaluation.lineage import compute_experiment_version_id
-    from evalhub.evaluation.models import ExperimentDefinition
+    from proofgrove.evaluation.enums import Scenario
+    from proofgrove.evaluation.lineage import compute_experiment_version_id
+    from proofgrove.evaluation.models import ExperimentDefinition
 
     experiment = ExperimentDefinition(
         name="prompt variants",
@@ -159,8 +159,8 @@ async def test_exact_rerun_replays_the_recorded_prompt():
 
     from types import SimpleNamespace
 
-    from evalhub.api.v1.evaluation import DatasetRunRequest, _apply_exact_rerun_contract
-    from evalhub.evaluation.enums import EvaluationScope
+    from proofgrove.api.v1.evaluation import DatasetRunRequest, _apply_exact_rerun_contract
+    from proofgrove.evaluation.enums import EvaluationScope
 
     source = SimpleNamespace(
         experiment=SimpleNamespace(tenant_id="tenant-a"),

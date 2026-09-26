@@ -6,17 +6,17 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub import runs_worker
-from evalhub.api.dependencies import get_registry_service
-from evalhub.db.models import Base
-from evalhub.db.session import async_session_factory
-from evalhub.db.store import EXPERIMENT_CONTRACT_FIELDS, EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import EvaluationScope
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.main import app
-from evalhub.runs_worker import process_one_job
+from proofgrove import runs_worker
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.db.models import Base
+from proofgrove.db.session import async_session_factory
+from proofgrove.db.store import EXPERIMENT_CONTRACT_FIELDS, EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import EvaluationScope
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.main import app
+from proofgrove.runs_worker import process_one_job
 
 TENANT = "tenant-attach"
 OTHER_TENANT = "tenant-intruder"

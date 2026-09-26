@@ -10,9 +10,9 @@ from unittest.mock import patch
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub import runs_worker
-from evalhub.db.models import RunJobORM
-from evalhub.db.store import EvaluationStore
+from proofgrove import runs_worker
+from proofgrove.db.models import RunJobORM
+from proofgrove.db.store import EvaluationStore
 
 
 async def main():

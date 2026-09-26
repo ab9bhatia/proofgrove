@@ -10,13 +10,13 @@ import pytest
 from pydantic import SecretStr
 from starlette.requests import Request
 
-from evalhub.api.v1 import llms
-from evalhub.evaluation import model_providers as providers
-from evalhub.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
-from evalhub.evaluation.readiness import assess_evidence_readiness
-from evalhub.evaluation.target import llm_runner
-from evalhub.platform.contracts import TargetVersion
-from evalhub.settings import settings
+from proofgrove.api.v1 import llms
+from proofgrove.evaluation import model_providers as providers
+from proofgrove.evaluation.enums import EvaluationScope, EvidenceReadiness, Scenario
+from proofgrove.evaluation.readiness import assess_evidence_readiness
+from proofgrove.evaluation.target import llm_runner
+from proofgrove.platform.contracts import TargetVersion
+from proofgrove.settings import settings
 
 PREFIX = "/evaluation/model-providers"
 KEY = "test-private-provider-key-never-return"

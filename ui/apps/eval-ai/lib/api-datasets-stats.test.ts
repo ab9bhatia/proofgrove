@@ -36,7 +36,7 @@ describe("api.getDatasetStats", () => {
 
     const url = sessionAwareFetch.mock.calls[0][0] as string;
     const parsed = new URL(url, "http://x");
-    expect(parsed.pathname).toBe("/api/eval-hub/datasets/stats");
+    expect(parsed.pathname).toBe("/api/proofgrove/datasets/stats");
     expect(result).toEqual(body);
   });
 });

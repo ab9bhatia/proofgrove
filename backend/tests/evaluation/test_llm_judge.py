@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from evalhub.evaluation.enums import Adapter, ScoringType
-from evalhub.evaluation.llm_judge import (
+from proofgrove.evaluation.enums import Adapter, ScoringType
+from proofgrove.evaluation.llm_judge import (
     LLMJudge,
     _strip_markdown_fence,
     completion_token_params,
@@ -16,8 +16,8 @@ from evalhub.evaluation.llm_judge import (
     supports_json_response_format,
     uses_completion_tokens,
 )
-from evalhub.evaluation.models import EvaluationRow, EvaluatorConfig
-from evalhub.settings import Settings
+from proofgrove.evaluation.models import EvaluationRow, EvaluatorConfig
+from proofgrove.settings import Settings
 
 
 def test_llm_judge_parses_json_response():
@@ -280,8 +280,8 @@ def test_llm_judge_omits_response_format_for_claude():
 
 @pytest.mark.parametrize("score", [float("nan"), float("inf"), float("-inf")])
 def test_nonfinite_judge_scores_are_errors(score):
-    from evalhub.evaluation.adapters.scale import unit_to_raw
-    from evalhub.evaluation.llm_judge import JudgeResult
+    from proofgrove.evaluation.adapters.scale import unit_to_raw
+    from proofgrove.evaluation.llm_judge import JudgeResult
 
     with pytest.raises(ValueError, match="finite"):
         JudgeResult(score, None, "", 0, 0)

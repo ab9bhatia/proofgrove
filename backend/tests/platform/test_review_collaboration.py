@@ -11,7 +11,7 @@ the API (they are derived from the audit log).
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
-from evalhub.platform.review import parse_mentions
+from proofgrove.platform.review import parse_mentions
 from tests.conftest import act_as
 from tests.platform.test_review_decision_history import _finding_with_task
 
@@ -22,8 +22,8 @@ TENANT = "tenant-test"
 def test_remediation_list_uses_caller_tenant_and_filters_foreign_findings(client, monkeypatch):
     from unittest.mock import AsyncMock
 
-    from evalhub.platform import authz
-    from evalhub.settings import settings
+    from proofgrove.platform import authz
+    from proofgrove.settings import settings
 
     records = []
     for _ in range(2):

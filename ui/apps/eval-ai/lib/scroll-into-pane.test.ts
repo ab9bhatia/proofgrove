@@ -7,7 +7,7 @@ import { scrollIntoPane } from "./scroll-into-pane";
 function pane(): { pane: HTMLElement; target: HTMLElement } {
   document.body.innerHTML = "";
   const paneElement = document.createElement("div");
-  paneElement.className = "eval-hub-workspace-scroll";
+  paneElement.className = "proofgrove-workspace-scroll";
   const target = document.createElement("div");
   paneElement.append(target);
   document.body.append(paneElement);

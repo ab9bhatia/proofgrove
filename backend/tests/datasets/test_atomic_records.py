@@ -1,6 +1,6 @@
 """Dataset replacement rolls back as a unit and cannot mutate validated data.
 
-For PostgreSQL, set EVALHUB_TEST_POSTGRES_URL to a disposable test database
+For PostgreSQL, set PROOFGROVE_TEST_POSTGRES_URL to a disposable test database
 (asyncpg URL), then run ``uv run pytest --confcutdir=tests/datasets tests/datasets/test_atomic_records.py``.
 The confcutdir excludes the parent SQLite-only fixtures. Each test creates
 and removes its own PostgreSQL schema; no deployed database should be used.
@@ -13,16 +13,16 @@ import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from evalhub.datasets.exceptions import DatasetImmutableError, DatasetValidationError
-from evalhub.datasets.models import DatasetMetadata, DatasetRecord
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.db.models import Base
+from proofgrove.datasets.exceptions import DatasetImmutableError, DatasetValidationError
+from proofgrove.datasets.models import DatasetMetadata, DatasetRecord
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.db.models import Base
 
 
 @pytest.fixture
 def dataset():
-    url = os.environ.get("EVALHUB_TEST_POSTGRES_URL")
+    url = os.environ.get("PROOFGROVE_TEST_POSTGRES_URL")
     engine = None
     schema = None
     if url:
@@ -93,12 +93,12 @@ def test_merge_rechecks_status_after_service_precheck(dataset, monkeypatch):
     assert [r["inputs"] for r in storage.get_records("atomic", "tenant-one")] == [{"q": "old"}]
 
 
-@pytest.mark.skipif(not os.environ.get("EVALHUB_TEST_POSTGRES_URL"), reason="requires PostgreSQL row locks")
+@pytest.mark.skipif(not os.environ.get("PROOFGROVE_TEST_POSTGRES_URL"), reason="requires PostgreSQL row locks")
 def test_waiting_merge_observes_committed_validation(dataset, monkeypatch):
     from concurrent.futures import ThreadPoolExecutor
     from threading import Event
 
-    from evalhub.datasets import postgres_store
+    from proofgrove.datasets import postgres_store
 
     storage, _ = dataset
     reached_lock = Event()

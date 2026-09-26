@@ -26,13 +26,14 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
     id: "workspace",
     label: "Workspace",
     items: [
-      { href: "/", label: "Start here", icon: LayoutDashboard },
+      { href: "/", label: "Start here", icon: LayoutDashboard, activePaths: ["/", "/learn"] },
       { href: "/datasets", label: "Golden dataset", icon: Database },
-      { href: "/ab-test", label: "A/B test", icon: FlaskConical },
-      { href: "/catalog/prompts", label: "Prompt management", icon: MessageSquareText },
-      { href: "/catalog/llms", label: "Models", icon: BrainCircuit },
+      { href: "/catalog/agents", label: "What to test", icon: Bot },
       { href: "/catalog/metrics", label: "Checks", icon: Ruler },
       { href: "/evaluations", label: "Experiments", icon: FlaskConical, activePaths: ["/evaluations", "/runs", "/experiments", "/compare"] },
+      { href: "/catalog/prompts", label: "Prompt management", icon: MessageSquareText },
+      { href: "/catalog/llms", label: "Models", icon: BrainCircuit },
+      { href: "/ab-test", label: "A/B test", icon: FlaskConical },
       { href: "/projects", label: "Observability", icon: RadioTower, activePaths: ["/projects", "/tracing"] },
     ],
   },
@@ -41,7 +42,6 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
     label: "Lab setup",
     items: [
       { href: "/lab-setup", label: "Live demo setup", icon: Play },
-      { href: "/catalog/agents", label: "Agents", icon: Bot },
       { href: "/usage", label: "Usage", icon: BarChart3 },
       { href: "/reviews", label: "Review queue", icon: ClipboardCheck },
       {

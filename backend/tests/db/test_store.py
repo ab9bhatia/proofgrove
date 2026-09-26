@@ -4,14 +4,14 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base, CapturedTraceIndexORM, EvaluationRunItemORM, EvaluationRunORM, ExperimentORM, MetricResultORM
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.engine import EvaluationEngine
-from evalhub.evaluation.enums import MetricApplicability
-from evalhub.evaluation.judge import MockJudge
-from evalhub.evaluation.models import EvaluationRow
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.platform.contracts import EvaluationProject
+from proofgrove.db.models import Base, CapturedTraceIndexORM, EvaluationRunItemORM, EvaluationRunORM, ExperimentORM, MetricResultORM
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.engine import EvaluationEngine
+from proofgrove.evaluation.enums import MetricApplicability
+from proofgrove.evaluation.judge import MockJudge
+from proofgrove.evaluation.models import EvaluationRow
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.platform.contracts import EvaluationProject
 
 
 @pytest.fixture
@@ -316,9 +316,9 @@ async def test_not_applicable_metric_round_trips_and_remains_listable(
 
 @pytest.mark.asyncio
 async def test_case_readers_exclude_persisted_spans_and_keep_legacy_subjects(store):
-    from evalhub.db.store import _metric_result_from_orm
-    from evalhub.evaluation.models import MetricResult
-    from evalhub.evaluation.report import build_report
+    from proofgrove.db.store import _metric_result_from_orm
+    from proofgrove.evaluation.models import MetricResult
+    from proofgrove.evaluation.report import build_report
 
     rows = get_sample_rows("exp-llm-core-v1")[:1]
     run = EvaluationEngine(judge=MockJudge()).execute(SAMPLE_EXPERIMENTS[0], rows)
@@ -374,8 +374,8 @@ async def test_case_readers_exclude_persisted_spans_and_keep_legacy_subjects(sto
 
 @pytest.mark.asyncio
 async def test_create_run_response_uses_case_projection(store, monkeypatch):
-    from evalhub.api.v1.evaluation import create_run
-    from evalhub.evaluation.models import MetricResult
+    from proofgrove.api.v1.evaluation import create_run
+    from proofgrove.evaluation.models import MetricResult
 
     engine = EvaluationEngine(judge=MockJudge())
     execute = engine.execute
@@ -413,7 +413,7 @@ async def test_bind_manifest_to_experiment_requires_caller_tenant_to_own_the_man
     (resolved and enforced by the route), regardless of what the experiment
     currently carries.
     """
-    from evalhub.db.models import ExperimentORM, RunManifestORM
+    from proofgrove.db.models import ExperimentORM, RunManifestORM
 
     store.session.add(
         ExperimentORM(
@@ -474,7 +474,7 @@ async def test_bind_manifest_to_experiment_requires_caller_tenant_to_own_the_man
     ("", "tenant-foo", "tenant-foo", "foo"),
 ])
 async def test_trace_index_join_preserves_tenant_identity(store, monkeypatch, namespace, owner, canonical, foreign):
-    from evalhub.settings import settings
+    from proofgrove.settings import settings
 
     monkeypatch.setattr(settings, "pod_namespace", namespace)
     session = store.session

@@ -4,19 +4,19 @@ from types import SimpleNamespace
 
 import pytest
 
-from evalhub.evaluation.lineage import (
+from proofgrove.evaluation.lineage import (
     COMPARISON_BASIS_VERSION,
     build_lineage,
     compute_comparison_basis_hash,
     compute_comparison_basis_hash_v1,
     compute_experiment_version_id,
 )
-from evalhub.evaluation.models import recorded_comparison_basis
-from evalhub.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
-from evalhub.evaluation.scenario_router import build_evaluator_configs
-from evalhub.platform.contracts import EvaluationProject, QualityProfileVersion, TargetVersion, VersionLifecycle
-from evalhub.platform.resolver import resolve_run_manifest
-from evalhub.settings import settings
+from proofgrove.evaluation.models import recorded_comparison_basis
+from proofgrove.evaluation.sample_data import SAMPLE_EXPERIMENTS, get_sample_rows
+from proofgrove.evaluation.scenario_router import build_evaluator_configs
+from proofgrove.platform.contracts import EvaluationProject, QualityProfileVersion, TargetVersion, VersionLifecycle
+from proofgrove.platform.resolver import resolve_run_manifest
+from proofgrove.settings import settings
 
 
 def _exp_rows_metrics():
@@ -138,7 +138,7 @@ def test_target_variants_share_comparison_basis_but_not_reproducibility_identity
     {"evidence_requirements": ["trace"]},
     {"effective_evidence_requirements": ["trace"]},
     {"exact_runtime_identity_required": True},
-    {"approver_roles": ["eval-hub-approver"]},
+    {"approver_roles": ["proofgrove-approver"]},
     {"review_trigger_gates": []},
     {"resolved_evaluation_scope": "full_execution"},
     {"metric_pack_refs": ["quality@2"]},

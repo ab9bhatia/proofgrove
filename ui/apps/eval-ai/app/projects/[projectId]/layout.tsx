@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useSelectedLayoutSegments } from "next/navigation";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { ArrowLeft, Clock, Radio } from "lucide-react";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { api, type TraceProject } from "@/lib/api";
 import { formatDateTime } from "@/lib/format-time";
 import { NavTab, NavTabs } from "@/components/ui/tabs";
@@ -18,9 +18,9 @@ import { NavTab, NavTabs } from "@/components/ui/tabs";
 // scope (no backend).
 export default function ProjectWorkspaceLayout({ children }: { children: ReactNode }) {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <ProjectWorkspace>{children}</ProjectWorkspace>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

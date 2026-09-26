@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from evalhub.settings import settings
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 #: The tenant this module's client acts as, the way the gateway sets it.
@@ -32,7 +32,7 @@ def test_capabilities_grant_everything_when_auth_not_required(client):
 
 def test_capabilities_deny_release_decision_when_authz_denies(client, auth_required, monkeypatch):
     check = AsyncMock(return_value=False)
-    monkeypatch.setattr("evalhub.api.v1.platform.check_permission", check)
+    monkeypatch.setattr("proofgrove.api.v1.platform.check_permission", check)
     response = client.get(
         "/platform/capabilities",
         headers={"x-evalai-tenant": "evalai", "x-evalai-sub": "viewer@example.com"},
@@ -43,13 +43,13 @@ def test_capabilities_deny_release_decision_when_authz_denies(client, auth_requi
 
 
 def test_capabilities_do_not_trust_roles_header(client, auth_required, monkeypatch):
-    monkeypatch.setattr("evalhub.api.v1.platform.check_permission", AsyncMock(return_value=False))
+    monkeypatch.setattr("proofgrove.api.v1.platform.check_permission", AsyncMock(return_value=False))
     response = client.get(
         "/platform/capabilities",
         headers={
             "x-evalai-tenant": "evalai",
             "x-evalai-sub": "admin@example.com",
-            "x-evalai-roles": "eval-hub-admin",
+            "x-evalai-roles": "proofgrove-admin",
         },
     )
     assert response.status_code == 200
@@ -57,7 +57,7 @@ def test_capabilities_do_not_trust_roles_header(client, auth_required, monkeypat
 
 
 def test_capabilities_grant_release_decision_when_authz_allows(client, auth_required, monkeypatch):
-    monkeypatch.setattr("evalhub.api.v1.platform.check_permission", AsyncMock(return_value=True))
+    monkeypatch.setattr("proofgrove.api.v1.platform.check_permission", AsyncMock(return_value=True))
     response = client.get(
         "/platform/capabilities",
         headers={
@@ -82,6 +82,6 @@ def test_capabilities_reject_mismatched_tenant(client, auth_required):
     response = client.get(
         "/platform/capabilities",
         params={"tenant_id": "tenant-evalai"},
-        headers={"x-evalai-tenant": "other", "x-evalai-roles": "eval-hub-approver"},
+        headers={"x-evalai-tenant": "other", "x-evalai-roles": "proofgrove-approver"},
     )
     assert response.status_code == 403

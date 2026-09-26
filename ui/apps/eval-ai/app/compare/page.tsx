@@ -29,7 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@evalai/shared/ui/dropdown-menu";
-import { EvalHubGate } from "@/components/eval-hub-gate";
+import { ProofgroveGate } from "@/components/proofgrove-gate";
 import { LegacyEvaluationRouteRedirect } from "@/components/legacy-evaluation-redirect";
 import { api, evaluationApi, type ExperimentDefinition, type RunResult } from "@/lib/api";
 import {
@@ -63,7 +63,7 @@ export interface ExperimentGroup {
 // The `/compare` route itself now forwards to the canonical evaluations library.
 export function ExperimentsPage() {
   return (
-    <EvalHubGate>
+    <ProofgroveGate>
       <Suspense
         fallback={
           <div className="flex justify-center py-24">
@@ -73,7 +73,7 @@ export function ExperimentsPage() {
       >
         <ExperimentsView />
       </Suspense>
-    </EvalHubGate>
+    </ProofgroveGate>
   );
 }
 

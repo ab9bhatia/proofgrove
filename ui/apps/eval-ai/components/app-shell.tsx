@@ -10,7 +10,7 @@ import { LabModeBanner } from "@/components/lab-mode-banner";
  */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const learning = pathname === "/learn" || pathname === "/presenter";
+  const learning = pathname === "/presenter";
   return (
     // dvh, not svh. `svh` is the viewport at its *smallest* — the size it would be
     // with every dynamic browser toolbar shown — so on a desktop window whose chrome
@@ -28,7 +28,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main
         id="main-content"
         tabIndex={-1}
-        className={`eval-hub-workspace eval-hub-workspace-scroll min-h-0 min-w-0 flex-1 overflow-auto overscroll-none ${learning ? "" : "pt-[calc(4rem+env(safe-area-inset-top))] lg:pt-0"}`}
+        className={`proofgrove-workspace proofgrove-workspace-scroll min-h-0 min-w-0 flex-1 overflow-auto overscroll-none ${learning ? "" : "pt-[calc(4rem+env(safe-area-inset-top))] lg:pt-0"}`}
       >
         <div className="min-h-full">
           {!learning && <LabModeBanner />}

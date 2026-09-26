@@ -11,15 +11,15 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from evalhub.db.models import (
+from proofgrove.db.models import (
     Base,
     EvaluationRunItemORM,
     EvaluationRunORM,
     ExperimentORM,
     RunJobORM,
 )
-from evalhub.db.store import EvaluationStore
-from evalhub.settings import settings
+from proofgrove.db.store import EvaluationStore
+from proofgrove.settings import settings
 
 OWNER = "tenant-usage"
 NOW = datetime.now(UTC)

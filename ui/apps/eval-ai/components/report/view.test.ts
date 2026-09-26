@@ -635,6 +635,30 @@ describe("ReportView", () => {
     expect(html).not.toContain("Judge gpt-4o");
   });
 
+  it("identifies builtin tool checks without inventing a model judge or answer verdict", () => {
+    const toolRun: RunResult = {
+      ...run,
+      active_metrics: ["agent.tool_input_accuracy"],
+      metric_results: [{
+        ...passingMetricResult("case-1"),
+        metric_id: "agent.tool_input_accuracy",
+        evaluator_id: "builtin.trace",
+        judge_model: null,
+      }],
+    };
+    expect(scoringMethodForRun(toolRun).label).toBe("Deterministic scoring");
+    const html = renderToStaticMarkup(createElement(ReportView, { run: toolRun }));
+    expect(html).toContain("Not used · deterministic metrics");
+    expect(html).toContain("A pass does not establish that the final answer is correct");
+    const withOperationalMetrics = renderToStaticMarkup(createElement(ReportView, { run: {
+      ...toolRun,
+      metric_results: [...toolRun.metric_results, {
+        ...passingMetricResult("case-1"), metric_id: "ops.latency", evaluator_id: "builtin.deterministic", judge_model: null,
+      }],
+    } }));
+    expect(withOperationalMetrics).toContain("A pass does not establish that the final answer is correct");
+  });
+
   it("prefers the immutable run lineage when provenance is available", () => {
     const lineageRun: RunResult = {
       ...run,

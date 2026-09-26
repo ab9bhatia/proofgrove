@@ -11,7 +11,7 @@ import { sessionAwareFetch } from "@evalai/shared/session";
 import { ApiError, apiErrorFromResponse } from "@/lib/api-errors";
 import type { RunResult } from "@/lib/api";
 
-const BASE = "/api/eval-hub";
+const BASE = "/api/proofgrove";
 
 /** Server-paginated run-history envelope (mirrors backend `PaginatedRuns`). */
 export interface PaginatedRuns {

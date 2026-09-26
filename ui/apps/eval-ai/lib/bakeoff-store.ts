@@ -8,7 +8,7 @@ import type { BakeoffTarget } from "@/lib/bakeoff";
  * are kept (`lib/live-runs.ts`) — dies with the tab and prunes terminal ids
  * exactly when grouping needs them, so a bakeoff keeps its own record here.
  */
-const STORAGE_KEY = "evalhub:bakeoff-launches";
+const STORAGE_KEY = "proofgrove:bakeoff-launches";
 
 /** Enough to cover a few forgotten tabs without growing without bound. */
 const MAX_REMEMBERED_LAUNCHES = 5;

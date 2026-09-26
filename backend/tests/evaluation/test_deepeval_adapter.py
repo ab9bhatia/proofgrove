@@ -2,10 +2,10 @@
 
 import pytest
 
-from evalhub.evaluation.adapters.deepeval_adapter import DeepEvalJudge
-from evalhub.evaluation.enums import Adapter, ScoringType
-from evalhub.evaluation.models import EvaluationRow, EvaluatorConfig
-from evalhub.settings import Settings
+from proofgrove.evaluation.adapters.deepeval_adapter import DeepEvalJudge
+from proofgrove.evaluation.enums import Adapter, ScoringType
+from proofgrove.evaluation.models import EvaluationRow, EvaluatorConfig
+from proofgrove.settings import Settings
 
 
 class _NoneScoreMetric:

@@ -2,9 +2,9 @@
 
 import pytest
 
-from evalhub.datasets.enums import DatasetStatus
-from evalhub.datasets.exceptions import DatasetImmutableError, InvalidTransitionError
-from evalhub.datasets.versioning import (
+from proofgrove.datasets.enums import DatasetStatus
+from proofgrove.datasets.exceptions import DatasetImmutableError, InvalidTransitionError
+from proofgrove.datasets.versioning import (
     assert_mutable,
     compute_target_status_from_dqs,
     validate_transition,

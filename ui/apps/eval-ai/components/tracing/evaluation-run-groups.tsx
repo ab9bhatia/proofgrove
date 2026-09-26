@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { FilterSelect } from "@/components/toolbar";
 import { groupTracingResults, type TracingGroupingIdentity } from "@/components/tracing/trace-workspace";
 
-const GROUPING_KEY = "eval-hub.tracing.group-by";
+const GROUPING_KEY = "proofgrove.tracing.group-by";
 export type Grouping = "none" | "evaluation" | "run";
 
 export function useTracingGrouping() {

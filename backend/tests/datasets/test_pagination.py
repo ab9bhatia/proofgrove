@@ -12,12 +12,12 @@ from unittest.mock import MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.datasets.exceptions import DatasetNotFoundError
-from evalhub.datasets.models import DatasetFilterParams
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.main import app
-from evalhub.settings import settings
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.datasets.exceptions import DatasetNotFoundError
+from proofgrove.datasets.models import DatasetFilterParams
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.main import app
+from proofgrove.settings import settings
 
 #: The tenant this module's clients act as, the way the gateway sets it.
 TENANT = "t1"
@@ -273,16 +273,16 @@ class TestRegistryPaging:
 class TestStorePaging:
     @pytest.fixture
     def store(self, tmp_path, monkeypatch):
-        from evalhub.settings import settings
+        from proofgrove.settings import settings
 
         monkeypatch.setattr(settings, "database_url", f"sqlite:///{tmp_path}/datasets.db")
-        from evalhub.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
 
         return SqlDatasetStore()
 
     def _seed(self, store, name: str, records: int) -> None:
-        from evalhub.datasets.enums import DatasetStatus
-        from evalhub.datasets.models import DatasetMetadata
+        from proofgrove.datasets.enums import DatasetStatus
+        from proofgrove.datasets.models import DatasetMetadata
 
         store.create_dataset(
             name,
@@ -347,12 +347,12 @@ class TestListDatasetsTenantScope:
 
     @pytest.fixture
     def scoped_client(self, tmp_path, monkeypatch):
-        from evalhub.datasets.enums import DatasetStatus
-        from evalhub.datasets.models import DatasetMetadata
-        from evalhub.settings import settings
+        from proofgrove.datasets.enums import DatasetStatus
+        from proofgrove.datasets.models import DatasetMetadata
+        from proofgrove.settings import settings
 
         monkeypatch.setattr(settings, "database_url", f"sqlite:///{tmp_path}/scope.db")
-        from evalhub.datasets.postgres_store import SqlDatasetStore
+        from proofgrove.datasets.postgres_store import SqlDatasetStore
 
         store = SqlDatasetStore()
         for name, tenant in (("mine_a", "tenant-a"), ("mine_b", "tenant-a"), ("theirs", "tenant-b")):

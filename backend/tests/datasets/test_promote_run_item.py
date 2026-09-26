@@ -11,22 +11,22 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_evaluation_store, get_registry_service
-from evalhub.api.v1.datasets import promoted_record
-from evalhub.datasets import postgres_store as store_module
-from evalhub.datasets.csv_parser import metadata_to_record, record_metadata
-from evalhub.datasets.enums import ChangeReason, DatasetStatus
-from evalhub.datasets.exceptions import (
+from proofgrove.api.dependencies import get_evaluation_store, get_registry_service
+from proofgrove.api.v1.datasets import promoted_record
+from proofgrove.datasets import postgres_store as store_module
+from proofgrove.datasets.csv_parser import metadata_to_record, record_metadata
+from proofgrove.datasets.enums import ChangeReason, DatasetStatus
+from proofgrove.datasets.exceptions import (
     DatasetImmutableError,
     DatasetNotFoundError,
     DatasetValidationError,
     InvalidTransitionError,
 )
-from evalhub.datasets.models import DatasetMetadata, DatasetRecord, PromoteRunItemRequest
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.evaluation.dataset_bridge import record_to_row
-from evalhub.evaluation.models import EvidencePolicy, RunItemDetail, RunItemExecution
-from evalhub.main import app
+from proofgrove.datasets.models import DatasetMetadata, DatasetRecord, PromoteRunItemRequest
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.evaluation.dataset_bridge import record_to_row
+from proofgrove.evaluation.models import EvidencePolicy, RunItemDetail, RunItemExecution
+from proofgrove.main import app
 
 
 def _item(**overrides) -> RunItemDetail:
@@ -525,7 +525,7 @@ class TestPromoteRoute:
     async def test_happy_path_promotes_the_fetched_item(
         self, client: AsyncClient, mock_svc: MagicMock, mock_store: MagicMock
     ) -> None:
-        from evalhub.datasets.models import PromoteRunItemResult
+        from proofgrove.datasets.models import PromoteRunItemResult
 
         mock_svc.promote_record.return_value = PromoteRunItemResult(
             dataset_name="ds", record_id="rid-1", duplicate=False
@@ -553,7 +553,7 @@ class TestPromoteRoute:
     ) -> None:
         # The destination dataset belongs to OWNER, so the source run is looked
         # up as OWNER's — a caller cannot name the tenant the read runs under.
-        from evalhub.datasets.models import PromoteRunItemResult
+        from proofgrove.datasets.models import PromoteRunItemResult
 
         mock_svc.get_dataset_tenant.return_value = OWNER
         mock_svc.promote_record.return_value = PromoteRunItemResult(
@@ -575,7 +575,7 @@ class TestPromoteRoute:
         # Production sets POD_NAMESPACE, so the dataset guard passes for an
         # in-namespace caller with no header. The run side must be scoped by
         # the dataset's tenant regardless — never by a body-supplied one.
-        from evalhub.platform import authz
+        from proofgrove.platform import authz
 
         monkeypatch.setattr(authz.settings, "pod_namespace", OWNER)
         mock_svc.get_dataset_tenant.return_value = OWNER

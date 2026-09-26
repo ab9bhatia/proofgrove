@@ -1,5 +1,5 @@
 import "server-only";
-import { evalHubBaseUrl } from '@/lib/eval-hub';
+import { proofgroveBaseUrl } from '@/lib/proofgrove';
 import { resolveTenant } from '@/lib/tenant';
 import { modelSelectionId } from '@/lib/model-selection';
 import type { LabConfiguration } from '@/lib/ab-test';
@@ -28,7 +28,7 @@ export async function labMode(): Promise<LabConfiguration> {
   const unavailable: LabConfiguration = { mode, live: false, model: null, endpoint: null, profiles: [] };
   if (mode !== 'local' && mode !== 'live') return unavailable;
   try {
-    const response = await fetch(`${evalHubBaseUrl()}/evaluation/model-providers`, {
+    const response = await fetch(`${proofgroveBaseUrl()}/evaluation/model-providers`, {
       headers: { 'x-evalai-tenant': resolveTenant().slice('tenant-'.length) },
       cache: 'no-store', signal: AbortSignal.timeout(15000),
     });

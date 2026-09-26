@@ -53,7 +53,7 @@ export function PresenterConsole({ links }: { links: { baseline: string; compari
       <p>Before sharing: verify the share preview, turn off notification previews, keep keys and terminals private, open a saved run and comparison, and rehearse your chosen evaluation mode. Do not reset the database.</p>
       <p><strong>Why not use an LLM judge for everything?</strong> Exact contracts suit code. Rubrics need calibration against human-labelled examples. Inspect disagreements.</p>
       <p><strong>Can we pass without traces?</strong> Some response checks can. Action checks need the observations specified by their contract. Missing required evidence stays incomplete.</p>
-      <p><strong>Are the saved runs live?</strong> Nova uses authored responses with genuine deterministic text scoring. They are labelled prepared examples. A direct OpenAI response test still does not execute agent tools.</p>
+      <p><strong>Are these results from a live run?</strong> A new guided local-agent run executes local tools and asks the configured model for a fresh final answer. An earlier saved run contains evidence from that earlier execution. Prepared teaching examples use authored evidence and must be identified separately. These tool checks do not establish answer correctness or a complete production trace.</p>
       <p><strong>Does the average decide release?</strong> No. Critical failures, missing evidence and coverage matter independently. Runtime authorization remains separate.</p>
     </div></details>
   </div>;

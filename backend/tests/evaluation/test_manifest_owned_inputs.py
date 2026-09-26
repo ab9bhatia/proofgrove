@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 from fastapi import HTTPException
 
-from evalhub.api.v1.evaluation import DatasetRunRequest, _refuse_manifest_owned_overrides
+from proofgrove.api.v1.evaluation import DatasetRunRequest, _refuse_manifest_owned_overrides
 
 
 def _manifest(metric_ids):
@@ -51,11 +51,11 @@ async def test_direct_run_uses_the_tenant_pinned_manifest():
 
     from fastapi import Request
 
-    from evalhub.api.v1.evaluation import create_run
-    from evalhub.evaluation.engine import EvaluationEngine
-    from evalhub.evaluation.judge import MockJudge
-    from evalhub.evaluation.models import EvaluationRow, ExperimentDefinition
-    from evalhub.platform.contracts import ResolvedRunManifest
+    from proofgrove.api.v1.evaluation import create_run
+    from proofgrove.evaluation.engine import EvaluationEngine
+    from proofgrove.evaluation.judge import MockJudge
+    from proofgrove.evaluation.models import EvaluationRow, ExperimentDefinition
+    from proofgrove.platform.contracts import ResolvedRunManifest
 
     manifest = ResolvedRunManifest(
         manifest_id="pinned", manifest_hash="hash", tenant_id="tenant-own", project_id="project",

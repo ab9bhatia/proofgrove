@@ -2,13 +2,13 @@
 
 from uuid import uuid4
 
-from evalhub.settings import settings
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 
 def test_closed_loop_persists_review_regression_replay_and_evidence(client, monkeypatch):
-    from evalhub.evaluation.engine import EvaluationEngine
-    from evalhub.evaluation.models import MetricResult
+    from proofgrove.evaluation.engine import EvaluationEngine
+    from proofgrove.evaluation.models import MetricResult
 
     execute = EvaluationEngine.execute
 
@@ -114,7 +114,7 @@ def test_closed_loop_persists_review_regression_replay_and_evidence(client, monk
 def test_platform_auth_requires_identity_permission_and_matching_tenant(client, monkeypatch):
     from unittest.mock import AsyncMock
 
-    from evalhub.platform import authz
+    from proofgrove.platform import authz
 
     prior = settings.platform_auth_required
     settings.platform_auth_required = True

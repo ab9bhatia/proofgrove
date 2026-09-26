@@ -14,8 +14,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evalhub.orchestrator import workflows as orchestrator_workflows
-from evalhub.orchestrator.workflows import _heartbeat_loop, execute_dataset_run_job
+from proofgrove.orchestrator import workflows as orchestrator_workflows
+from proofgrove.orchestrator.workflows import _heartbeat_loop, execute_dataset_run_job
 
 
 async def test_heartbeat_loop_calls_activity_heartbeat_periodically(monkeypatch):
@@ -95,7 +95,7 @@ async def test_temporal_connection_failure_prevents_application_startup(monkeypa
 
     from temporalio.client import Client
 
-    from evalhub.main import app, lifespan
+    from proofgrove.main import app, lifespan
 
     monkeypatch.setattr(orchestrator_workflows.settings, "evaluation_runtime", "temporal")
     monkeypatch.setattr(orchestrator_workflows.settings, "trace_index_enabled", False)
@@ -112,8 +112,8 @@ async def test_temporal_connection_failure_prevents_application_startup(monkeypa
 
 
 async def _pending_job(response_source: str = "provided") -> str:
-    from evalhub.db.session import async_session
-    from evalhub.db.store import EvaluationStore
+    from proofgrove.db.session import async_session
+    from proofgrove.db.store import EvaluationStore
 
     async with async_session() as session:
         return await EvaluationStore(session).create_run_job(
@@ -122,8 +122,8 @@ async def _pending_job(response_source: str = "provided") -> str:
 
 
 async def _job_state(run_id: str) -> tuple[str, str | None]:
-    from evalhub.db.session import async_session
-    from evalhub.db.store import EvaluationStore
+    from proofgrove.db.session import async_session
+    from proofgrove.db.store import EvaluationStore
 
     async with async_session() as session:
         job = await EvaluationStore(session).get_run_job(run_id)
@@ -139,10 +139,10 @@ async def test_a_failed_attempt_leaves_the_job_claimable_for_the_next_attempt(mo
 
     from temporalio.exceptions import ApplicationError
 
-    from evalhub import runs_worker
+    from proofgrove import runs_worker
 
     run_id = await _pending_job()
-    execute = AsyncMock(side_effect=[RuntimeError("postgresql://eval:s3cret@db.internal/evalhub"), None])
+    execute = AsyncMock(side_effect=[RuntimeError("postgresql://eval:s3cret@db.internal/proofgrove"), None])
     monkeypatch.setattr(runs_worker, "execute_dataset_run", execute)
     monkeypatch.setattr(runs_worker, "get_registry_service", MagicMock())
     monkeypatch.setattr(runs_worker, "get_evaluation_engine", MagicMock())
@@ -164,10 +164,10 @@ async def test_the_workflow_marks_the_job_failed_only_after_the_last_attempt(mon
 
     from temporalio.exceptions import ActivityError, ApplicationError
 
-    from evalhub.orchestrator.temporal import DatasetRunFailure, DatasetRunWorkflowInput
-    from evalhub.orchestrator.workflows import DatasetRunWorkflow, fail_dataset_run_job
+    from proofgrove.orchestrator.temporal import DatasetRunFailure, DatasetRunWorkflowInput
+    from proofgrove.orchestrator.workflows import DatasetRunWorkflow, fail_dataset_run_job
 
-    exhausted = ActivityError("activity failed", scheduled_event_id=1, started_event_id=2, identity="w", activity_type="evalhub.execute-dataset-run-job", activity_id="1", retry_state=None)
+    exhausted = ActivityError("activity failed", scheduled_event_id=1, started_event_id=2, identity="w", activity_type="proofgrove.execute-dataset-run-job", activity_id="1", retry_state=None)
     exhausted.__cause__ = ApplicationError("ValueError: dataset has no rows")
     execute_activity = AsyncMock(side_effect=[exhausted, None])
     monkeypatch.setattr(orchestrator_workflows.workflow, "execute_activity", execute_activity)
@@ -182,10 +182,10 @@ async def test_the_workflow_marks_the_job_failed_only_after_the_last_attempt(mon
 
 
 async def test_fail_dataset_run_job_never_overwrites_a_completed_job():
-    from evalhub.db.session import async_session
-    from evalhub.db.store import EvaluationStore
-    from evalhub.orchestrator.temporal import DatasetRunFailure
-    from evalhub.orchestrator.workflows import fail_dataset_run_job
+    from proofgrove.db.session import async_session
+    from proofgrove.db.store import EvaluationStore
+    from proofgrove.orchestrator.temporal import DatasetRunFailure
+    from proofgrove.orchestrator.workflows import fail_dataset_run_job
 
     run_id = await _pending_job()
     async with async_session() as session:
@@ -203,7 +203,7 @@ async def test_fail_dataset_run_job_never_overwrites_a_completed_job():
 
 @pytest.fixture
 def temporal_runtime(monkeypatch):
-    from evalhub.orchestrator import temporal
+    from proofgrove.orchestrator import temporal
     monkeypatch.setattr(temporal.settings, "evaluation_runtime", "temporal")
     monkeypatch.setattr(temporal.settings, "temporal_reconcile_after_seconds", 0)
     return temporal
@@ -216,8 +216,8 @@ async def test_submission_outcomes_keep_ambiguous_jobs_recoverable(monkeypatch, 
     from temporalio.common import WorkflowIDReusePolicy
     from temporalio.exceptions import WorkflowAlreadyStartedError
 
-    from evalhub.db.session import async_session
-    from evalhub.db.store import WORKFLOW_SUBMITTED_AT_KEY, EvaluationStore
+    from proofgrove.db.session import async_session
+    from proofgrove.db.store import WORKFLOW_SUBMITTED_AT_KEY, EvaluationStore
 
     job = await _pending_job()
     client = AsyncMock()
@@ -229,7 +229,7 @@ async def test_submission_outcomes_keep_ambiguous_jobs_recoverable(monkeypatch, 
         row = await EvaluationStore(session).get_run_job(job)
         assert row.status == "pending"
         assert not (row.params or {}).get(WORKFLOW_SUBMITTED_AT_KEY)
-    client.start_workflow.side_effect = WorkflowAlreadyStartedError(job, "evalhub.dataset-run")
+    client.start_workflow.side_effect = WorkflowAlreadyStartedError(job, "proofgrove.dataset-run")
     with pytest.raises(WorkflowAlreadyStartedError):
         await temporal_runtime.submit_dataset_run(job)
     async with async_session() as session:
@@ -243,8 +243,8 @@ async def test_reconciliation_walks_pages_and_retries_new_and_failed_jobs(tempor
 
     from temporalio.exceptions import WorkflowAlreadyStartedError
 
-    from evalhub.db.session import async_session
-    from evalhub.db.store import WORKFLOW_SUBMITTED_AT_KEY, EvaluationStore
+    from proofgrove.db.session import async_session
+    from proofgrove.db.store import WORKFLOW_SUBMITTED_AT_KEY, EvaluationStore
 
     jobs = [await _pending_job() for _ in range(5)]
     client = AsyncMock()
@@ -254,7 +254,7 @@ async def test_reconciliation_walks_pages_and_retries_new_and_failed_jobs(tempor
         if kwargs["id"] == failed:
             raise RuntimeError("temporarily offline")
         if kwargs["id"] == duplicate:
-            raise WorkflowAlreadyStartedError(duplicate, "evalhub.dataset-run")
+            raise WorkflowAlreadyStartedError(duplicate, "proofgrove.dataset-run")
     client.start_workflow.side_effect = start
     assert await temporal_runtime.reconcile_pending_run_jobs(client, page=2) == 3
     assert client.start_workflow.await_count == 5
@@ -274,8 +274,8 @@ async def test_reconciliation_walks_pages_and_retries_new_and_failed_jobs(tempor
 async def test_reconciliation_respects_grace_and_does_not_overwrite_running_params(monkeypatch, temporal_runtime):
     from unittest.mock import AsyncMock
 
-    from evalhub.db.session import async_session
-    from evalhub.db.store import EvaluationStore
+    from proofgrove.db.session import async_session
+    from proofgrove.db.store import EvaluationStore
     job = await _pending_job()
     monkeypatch.setattr(temporal_runtime.settings, "temporal_reconcile_after_seconds", 60)
     client = AsyncMock()
@@ -315,7 +315,7 @@ async def test_activity_failure_serialization_excludes_entire_private_cause(monk
     from temporalio.converter import DefaultFailureConverter, DefaultPayloadConverter
     from temporalio.exceptions import ApplicationError
 
-    from evalhub import runs_worker
+    from proofgrove import runs_worker
     sentinel = "SYNTHETIC_PRIVATE_PAYLOAD_42"
     monkeypatch.setattr(runs_worker, "process_run_job", AsyncMock(side_effect=RuntimeError(sentinel)))
     with pytest.raises(ApplicationError) as error:

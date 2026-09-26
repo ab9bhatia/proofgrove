@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from unittest.mock import AsyncMock
 
-from evalhub.evaluation.target.llm_runner import LlmTargetOutput
+from proofgrove.evaluation.target.llm_runner import LlmTargetOutput
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'scripts'))
 from seed_refund_demo import DATASET, PROMPT_ID, seed
@@ -17,7 +17,7 @@ def test_refund_sample_and_ab_comparison(client, monkeypatch):
         response='Propose AED 250 to the original payment method; await confirmation.',
         latency_seconds=0.01, model_id='test-model', invocation_id='mock-only',
         prompt_tokens=15, completion_tokens=12))
-    monkeypatch.setattr('evalhub.evaluation.run_service.run_llm_target', stub)
+    monkeypatch.setattr('proofgrove.evaluation.run_service.run_llm_target', stub)
     seed(client)
     seed(client)  # Repeated startup must not duplicate or overwrite the fixtures.
     records = client.get(f'/datasets/{DATASET}/records').json()

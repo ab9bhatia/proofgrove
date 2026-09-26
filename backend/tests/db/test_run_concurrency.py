@@ -1,6 +1,6 @@
 """Concurrent persistence uses one transaction for experiment creation and numbering.
 
-For PostgreSQL, set EVALHUB_TEST_POSTGRES_URL to a disposable test database
+For PostgreSQL, set PROOFGROVE_TEST_POSTGRES_URL to a disposable test database
 (asyncpg URL), then run ``uv run pytest --confcutdir=tests/db tests/db/test_run_concurrency.py``.
 The confcutdir excludes the parent SQLite-only fixtures. Each test creates
 and removes its own PostgreSQL schema; no deployed database should be used.
@@ -14,14 +14,14 @@ import pytest
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from evalhub.db.models import Base, EvaluationRunORM, ExperimentORM
-from evalhub.db.store import EvaluationStore
-from evalhub.evaluation.models import ExperimentDefinition, RunResult
+from proofgrove.db.models import Base, EvaluationRunORM, ExperimentORM
+from proofgrove.db.store import EvaluationStore
+from proofgrove.evaluation.models import ExperimentDefinition, RunResult
 
 
 @pytest.fixture
 async def sessions(tmp_path):
-    url = os.environ.get("EVALHUB_TEST_POSTGRES_URL", f"sqlite+aiosqlite:///{tmp_path / 'concurrent.db'}")
+    url = os.environ.get("PROOFGROVE_TEST_POSTGRES_URL", f"sqlite+aiosqlite:///{tmp_path / 'concurrent.db'}")
     engine = create_async_engine(url)
     schema = None
     if engine.dialect.name == "postgresql":

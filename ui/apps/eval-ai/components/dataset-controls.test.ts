@@ -19,7 +19,7 @@ describe("dataset controls", () => {
       createElement(ImportDatasetLayout, {
         name: "support_quality",
         setName: () => undefined,
-        productId: "eval-hub",
+        productId: "proofgrove",
         setProductId: () => undefined,
         file: null,
         setFile: () => undefined,
@@ -31,6 +31,7 @@ describe("dataset controls", () => {
 
     expect(html).toContain("Dataset details");
     expect(html).toContain("CSV file");
+    expect(html).toContain("Download Nova agent sample (4 cases)");
     expect(html).toContain("Drop a CSV file here");
     expect(html).toContain("Cancel");
     expect(html).toContain("Import Draft");

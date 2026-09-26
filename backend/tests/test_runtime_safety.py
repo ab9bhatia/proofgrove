@@ -10,14 +10,14 @@ from unittest.mock import AsyncMock
 import pytest
 from starlette.requests import Request
 
-from evalhub import main, runs_worker
-from evalhub.datasets import generation_service
-from evalhub.datasets.generation_jobs import GenerationJobStore
-from evalhub.datasets.models import DatasetRecord
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.errors import EvaluationInputError
-from evalhub.tracing import index_worker
+from proofgrove import main, runs_worker
+from proofgrove.datasets import generation_service
+from proofgrove.datasets.generation_jobs import GenerationJobStore
+from proofgrove.datasets.models import DatasetRecord
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.errors import EvaluationInputError
+from proofgrove.tracing import index_worker
 
 
 async def test_registration_cannot_report_cancelled_then_replace_records(monkeypatch):
@@ -96,7 +96,7 @@ async def test_runtime_failure_logs_exclude_raw_exception(monkeypatch, caplog, p
             monkeypatch.setattr(index_worker, "EvaluationStore", lambda _: store)
             state = await index_worker._confirm_one(sessions, SimpleNamespace(find=AsyncMock(side_effect=error)), "test", "test", {"trace_id": "trace"}, None)
             assert state == "archive_unavailable"
-    records = [record for record in caplog.records if record.name.startswith("evalhub.")]
+    records = [record for record in caplog.records if record.name.startswith("proofgrove.")]
     assert records
     for record in records:
         assert record.exc_info is None
@@ -108,8 +108,8 @@ async def test_runtime_failure_logs_exclude_raw_exception(monkeypatch, caplog, p
     ("error", "expected"),
     [
         (EvaluationInputError("Source run has no immutable evidence snapshot to rescore"), "Source run has no immutable evidence snapshot to rescore"),
-        (EvaluationInputError("target postgresql://eval:s3cret@db.internal/evalhub password=hunter2"), "target postgresql://eval:[REDACTED]@db.internal/evalhub password=[REDACTED]"),
-        (RuntimeError("postgresql://eval:s3cret@db.internal/evalhub"), "RuntimeError: the failure detail is withheld from stored evidence"),
+        (EvaluationInputError("target postgresql://eval:s3cret@db.internal/proofgrove password=hunter2"), "target postgresql://eval:[REDACTED]@db.internal/proofgrove password=[REDACTED]"),
+        (RuntimeError("postgresql://eval:s3cret@db.internal/proofgrove"), "RuntimeError: the failure detail is withheld from stored evidence"),
     ],
 )
 def test_job_error_messages_keep_authored_text_and_withhold_driver_text(error, expected):
@@ -134,8 +134,8 @@ def test_pydantic_validation_errors_are_never_treated_as_safe():
 async def test_wrapped_agent_transport_errors_never_become_public(monkeypatch):
     import httpx
 
-    from evalhub.evaluation.target import a2a_client
-    from evalhub.redaction import safe_error_message
+    from proofgrove.evaluation.target import a2a_client
+    from proofgrove.redaction import safe_error_message
 
     sentinel = "SYNTHETIC_PRIVATE_PAYLOAD_42"
     real_client = httpx.AsyncClient

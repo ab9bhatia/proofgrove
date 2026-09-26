@@ -95,10 +95,13 @@ def main():
         ready = subprocess.run(['uv', 'run', '--no-sync', 'python', '../scripts/seed_ready_evaluation.py'], cwd=ROOT / 'backend', env=seed_env)
         if ready.returncode:
             raise RuntimeError('Prepared evaluation artifacts failed to initialize; review the error above.')
+        working_agents = subprocess.run(['uv', 'run', '--no-sync', 'python', '../scripts/seed_working_agents.py'], cwd=ROOT / 'backend', env=seed_env)
+        if working_agents.returncode:
+            raise RuntimeError('Working-agent golden datasets failed to initialize; review the error above.')
         api_log = open(LOCAL / 'api.log', 'a', buffering=1)
         logs.append(api_log)
         api_process = subprocess.Popen(
-            ['uv', 'run', '--no-sync', 'uvicorn', 'evalhub.main:app', '--host', '127.0.0.1', '--port', '8010'],
+            ['uv', 'run', '--no-sync', 'uvicorn', 'proofgrove.main:app', '--host', '127.0.0.1', '--port', '8010'],
             cwd=ROOT / 'backend', env=env, stdout=api_log, stderr=subprocess.STDOUT, start_new_session=True,
         )
         PROCESSES.append(api_process)

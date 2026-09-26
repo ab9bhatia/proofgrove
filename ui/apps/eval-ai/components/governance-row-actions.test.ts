@@ -10,7 +10,7 @@ const profile: QualityProfileVersion = {
   profile_id: "task-completion", version: "1.0.0", tenant_id: "tenant-classroom",
   project_id: "project-1", name: "Task Completion", status: "draft",
   metric_ids: ["quality.task_completion"], evidence_requirements: ["final_output"],
-  hard_blocker_metric_ids: ["quality.task_completion"], approver_roles: ["eval-hub-approver"],
+  hard_blocker_metric_ids: ["quality.task_completion"], approver_roles: ["proofgrove-approver"],
   test_status: "not_tested",
 };
 const policy: ReleaseGatePolicyVersion = {

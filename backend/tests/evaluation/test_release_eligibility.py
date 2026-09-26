@@ -2,14 +2,14 @@
 
 from types import SimpleNamespace
 
-from evalhub.evaluation.enums import (
+from proofgrove.evaluation.enums import (
     EvidenceCaptureStatus,
     EvidenceCategoryStatus,
     GateResult,
     RunStatus,
     VerdictStatus,
 )
-from evalhub.evaluation.release_eligibility import (
+from proofgrove.evaluation.release_eligibility import (
     release_eligibility,
     release_gate_violation,
 )
@@ -82,9 +82,9 @@ def test_unfinished_inconclusive_incomplete_and_non_pass_gate_block():
 
 
 def test_build_report_includes_release_eligibility():
-    from evalhub.evaluation.enums import Scenario
-    from evalhub.evaluation.models import ExperimentDefinition, RunResult
-    from evalhub.evaluation.report import build_report
+    from proofgrove.evaluation.enums import Scenario
+    from proofgrove.evaluation.models import ExperimentDefinition, RunResult
+    from proofgrove.evaluation.report import build_report
 
     run = RunResult(
         run_id="run-elig-1",
@@ -113,9 +113,9 @@ def test_build_ci_callback_reports_release_allowed_false_for_diagnostic_run():
     an inline verdict+gate check that can't see diagnostic_only/governance/
     evidence-completeness at all."""
 
-    from evalhub.evaluation.enums import Scenario
-    from evalhub.evaluation.models import ExperimentDefinition, RunResult
-    from evalhub.evaluation.report import build_ci_callback
+    from proofgrove.evaluation.enums import Scenario
+    from proofgrove.evaluation.models import ExperimentDefinition, RunResult
+    from proofgrove.evaluation.report import build_ci_callback
 
     run = RunResult(
         run_id="run-elig-2",
@@ -137,9 +137,9 @@ def test_build_ci_callback_reports_release_allowed_false_for_diagnostic_run():
 
 
 def test_build_ci_callback_reports_release_allowed_true_for_governed_complete_run():
-    from evalhub.evaluation.enums import Scenario
-    from evalhub.evaluation.models import ExperimentDefinition, RunResult
-    from evalhub.evaluation.report import build_ci_callback
+    from proofgrove.evaluation.enums import Scenario
+    from proofgrove.evaluation.models import ExperimentDefinition, RunResult
+    from proofgrove.evaluation.report import build_ci_callback
 
     run = RunResult(
         run_id="run-elig-3",

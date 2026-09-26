@@ -1,6 +1,6 @@
 """Tests for CSV parsing edge cases."""
 
-from evalhub.datasets.csv_parser import parse_csv
+from proofgrove.datasets.csv_parser import parse_csv
 
 
 def test_parse_csv_accepts_utf8_bom() -> None:

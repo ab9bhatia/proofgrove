@@ -307,8 +307,8 @@ function RunItemDrawerContent({
           const created = await api.createDataset({
             dataset_name: newDatasetName.trim(),
             tenant_id,
-            product_id: "eval-hub",
-            created_by: "eval-hub-ui",
+            product_id: "proofgrove",
+            created_by: "proofgrove-ui",
           });
           target = created.dataset_name ?? created.name ?? newDatasetName.trim();
           createdEmpty = target;
@@ -320,7 +320,7 @@ function RunItemDrawerContent({
           expected_source: expectedSource,
           ...(expectedSource === "reviewer" ? { expected_text: expectedText.trim() } : {}),
           create_version_if_immutable: createVersion,
-          created_by: "eval-hub-ui",
+          created_by: "proofgrove-ui",
         });
         if (promoteRequestRef.current !== requested) return;
         setPromoteResult(result);

@@ -12,8 +12,8 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/components/ui-state", () => ({
   useUIState: () => ({ fullName: "Reviewer", identityResolved: true }),
 }));
-vi.mock("@/components/eval-hub-gate", () => ({
-  EvalHubGate: ({ children }: { children: ReactNode }) => children,
+vi.mock("@/components/proofgrove-gate", () => ({
+  ProofgroveGate: ({ children }: { children: ReactNode }) => children,
 }));
 
 it("renders and switches both review panels using the real tab components", async () => {

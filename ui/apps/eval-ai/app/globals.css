@@ -437,38 +437,38 @@
   }
 
   /* Main workspace scrollbar — gutter always reserved so focus/hover never shifts cards. */
-  .eval-hub-workspace-scroll {
+  .proofgrove-workspace-scroll {
     scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: transparent transparent;
   }
 
-  .eval-hub-workspace-scroll::-webkit-scrollbar {
+  .proofgrove-workspace-scroll::-webkit-scrollbar {
     width: 8px;
   }
 
-  .eval-hub-workspace-scroll::-webkit-scrollbar-thumb {
+  .proofgrove-workspace-scroll::-webkit-scrollbar-thumb {
     background: transparent;
     border-radius: 999px;
   }
 
-  .eval-hub-workspace-scroll:hover {
+  .proofgrove-workspace-scroll:hover {
     scrollbar-color: rgb(30 31 30 / 0.16) transparent;
   }
 
-  .eval-hub-workspace-scroll:hover::-webkit-scrollbar-thumb {
+  .proofgrove-workspace-scroll:hover::-webkit-scrollbar-thumb {
     background: rgb(30 31 30 / 0.16);
   }
 
-  .dark .eval-hub-workspace-scroll:hover {
+  .dark .proofgrove-workspace-scroll:hover {
     scrollbar-color: rgb(251 248 255 / 0.2) transparent;
   }
 
-  .dark .eval-hub-workspace-scroll:hover::-webkit-scrollbar-thumb {
+  .dark .proofgrove-workspace-scroll:hover::-webkit-scrollbar-thumb {
     background: rgb(251 248 255 / 0.2);
   }
 
-  .eval-hub-eyebrow {
+  .proofgrove-eyebrow {
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -476,24 +476,24 @@
     text-transform: uppercase;
   }
 
-  .eval-hub-workspace {
+  .proofgrove-workspace {
     background: var(--background);
   }
 
-  .dark .eval-hub-workspace {
+  .dark .proofgrove-workspace {
     background: linear-gradient(180deg, #1e1f1e 0%, #262726 100%);
   }
 
   /* Scroll lives on #main-content, not body — block Radix padding compensation that shifts layout. */
-  .eval-hub-skin body[data-scroll-locked] {
+  .proofgrove-skin body[data-scroll-locked] {
     margin-right: 0 !important;
     padding-right: 0 !important;
   }
 
   /* ---- Shared primitive skin (scoped to Proofgrove) ---- */
 
-  .eval-hub-skin button,
-  .eval-hub-skin [role="button"] {
+  .proofgrove-skin button,
+  .proofgrove-skin [role="button"] {
     transition:
       background-color var(--dur-fast) var(--ease-standard),
       border-color var(--dur-fast) var(--ease-standard),
@@ -503,14 +503,14 @@
       filter var(--dur-fast) var(--ease-standard);
   }
 
-  .eval-hub-skin button:active:not(:disabled),
-  .eval-hub-skin [role="button"]:active:not([aria-disabled="true"]) {
+  .proofgrove-skin button:active:not(:disabled),
+  .proofgrove-skin [role="button"]:active:not([aria-disabled="true"]) {
     transform: scale(0.98);
   }
 
-  .eval-hub-skin .rounded-2xl.border.bg-card,
-  .eval-hub-skin [class*="rounded-2xl"][class*="border"][class*="bg-card"],
-  .eval-hub-skin [class*="rounded-2xl"][class*="border"][class*="bg-background"] {
+  .proofgrove-skin .rounded-2xl.border.bg-card,
+  .proofgrove-skin [class*="rounded-2xl"][class*="border"][class*="bg-card"],
+  .proofgrove-skin [class*="rounded-2xl"][class*="border"][class*="bg-background"] {
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-sm);
   }
@@ -521,9 +521,9 @@
      utilities layer — every invalid field in the app rendered the ordinary grey
      border, and the review form's rationale and outcome have no companion error
      message, so a failed submit gave a sighted user no signal at all. */
-  .eval-hub-skin input:not([type="checkbox"]):not([type="radio"]):not([aria-invalid="true"]),
-  .eval-hub-skin textarea:not([aria-invalid="true"]),
-  .eval-hub-skin select:not([aria-invalid="true"]) {
+  .proofgrove-skin input:not([type="checkbox"]):not([type="radio"]):not([aria-invalid="true"]),
+  .proofgrove-skin textarea:not([aria-invalid="true"]),
+  .proofgrove-skin select:not([aria-invalid="true"]) {
     border-color: var(--input) !important;
     transition:
       border-color var(--dur-fast) var(--ease-standard),
@@ -533,20 +533,20 @@
   /* Focus must not repaint an invalid field back to the ordinary accent either:
      focusFirstInvalid moves focus to the offending control, which is exactly
      when the error border has to stay visible. */
-  .eval-hub-skin input:not([type="checkbox"]):not([type="radio"]):not([aria-invalid="true"]):focus-visible,
-  .eval-hub-skin textarea:not([aria-invalid="true"]):focus-visible,
-  .eval-hub-skin select:not([aria-invalid="true"]):focus-visible {
+  .proofgrove-skin input:not([type="checkbox"]):not([type="radio"]):not([aria-invalid="true"]):focus-visible,
+  .proofgrove-skin textarea:not([aria-invalid="true"]):focus-visible,
+  .proofgrove-skin select:not([aria-invalid="true"]):focus-visible {
     border-color: var(--purple-deep) !important;
     box-shadow: 0 0 0 3px rgb(174 116 255 / 0.28);
   }
 
-  .eval-hub-skin [role="tablist"] [role="tab"][data-state="active"] {
+  .proofgrove-skin [role="tablist"] [role="tab"][data-state="active"] {
     border-color: var(--evalai-green) !important;
     color: var(--foreground);
   }
 
-  .eval-hub-skin [role="dialog"],
-  .eval-hub-skin aside[role="dialog"] {
+  .proofgrove-skin [role="dialog"],
+  .proofgrove-skin aside[role="dialog"] {
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-hover);
   }
@@ -555,7 +555,7 @@
      at 0.08em tracking. The app read as two conventions only because several
      tables overrode this with their own size/casing utilities — the fix is to let
      those inherit, not to drop the treatment. */
-  .eval-hub-skin table thead th {
+  .proofgrove-skin table thead th {
     font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -589,7 +589,7 @@
      the document never scrolls — `#main-content` does. Setting this on `html` was
      inert: the browser applies scroll-padding to the container that actually
      scrolls, which is the one carrying this class. */
-  .eval-hub-workspace-scroll {
+  .proofgrove-workspace-scroll {
     scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom));
   }
 }
@@ -607,9 +607,9 @@
    `border-input` utility sitting beside it on the same element — so the error
    border is stated here rather than left to the cascade. Verified in the browser:
    without this the border stayed --input with aria-invalid set. */
-.eval-hub-skin input[aria-invalid="true"]:not([type="checkbox"]):not([type="radio"]),
-.eval-hub-skin textarea[aria-invalid="true"],
-.eval-hub-skin select[aria-invalid="true"] {
+.proofgrove-skin input[aria-invalid="true"]:not([type="checkbox"]):not([type="radio"]),
+.proofgrove-skin textarea[aria-invalid="true"],
+.proofgrove-skin select[aria-invalid="true"] {
   border-color: var(--destructive) !important;
 }
 
@@ -618,17 +618,17 @@
    layered one — so `font-medium` and `font-semibold` still on individual `th`
    elements beat the 700 the brand sets for labels, and the same role rendered
    at three different weights across the app. */
-.eval-hub-skin table thead th {
+.proofgrove-skin table thead th {
   font-weight: 700;
 }
 
-.eval-hub-skin button.rounded-full,
-.eval-hub-skin [role="button"].rounded-full,
+.proofgrove-skin button.rounded-full,
+.proofgrove-skin [role="button"].rounded-full,
 /* Anchors too. `buttonVariants` is applied to <Link> as often as to <button>,
    so covering only the element left "Evaluate dataset" a pill beside a
    square-cornered "Deprecate" — the exact mismatch this rule exists to stop.
    Round decorations are spans and divs, which this never touches. */
-.eval-hub-skin a.rounded-full {
+.proofgrove-skin a.rounded-full {
   border-radius: var(--radius);
 }
 

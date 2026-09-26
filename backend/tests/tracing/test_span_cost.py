@@ -2,8 +2,8 @@
 
 import pytest
 
-from evalhub.evaluation.models import ArchivedTraceSpan
-from evalhub.tracing.cost import (
+from proofgrove.evaluation.models import ArchivedTraceSpan
+from proofgrove.tracing.cost import (
     estimate_span_cost_usd,
     estimate_tokens_cost_usd,
     normalize_model_id,
@@ -11,7 +11,7 @@ from evalhub.tracing.cost import (
     recorded_span_cost_usd,
     sum_span_costs_usd,
 )
-from evalhub.tracing.models import span_index_rows_from_spans, trace_stats_from_spans
+from proofgrove.tracing.models import span_index_rows_from_spans, trace_stats_from_spans
 
 
 def _span(

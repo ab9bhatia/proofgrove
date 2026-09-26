@@ -3,8 +3,8 @@
 import httpx
 import pytest
 
-from evalhub.evaluation.dataset_bridge import record_to_row
-from evalhub.evaluation.enums import (
+from proofgrove.evaluation.dataset_bridge import record_to_row
+from proofgrove.evaluation.enums import (
     EvaluationScope,
     EvidenceCaptureStatus,
     EvidenceCategoryStatus,
@@ -13,13 +13,13 @@ from evalhub.evaluation.enums import (
     ProvenanceStatus,
     Scenario,
 )
-from evalhub.evaluation.models import EvaluationRow, ToolCall
-from evalhub.evaluation.readiness import (
+from proofgrove.evaluation.models import EvaluationRow, ToolCall
+from proofgrove.evaluation.readiness import (
     assess_evidence_readiness,
     classify_evidence_capture,
 )
-from evalhub.evaluation.target.discovery import AgentSummary
-from evalhub.settings import Settings
+from proofgrove.evaluation.target.discovery import AgentSummary
+from proofgrove.settings import Settings
 
 
 def _settings() -> Settings:
@@ -217,7 +217,7 @@ async def test_agent_dependency_failure_is_unknown(monkeypatch):
         raise httpx.ConnectError("temporary outage")
 
     monkeypatch.setattr(
-        "evalhub.evaluation.readiness.list_tenant_agents",
+        "proofgrove.evaluation.readiness.list_tenant_agents",
         _unavailable,
     )
     result = await _assess(
@@ -246,7 +246,7 @@ async def test_agent_revision_drift_blocks_worker_revalidation(monkeypatch):
             )
         ]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="agent",
         evaluation_scope=EvaluationScope.TOOL_INTERACTIONS,
@@ -275,7 +275,7 @@ async def test_tool_interactions_are_not_ready_without_completion_manifest(monke
             )
         ]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="agent",
         evaluation_scope=EvaluationScope.TOOL_INTERACTIONS,
@@ -307,7 +307,7 @@ async def test_tool_interactions_are_ready_when_trace_archive_is_enabled(monkeyp
             )
         ]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="agent",
         evaluation_scope=EvaluationScope.TOOL_INTERACTIONS,
@@ -335,7 +335,7 @@ async def test_byo_tool_interactions_are_ready_when_trace_archive_is_enabled(mon
             )
         ]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="agent",
         evaluation_scope=EvaluationScope.TOOL_INTERACTIONS,
@@ -632,7 +632,7 @@ async def test_full_execution_is_ready_for_a_capable_agent(monkeypatch):
             )
         ]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="agent",
         evaluation_scope=EvaluationScope.FULL_EXECUTION,
@@ -665,7 +665,7 @@ async def test_full_execution_is_refused_for_a_source_that_cannot_supply_tools(m
     async def _agents(**kwargs):  # noqa: ARG001
         return []
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="provided",
         evaluation_scope=EvaluationScope.FULL_EXECUTION,
@@ -772,7 +772,7 @@ async def test_a_metric_requirement_promotes_the_depth_the_caller_chose(monkeypa
             )
         ]
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="agent",
         evaluation_scope=EvaluationScope.FULL_EXECUTION,
@@ -795,7 +795,7 @@ async def test_full_execution_is_refused_for_a_source_that_cannot_supply_tool_ev
     async def _agents(**kwargs):  # noqa: ARG001
         return []
 
-    monkeypatch.setattr("evalhub.evaluation.readiness.list_tenant_agents", _agents)
+    monkeypatch.setattr("proofgrove.evaluation.readiness.list_tenant_agents", _agents)
     result = await _assess(
         response_source="provided",
         evaluation_scope=EvaluationScope.FULL_EXECUTION,

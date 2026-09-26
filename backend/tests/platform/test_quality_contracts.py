@@ -2,9 +2,9 @@
 
 from uuid import uuid4
 
-from evalhub.evaluation.enums import EvaluationScope, Scenario
-from evalhub.evaluation.metrics import METRIC_CATALOG
-from evalhub.platform.resolver import resolve_scoring_configuration
+from proofgrove.evaluation.enums import EvaluationScope, Scenario
+from proofgrove.evaluation.metrics import METRIC_CATALOG
+from proofgrove.platform.resolver import resolve_scoring_configuration
 
 TENANT = "tenant-a"
 
@@ -159,7 +159,7 @@ def _profile(
                 if hard_blocker_metric_ids is not None
                 else ["safety.general"]
             ),
-            "approver_roles": ["eval-hub-approver"],
+            "approver_roles": ["proofgrove-approver"],
             "gate_policy_id": ids["gate"],
             "gate_policy_version": "1.0.0",
         },
@@ -176,7 +176,7 @@ def _gate(client, ids):
             "tenant_id": TENANT,
             "name": "Claims release",
             "required_evidence": ["tool_calls"],
-            "required_approver_roles": ["eval-hub-approver"],
+            "required_approver_roles": ["proofgrove-approver"],
         },
     )
     assert response.status_code == 201, response.text
@@ -603,7 +603,7 @@ def test_contract_may_gate_on_a_metric_the_catalog_calls_diagnostic(client):
     step, reporting only that "hard-blocker metrics must be selected and
     required" for the metric the contract had just named.
     """
-    from evalhub.platform.resolver import _catalog_diagnostic_default
+    from proofgrove.platform.resolver import _catalog_diagnostic_default
 
     assert _catalog_diagnostic_default("quality.task_completion"), (
         "fixture assumes this metric is diagnostic by default; pick another if that changes"

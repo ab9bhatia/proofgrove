@@ -9,13 +9,13 @@ from unittest.mock import MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from evalhub.api.dependencies import get_registry_service
-from evalhub.datasets.enums import DatasetStatus
-from evalhub.datasets.models import DatasetMetadata
-from evalhub.datasets.postgres_store import SqlDatasetStore
-from evalhub.datasets.registry import DatasetRegistryService
-from evalhub.main import app
-from evalhub.settings import settings
+from proofgrove.api.dependencies import get_registry_service
+from proofgrove.datasets.enums import DatasetStatus
+from proofgrove.datasets.models import DatasetMetadata
+from proofgrove.datasets.postgres_store import SqlDatasetStore
+from proofgrove.datasets.registry import DatasetRegistryService
+from proofgrove.main import app
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 #: The tenant this module's clients act as, the way the gateway sets it.
@@ -74,8 +74,8 @@ class TestDatasetStatsEndpoint:
     ) -> None:
         from unittest.mock import AsyncMock
 
-        from evalhub.platform import authz
-        from evalhub.settings import settings
+        from proofgrove.platform import authz
+        from proofgrove.settings import settings
 
         mock_svc.dataset_stats.return_value = {"total": 0, "by_status": {}}
         prior = settings.platform_auth_required
@@ -113,7 +113,7 @@ class TestDatasetStatsRegistry:
             "by_status": {"PUBLISHED": 1, "DRAFT": 3},
         }
         svc = DatasetRegistryService(storage=storage)
-        from evalhub.datasets.models import DatasetFilterParams
+        from proofgrove.datasets.models import DatasetFilterParams
 
         result = svc.dataset_stats(
             DatasetFilterParams(tenant_id="t1", product_id="p1", status=None)

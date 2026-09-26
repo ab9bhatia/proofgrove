@@ -10,8 +10,8 @@ describe("Proofgrove navigation", () => {
         items: group.items.map((item) => item.label),
       })),
     ).toEqual([
-      { label: "Workspace", items: ["Start here", "Golden dataset", "A/B test", "Prompt management", "Models", "Checks", "Experiments", "Observability"] },
-      { label: "Lab setup", items: ["Live demo setup", "Agents", "Usage", "Review queue", "Governance"] },
+      { label: "Workspace", items: ["Start here", "Golden dataset", "What to test", "Checks", "Experiments", "Prompt management", "Models", "A/B test", "Observability"] },
+      { label: "Lab setup", items: ["Live demo setup", "Usage", "Review queue", "Governance"] },
     ]);
   });
 

@@ -2,8 +2,8 @@
 
 import pytest
 
-from evalhub.platform import authz
-from evalhub.settings import settings
+from proofgrove.platform import authz
+from proofgrove.settings import settings
 from tests.conftest import act_as
 from tests.platform.test_review_decision_history import _finding_with_task
 
@@ -12,7 +12,7 @@ TENANT = "tenant-proof"
 
 def enable_auth(client, monkeypatch):
     async def grant(request, permission):
-        request.state.eval_hub_permissions = {*getattr(request.state, "eval_hub_permissions", set()), permission}
+        request.state.proofgrove_permissions = {*getattr(request.state, "proofgrove_permissions", set()), permission}
         return True
     monkeypatch.setattr(settings, "platform_auth_required", True)
     monkeypatch.setattr(authz, "check_permission", grant)
@@ -133,7 +133,7 @@ def test_retirement_requires_approval_regardless_of_profile_name(client, monkeyp
 def test_version_approval_rolls_back_when_audit_insert_fails(client, kind, payload):
     from sqlalchemy import event
 
-    from evalhub.db.models import AuditEventORM
+    from proofgrove.db.models import AuditEventORM
 
     params = {"tenant_id": TENANT}
     body = {**payload, "version": "1", "tenant_id": TENANT, "name": "Audit rollback"}

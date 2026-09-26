@@ -1,6 +1,6 @@
 """GET /platform/findings — tenant scope from query or gateway header."""
 
-from evalhub.settings import settings
+from proofgrove.settings import settings
 from tests.conftest import act_as
 
 
